@@ -5,7 +5,10 @@
     along with it.
 """
 
+import pyfiglet
 import json
+
+# Local Imports
 
 class Interface():
     def __init__(self):
@@ -18,14 +21,15 @@ class Interface():
         corresponding commands.
     '''
     def run(self):
-        self.__welcomeMsg()
+        # self.__welcomeMsg()
+        print(pyfiglet.figlet_format("UML Editor"))
         while self.isRunning:
             cmd = input(">> ").split(" ")
             # List all classes and contents
             if cmd[0] == 'listClasses':
                 self.listClasses()
             # List contents of a specified class
-            if cmd[0] == 'listClass':
+            elif cmd[0] == 'listClass':
                 if len(cmd) < 2:
                     print(f"Not enough arguments.\nType 'help' {cmd[0]} for correct usage.")
                     continue
@@ -34,17 +38,19 @@ class Interface():
                     continue
                 self.listClass(cmd[1])
             # List all relationships that exist between classes
-            if cmd[0] == 'listRelationships':
+            elif cmd[0] == 'listRelationships':
                 self.listRelationships()
             # Help with a specified command
-            if cmd[0] == 'help' and len(cmd) > 1:
+            elif cmd[0] == 'help' and len(cmd) > 1:
                 self.help(cmd[1])
             # Default help command
             elif cmd[0] == 'help':
                 self.help()
             # Exit application
-            if cmd[0] == 'exit':
+            elif cmd[0] == 'exit':
                 self.exit()
+            else:
+                print(f"Command not found: {cmd[0]}")
 
     '''
         Private
@@ -75,10 +81,10 @@ class Interface():
     def listClasses(self):
         # Placeholder
         print("ClassName:")
-        print("\tAttribute\n\tAttribute")
+        print("\tAttribute 1\n\tAttribute 2\n\t...\n\tAttribute n")
 
         print("ClassName:")
-        print("\tAttribute\n\tAttribute")
+        print("\tAttribute 1\n\tAttribute 2\n\t...\n\tAttribute n")
 
     '''
         Lists the contents of a specified
@@ -134,12 +140,16 @@ class Interface():
                     break
             # Prints the usage and description of the specified command.
             if command is not None:
+                # Displays the syntax of the command
                 print("Usage: " + cmd, end="")
                 for option in command["args"]:
-                    print(f" [{option}]", end="")
+                    print(f" [{option['name']}]", end="")
                 print(f"\n\n\t{command['desc']}\n")
+                # Displays the arguments and their descriptions
+                for option in command["args"]:
+                    print('{:<12}{:<12}'.format(option['name'], option['desc']))
             else:
-                print("Command not found. Type 'help' for a list of commands.")
+                print(f"Command not found: {cmd}\nType 'help' for a list of commands.")
                 
 
 
