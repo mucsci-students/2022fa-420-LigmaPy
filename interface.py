@@ -6,9 +6,11 @@
 """
 
 import pyfiglet
-import json
+# import json
 
 # Local Imports
+from UMLClass import addClass, deleteClass, renameClass
+from interfaceCommands import *
 
 class Interface():
     def __init__(self):
@@ -17,7 +19,7 @@ class Interface():
 
     '''
         Main loop to run the program.
-        Taks input from user and runs the 
+        Takes input from user and runs the 
         corresponding commands.
     '''
     def run(self):
@@ -25,30 +27,47 @@ class Interface():
         print(pyfiglet.figlet_format("UML Editor"))
         while self.isRunning:
             cmd = input(">> ").split(" ")
+            ### CLASS COMMANDS ###
+            if cmd[0] == 'addClass':
+                if len(cmd) == 2:
+                    addClass(cmd[1])
+                else:
+                    print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
+            elif cmd[0] == 'deleteClass':
+                if len(cmd) == 2:
+                    deleteClass(cmd[1])
+                else:
+                    print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
+            elif cmd[0] == 'renameClass':
+                if len(cmd) == 3:
+                    renameClass(cmd[1], cmd[2])
+                else:
+                    print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
+            ### INTERFACE COMMANDS ###
             # List all classes and contents
-            if cmd[0] == 'listClasses':
-                self.listClasses()
+            elif cmd[0] == 'listClasses':
+                listClasses()
             # List contents of a specified class
             elif cmd[0] == 'listClass':
-                if len(cmd) < 2:
-                    print(f"Not enough arguments.\nType 'help' {cmd[0]} for correct usage.")
-                    continue
-                elif len(cmd) > 2:
-                    print(f"Too many arguments.\n Type 'help' {cmd[0]} for correct usage.")
-                    continue
-                self.listClass(cmd[1])
+                if len(cmd) == 2:
+                    listClass(cmd[1])
+                else:
+                    print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
             # List all relationships that exist between classes
             elif cmd[0] == 'listRelationships':
-                self.listRelationships()
+                listRelationships()
             # Help with a specified command
             elif cmd[0] == 'help' and len(cmd) > 1:
-                self.help(cmd[1])
+                help(cmd[1])
             # Default help command
             elif cmd[0] == 'help':
-                self.help()
+                help()
             # Exit application
             elif cmd[0] == 'exit':
-                self.exit()
+                self.isRunning = False
+                exit()
+            elif cmd[0] == '':
+                pass
             else:
                 print(f"Command not found: {cmd[0]}")
 
@@ -66,107 +85,6 @@ class Interface():
         print("\t*****************************************")
         print("\t    Type 'help' for a list of commands")
         print("\t\t   Type 'exit' to quit\n")
-
-    '''
-        Lists all of the classes and contents
-        of the classes in a nice way.
-
-        Example Output:
-
-        Class Name:
-            Attribute
-            Attribute
-            ...
-    '''
-    def listClasses(self):
-        # Placeholder
-        print("ClassName:")
-        print("\tAttribute 1\n\tAttribute 2\n\t...\n\tAttribute n")
-
-        print("ClassName:")
-        print("\tAttribute 1\n\tAttribute 2\n\t...\n\tAttribute n")
-
-    '''
-        Lists the contents of a specified
-        class in a nice way.
-    '''
-    def listClass(self, name):
-        print(f"\n {name} Attributes")
-        # Loop to print bottom border with 
-        # length len(name) + len("Attributes") + 2
-        for i in range((len(name) + 13)):
-            print("*", end="")
-        # Placeholder
-        print("\nAttribute 1\nAttribute 2\n...\nAttribute n\n")
-
-    '''
-        Lists all of the relationships that
-        exist between classes in a nice way.
-
-        Example Output:
-        [src] -> [dest]
-    '''
-    def listRelationships(self):
-        # Placeholder
-        print("[src 1] -> [dest 1]")
-        print("[src 2] -> [dest 2]")
-        print("...")
-        print("[src n] -> [dest n]")
-
-    '''
-        Lists how to use the application without
-        leaving the program.
-    '''
-    def help(self, cmd=None):
-        data = open('commands.json')
-        cmds = json.load(data)
-        # Default help command - prints list of commands
-        #   and their descriptions.
-        if(cmd is None):    
-            print('{:<20}{:<12}'.format('Command', 'Description'))
-            print("***************************************************************************************")
-            for i in cmds['commands']:
-                newLine = '{:<20}{:<12}'.format(i['name'], i['desc'])
-                print(newLine)
-            print("***************************************************************************************")
-        else:
-            command = None
-            # Loops through list off commands and checks if the
-            #   input matches one of the existing commands.
-            # If there is no match, print message stating so.
-            for name in cmds["commands"]:
-                if cmd == name["name"]: 
-                    command = name
-                    break
-            # Prints the usage and description of the specified command.
-            if command is not None:
-                # Displays the syntax of the command
-                print("Usage: " + cmd, end="")
-                for option in command["args"]:
-                    print(f" [{option['name']}]", end="")
-                print(f"\n\n\t{command['desc']}\n")
-                # Displays the arguments and their descriptions
-                for option in command["args"]:
-                    print('{:<12}{:<12}'.format(option['name'], option['desc']))
-            else:
-                print(f"Command not found: {cmd}\nType 'help' for a list of commands.")
-                
-
-
-    '''
-        Exits the program
-    '''
-    def exit(self):
-        # Set isRunning to false to stop the loop
-        self.isRunning = False
-        # Get input from user if they want to save
-        exitChoice = input("Save progress? (Y/n)")
-        if exitChoice.lower() == 'y' or exitChoice == '':
-            print("SAVE PLACEHOLDER")
-        elif exitChoice.lower() == 'n':
-            print("Exiting")
-        else:
-            print("Invalid OPTION")
 
 def main():
     app = Interface()
