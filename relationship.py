@@ -1,65 +1,96 @@
 #Author Ammanuel Amare
 #9/1/22
-# we will need to inherit from the class module/class 
-# from classes import classmodel 
-
+from UMLClass import *
+# This list is used to store the relationships. 
+listofrelationships=[]
 class relationship:
+    # This is the constructor, you will need 3 paramaters to initialize the class
+    # Every relationship has a source ,destination, and a type
     def __init__(self,type,source,destination):
         self.type = type
         self.destination = destination
         self.source = source
-        self.listofrelationships = []
 
-
+#@para source is thesource class for relationship 
+#@para Destination is the destination class for relationship
+#@para tpe is the type of relationship defined between the classes
+# returns a string with needed information, can be a boolean value in the future. 
+#this is how you will add relationship to class
 def Add_relationship(source: str, destination: str, type: str):
+    
     status =""
-# currently waiting for the ability to search for a class given name 
-    sourceclass = source
-    destinationclass = destination
+# To add a class to a relationship it must exist, so we will search for the class,
+# if it does not exist we will fail with a error message. 
+    sourceclass = findClass(source)
+    destinationclass = findClass(destination)
+    #both lists will be needed for testing.
+    # this will take the second item of the tuple and convert it into a list 
+    listofdestinationclasses =(list(list(zip(*tuple_list))[1]))
+    
+    # this will take the first item of the tuple and convert it into a list 
+    listofsourceclasses =(list(list(zip(*tuple_list))[0]))
+
     if sourceclass is not None and destinationclass is not None:
-        #listofrelationships is just a placeholder for the list of class relationships
-        for item in sourceclass.listofrelationships:
-            if item.destination == destinationclass.name:
+        # Create tuple to later be appened to list of relationships.
+        newrelationship = (sourceclass, destinationclass,type)
+        for item in listofrelationships:
+            #if we find the relationship already exists we will log a error
+            if item == newrelationship:
                 status = f" Error: Relationship already exists."
                 return status
-        updated_class = sourceclass.listofrelationships.append(updated_relationship)
+        listofrelationships.append(newrelationship)
         status =f"Relationship for {source} & {destination} added"
     else:
         status = f" The {source} or {destination} class does not exist."
         return status
 
+#@para source is thesource class for relationship 
+#@para destination is the destination class for relationship
+#@para tpe is the type of relationship defined between the classes
 def Delete_relationship(source: str, destination: str, type: str):
     status =""
-    res = None
-    #again we need a way to search based on class name this will not work 
-    sourceclass = source
-    destinationclass = destination 
+    #Here we will need to search the source and destination to confrim they exist 
+    sourceclass = findClass(source)
+    destinationclass = findclass(destination)
+
     if sourceclass is not None and destinationclass is not None:
-        for item in sourceclass.listofrelationships:
-            if item.destination == destination:
-                
-                updated_class = sourceclass.listofrelationships.remove(item)
+        newrelationship = (sourceclass, destinationclass,type)
+
+        for item in listofrelationships:
+
+            if item == newrelationship:
+                # if we find the relationship remove it.
+                listofrelationships.remove(newrelationship)
                 status = "Successfully deleted relationship."
                 return status
     else:
         status = f"The {source} or {destination} does not exist"
         return status
     
-
+#@para source is thesource class for relationship 
+#@para Destination is the destination class for relationship
+#@para tpe is the type of relationship defined between the classes
+# Edit a relationship, needs to be discussed if we can create on the fly relationships. 
 def Edit_relationship(source: str, destination: str, type: str):
     status=""
-# gotta do the search here too 
-    sourceclass = source
-    destinationclass = destination
+# search
+    sourceclass = findClass(source)
+    destinationclass = findclass(destination)
+    #this will be great for debugging we can remove the Exception in prod. 
     if sourceclass is not None and destinationclass is not None:
-        for item in sourceclass.listofrelationships:
-            if item.destination == destination:
-                #to-do add logic for checking duplicate items
-                Add_relationship(source, destination, item.type, type)
-                status = f"Successfully edited relationship {source} & {destination}"
-                return status
-        status = f"Error: Relationship does not exist."
-        return status
+        try:
+            newrelationship = (sourceclass, destinationclass,type)
+            listofrelationships.remove(newrelationship)
+            Add_relationship(sourceclass, destinationclass, type)
+            status = f"Successfully edited relationship {source} & {destination}"
+
+        except Exception as e:
+            status = f"Error: The {source} or {destination} does not exist."
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            print('{} {}:{}'.format(exc_type, fname, exc_tb.tb_lineno))
+            print(e)
+            return status
     else:
         status = f"Error: The {source} or {destination} does not exist."
         return status
