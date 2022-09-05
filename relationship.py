@@ -94,3 +94,8 @@ def Edit_relationship(source: str, destination: str, type: str):
     else:
         status = f"Error: The {source} or {destination} does not exist."
         return status
+    #returns the list of all relationships type: list[typle(str,str,str)]
+    def Listofrelationships():
+        return listofrelationships
+
+    
