@@ -5,11 +5,12 @@
     along with it.
 """
 
-import pyfiglet
-# import json
+
+import pyfiglet # Install: pip install pyfiglet
 
 # Local Imports
 from UMLClass import addClass, deleteClass, renameClass
+from relationship import addRelationship, deleteRelationship
 from interfaceCommands import *
 
 class Interface():
@@ -23,7 +24,6 @@ class Interface():
         corresponding commands.
     '''
     def run(self):
-        # self.__welcomeMsg()
         print(pyfiglet.figlet_format("UML Editor"))
         while self.isRunning:
             cmd = input(">> ").split(" ")
@@ -41,6 +41,17 @@ class Interface():
             elif cmd[0] == 'renameClass':
                 if len(cmd) == 3:
                     renameClass(cmd[1], cmd[2])
+                else:
+                    print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
+            ### RELATIONSHIP COMMANDS ###
+            elif cmd[0] == 'addRelationship':
+                if len(cmd) == 3:
+                    addRelationship(cmd[1], cmd[2])
+                else:
+                    print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
+            elif cmd[0] == 'deleteRelationship':
+                if len(cmd) == 3:
+                    deleteRelationship(cmd[1], cmd[2])
                 else:
                     print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
             ### INTERFACE COMMANDS ###

@@ -5,6 +5,7 @@
 """
 import json
 from UMLClass import classIndex, findClass
+from relationship import relationIndex
 
 def listClasses():
     """
@@ -45,11 +46,13 @@ def listRelationships():
     """
         Lists all existing relationships between classes
     """
-    # Placeholder
-    print("[src 1] -> [dest 1]")
-    print("[src 2] -> [dest 2]")
-    print("...")
-    print("[src n] -> [dest n]")
+    print()
+    if len(relationIndex) > 0:
+        # List all relationships in relationIndex
+        for relation in relationIndex:
+            print(f"[{relation[0]}] -> [{relation[1]}]")
+    else:
+        print("No relationships found.")
 
 def help(cmd=None):
     """
@@ -92,8 +95,6 @@ def exit():
     """
         Exits the application
     """
-    # Set isRunning to false to stop the loop
-    # self.isRunning = False
     # Get input from user if they want to save
     exitChoice = input("Save progress? (Y/n)")
     if exitChoice.lower() == 'y' or exitChoice == '':
