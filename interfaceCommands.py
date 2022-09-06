@@ -1,10 +1,15 @@
 """
-    Trevor Bender and Christian Sheperdson
-
-    Commands to be used with the interface class
+    Author(s): Trevor Bender, Christian Sheperdson
+    Filename: interfaceCommands.py
+    Description: Commands to be used with the interface class
 """
+
+# Imports
 import json
+from prettytable import PrettyTable
+# Local Imports
 from UMLClass import classIndex, findClass
+from relationship import relationIndex
 
 def listClasses():
     """
@@ -24,6 +29,8 @@ def listClasses():
 def listClass(name: str):
     """
         Lists a specified classes contents
+
+        :param name: Name of the class to display contents of
     """
     # Get index of class with name in classIndex list
     index = findClass(name)
@@ -45,15 +52,25 @@ def listRelationships():
     """
         Lists all existing relationships between classes
     """
-    # Placeholder
-    print("[src 1] -> [dest 1]")
-    print("[src 2] -> [dest 2]")
-    print("...")
-    print("[src n] -> [dest n]")
+    print()
+    if len(relationIndex) > 0:
+        # List all relationships in relationIndex
+        table = PrettyTable(['Source', 'Destination'])
+        # Left align the table
+        table.align = 'l'
+        for relation in relationIndex:
+            # Add relationship to table
+            table.add_row([relation.source, relation.destination])
+        # Display table
+        print(table)
+    else:
+        print("No relationships found.")
 
 def help(cmd=None):
     """
         Lists how to use the application without leaving
+
+        :param cmd: Name of the command to show usage of. Default is None
     """
     data = open('commands.json')
     cmds = json.load(data)
@@ -92,8 +109,6 @@ def exit():
     """
         Exits the application
     """
-    # Set isRunning to false to stop the loop
-    # self.isRunning = False
     # Get input from user if they want to save
     exitChoice = input("Save progress? (Y/n)")
     if exitChoice.lower() == 'y' or exitChoice == '':

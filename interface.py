@@ -1,15 +1,15 @@
 """
-    Trevor Bender & Christian Sheperdson
-
-    Basic CLI interface and commands to go
-    along with it.
+    Author(s): Trevor Bender, Christian Sheperdson
+    Filename: interface.py
+    Description: Basic CLI interface and commands to go along with it.
 """
 
-import pyfiglet
-# import json
+
+import pyfiglet # Install: pip install pyfiglet
 
 # Local Imports
 from UMLClass import addClass, deleteClass, renameClass
+from relationship import addRelationship, deleteRelationship
 from interfaceCommands import *
 
 class Interface():
@@ -23,7 +23,7 @@ class Interface():
         corresponding commands.
     '''
     def run(self):
-        # self.__welcomeMsg()
+        # Prints a unicode art using package pyfiglet
         print(pyfiglet.figlet_format("UML Editor"))
         while self.isRunning:
             cmd = input(">> ").split(" ")
@@ -43,6 +43,34 @@ class Interface():
                     renameClass(cmd[1], cmd[2])
                 else:
                     print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
+            ### RELATIONSHIP COMMANDS ###
+            elif cmd[0] == 'addRelationship':
+                if len(cmd) == 3:
+                    addRelationship(cmd[1], cmd[2])
+                else:
+                    print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
+            elif cmd[0] == 'deleteRelationship':
+                if len(cmd) == 3:
+                    deleteRelationship(cmd[1], cmd[2])
+                else:
+                    print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
+            ### ATTRIBUTES COMMANDS ###
+            elif cmd[0] == 'addAttribute':
+                # TODO
+                pass
+            elif cmd[0] == 'deleteAttribute':
+                # TODO
+                pass
+            elif cmd[0] == 'renameAttribute':
+                # TODO
+                pass
+            ### SAVE/LOAD ###
+            elif cmd[0] == 'save':
+                # TODO
+                pass
+            elif cmd[0] == 'load':
+                # TODO
+                pass
             ### INTERFACE COMMANDS ###
             # List all classes and contents
             elif cmd[0] == 'listClasses':
@@ -70,21 +98,6 @@ class Interface():
                 pass
             else:
                 print(f"Command not found: {cmd[0]}")
-
-    '''
-        Private
-        Shows a formatted welcome message to user. Only shown
-        at the startup of the program.
-    '''
-    def __welcomeMsg(self):
-        print("\t*****************************************")
-        print("\t*\t\t\t\t\t*")
-        print("\t*\t\tUML Editor\t\t*")
-        print("\t*\t\t Ligma Py\t\t*")
-        print("\t*\t\t\t\t\t*")
-        print("\t*****************************************")
-        print("\t    Type 'help' for a list of commands")
-        print("\t\t   Type 'exit' to quit\n")
 
 def main():
     app = Interface()
