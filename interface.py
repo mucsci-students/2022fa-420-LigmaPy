@@ -11,7 +11,7 @@ import pyfiglet # Install: pip install pyfiglet
 from UMLClass import addClass, deleteClass, renameClass
 from relationship import addRelationship, deleteRelationship
 from interfaceCommands import *
-from saveload.py import save, load
+from saveload import save, load
 
 class Interface():
     def __init__(self):
