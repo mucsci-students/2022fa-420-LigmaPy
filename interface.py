@@ -11,6 +11,7 @@ import pyfiglet # Install: pip install pyfiglet
 from UMLClass import addClass, deleteClass, renameClass
 from relationship import addRelationship, deleteRelationship
 from interfaceCommands import *
+from saveload.py import save, load
 
 class Interface():
     def __init__(self):
@@ -66,10 +67,15 @@ class Interface():
                 pass
             ### SAVE/LOAD ###
             elif cmd[0] == 'save':
-                # TODO
-                pass
+                if len(cmd) == 2:
+                    save(classIndex, relationIndex, cmd[1])
+                else:
+                    print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")                
             elif cmd[0] == 'load':
-                # TODO
+                if len(cmd) == 2:
+                    load(cmd[1])
+                else:
+                    print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.") 
                 pass
             ### INTERFACE COMMANDS ###
             # List all classes and contents
