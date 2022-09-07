@@ -6,8 +6,7 @@ listofrelationships=[]
 class relationship:
     # This is the constructor, you will need 3 paramaters to initialize the class
     # Every relationship has a source ,destination, and a type
-    def __init__(self,type,source,destination):
-        self.type = type
+    def __init__(self,source,destination):
         self.destination = destination
         self.source = source
 
@@ -16,7 +15,7 @@ class relationship:
 #@para tpe is the type of relationship defined between the classes
 # returns a string with needed information, can be a boolean value in the future. 
 #this is how you will add relationship to class
-    def Add_relationship(self,source: str, destination: str, type: str):
+    def Add_relationship(self,source: str, destination: str):
         
         status =""
         #findclass returns index of item in golobal list 
@@ -46,7 +45,7 @@ class relationship:
     #@para source is thesource class for relationship 
     #@para destination is the destination class for relationship
     #@para tpe is the type of relationship defined between the classes
-    def Delete_relationship(self,source: str, destination: str, type: str):
+    def Delete_relationship(self,source: str, destination: str):
         status =""
         #Here we will need to search the source and destination to confrim they exist 
         sourceclass = findClass(source)
@@ -70,7 +69,7 @@ class relationship:
     #@para Destination is the destination class for relationship
     #@para tpe is the type of relationship defined between the classes
     # Edit a relationship, needs to be discussed if we can create on the fly relationships. 
-    def Edit_relationship(self,source: str, destination: str, type: str):
+    def Edit_relationship(self,source: str, destination: str):
         status=""
     # search
         sourceclass = findClass(source)
@@ -78,9 +77,9 @@ class relationship:
         #this will be great for debugging we can remove the Exception in prod. 
         if sourceclass is not None and destinationclass is not None:
             try:
-                newrelationship = (sourceclass, destinationclass,type)
+                newrelationship = (sourceclass, destinationclass)
                 listofrelationships.remove(newrelationship)
-                Add_relationship(sourceclass, destinationclass, type)
+                Add_relationship(sourceclass, destinationclass)
                 status = f"Successfully edited relationship {source} & {destination}"
 
             except Exception as e:
