@@ -1,7 +1,7 @@
 
 import json
-#import UMLClass
-#import relationship
+import UMLClass
+import relationship
 
 ##################################################################
 
@@ -175,4 +175,5 @@ list1 = [onetwo, threefour, fivesix]
 #print(t1)
 #json_s = json.dumps(t1, default=vars)
 #print(json_s)
+
 """

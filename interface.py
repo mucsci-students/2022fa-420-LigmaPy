@@ -9,9 +9,10 @@ import pyfiglet # Install: pip install pyfiglet
 
 # Local Imports
 from UMLClass import addClass, deleteClass, renameClass
+from attributes import addAttribute, deleteAttribute, renameAttribute
 from relationship import addRelationship, deleteRelationship
 from interfaceCommands import *
-from saveload import save, load
+from saveload import *
 
 class Interface():
     def __init__(self):
@@ -57,14 +58,20 @@ class Interface():
                     print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
             ### ATTRIBUTES COMMANDS ###
             elif cmd[0] == 'addAttribute':
-                # TODO
-                pass
+                if len(cmd) == 3:
+                    addAttribute(cmd[1], cmd[2])
+                else:
+                    print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
             elif cmd[0] == 'deleteAttribute':
-                # TODO
-                pass
+                if len(cmd) == 3:
+                    deleteAttribute(cmd[1], cmd[2])
+                else:
+                    print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
             elif cmd[0] == 'renameAttribute':
-                # TODO
-                pass
+                if len(cmd) == 4:
+                    renameAttribute(cmd[1], cmd[2], cmd[3])
+                else:
+                    print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
             ### SAVE/LOAD ###
             elif cmd[0] == 'save':
                 if len(cmd) == 2:

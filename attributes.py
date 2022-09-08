@@ -19,7 +19,7 @@ class attribute:
 
 def findAttribute(name, className):
 
-    classIndex = findClass(className)
+    classIndex = C.findClass(className)
 
     """ 
     if classIndex returns None, class doesn't exist
@@ -95,7 +95,7 @@ def renameAttribute(oldName, newName, className):
 
 
 ##################################### Driver Code ##############################################
-
+""""
 def main():
 
     while(1):
@@ -137,3 +137,4 @@ def main():
 
         else:
             print('Invalid command. Type \"help\" for list of valid commands.')
+"""
