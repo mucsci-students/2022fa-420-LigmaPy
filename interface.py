@@ -57,6 +57,7 @@ class Interface():
                 else:
                     print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
             ### ATTRIBUTES COMMANDS ###
+            #needs fixed
             elif cmd[0] == 'addAttribute':
                 if len(cmd) == 3:
                     addAttribute(cmd[1], cmd[2])
@@ -77,7 +78,8 @@ class Interface():
                 if len(cmd) == 2:
                     save(classIndex, relationIndex, cmd[1])
                 else:
-                    print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")                
+                    print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")   
+                    #needs fixed             
             elif cmd[0] == 'load':
                 if len(cmd) == 2:
                     load(cmd[1])
