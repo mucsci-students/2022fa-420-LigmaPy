@@ -38,6 +38,7 @@ class relationship:
                     return status
             listofrelationships.append(newrelationship)
             status =f"Relationship for {source} & {destination} added"
+            return status
         else:
             status = f" The {source} or {destination} class does not exist."
             return status
