@@ -30,7 +30,7 @@ class relationship:
 
         if sourceclass is not None and destinationclass is not None:
             # Create tuple to later be appened to list of relationships.
-            newrelationship = (source, destination,type)
+            newrelationship = (source, destination)
             for item in listofrelationships:
                 #if we find the relationship already exists we will log a error
                 if item == newrelationship:
@@ -52,7 +52,7 @@ class relationship:
         destinationclass = findClass(destination)
 
         if sourceclass is not None and destinationclass is not None:
-            newrelationship = (source, destination,type)
+            newrelationship = (source, destination)
 
             for item in listofrelationships:
 
