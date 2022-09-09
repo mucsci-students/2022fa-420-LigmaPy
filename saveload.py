@@ -2,8 +2,8 @@
 import json
 from os.path import exists
 import os.path
-from UMLClass import UMLClass
-from relationship import UMLRelationship
+from UMLClass import UMLClass, classIndex
+from relationship import relationship
 
 ##################################################################
 
@@ -13,19 +13,19 @@ from relationship import UMLRelationship
 saves file as filename in specified directory: open('filepath' + filename...)
 currently saves in root folder
 
-:param param1 UMLclass list 
-:param param2 relationship list 
+:param param1 UMLclass list
+:param param2 relationship list
 :param param3 filename specified by user
 :returns nothing
 """
 def save(classes, relations, filename):
-    
+
     #combines both into a tuple
     t = (classes, relations)
-    
+
     #encodes tuple above to json
     jsonString = json.dumps(t, default=vars)
-    
+
     #saves json string to file
     with open(filename + ".json", "w") as outfile:
         outfile.write(jsonString)
@@ -40,28 +40,28 @@ loads filename from specified directory: open('filepath' + filename...)
 currently loads from root folder
 
 :param the file name to load
-:returns tuple(list[UMLclass], list[relationships]) 
+:returns tuple(list[UMLclass], list[relationships])
 """
 def load(filename):
-    
+
     #check if file exists returns original lists if not
     fileExists = os.path.exists(filename + '.json')
-    if not fileExists:    
+    if not fileExists:
         print("File not found")
-        return (UMLClass.classIndex,  UMLRelationship.listofrelationships)
-    
+        return (UMLClass.classIndex,  relationship.listofrelationships)
+
     #opens the file and save contents as a json string
-    with open(filename + ".json", "r") as openfile: 
+    with open(filename + ".json", "r") as openfile:
         jsonObject = json.load(openfile)
-    
+
     #divides the json string into classes/relations
     classes = jsonObject[0]
     relations = jsonObject[1]
-    
+
     #creates lists to return
     returnClasses = []
     returnRelations = []
-    
+
     #loops through classes json and decodes each piece creating new objects then adds them to a dictionary
     for eachClass in classes:
         className = str(eachClass['name'])
@@ -69,22 +69,22 @@ def load(filename):
         className = UMLClass(className)
         for eachAttribute in attributesList:
             className.attributes.append(str(eachAttribute))
-        returnClasses.append(className)
-    
+        classIndex.append(className)
+
     #loops through relationship json and decodes each piece creating new tuples then adds them to a list
     for eachRelation in relations:
         eachRelationTuple = (eachRelation[0], eachRelation[1])
-        returnRelations.append(eachRelationTuple)
-        
-        #code below is for returning relationship objects 
+        listofrelationships.append(eachRelationTuple)
+
+        #code below is for returning relationship objects
         """
-        #name = (str(eachRelation['source']) + str(eachRelation['destination'])) #I just concat SourceNameDestName to name the relationship object (can change to match how interface does it)  
+        #name = (str(eachRelation['source']) + str(eachRelation['destination'])) #I just concat SourceNameDestName to name the relationship object (can change to match how interface does it)
         #name = relationship(eachRelation['source'], eachRelation['destination'])
-        #returnRelations.append(name) 
-        """ 
+        #returnRelations.append(name)
+        """
 
     return (returnClasses, returnRelations)
-    
+
 
 ##################################################################
 
@@ -92,7 +92,7 @@ def load(filename):
 #test code for storing classes in list
 """
 class1 = UMLClass("class1")
-class2 = UMLClass('class2') 
+class2 = UMLClass('class2')
 class3 = UMLClass('class3')
 class1.attributes.append('attr1')
 class1.attributes.append('attr2')
@@ -117,7 +117,7 @@ tuple1 = load('testfile')
 
 print()
 print("objects are of type:")
-print(tuple1) 
+print(tuple1)
 print()
 json_s = json.dumps(tuple1, default=vars)
 print("converted back to json to show it is equivalent to testfile:")
@@ -135,14 +135,14 @@ print(type(listOfRelations[1]))
 
 #dictionary load method
 """
-loads filename from file 
+loads filename from file
 :param the file name to load
-:returns tuple(dict{classes}, list[relationships])     
+:returns tuple(dict{classes}, list[relationships])
 """
 """
 def load(filename):
     #opens the file and save contents as a json string
-    with open(filename + ".json", "r") as openfile: 
+    with open(filename + ".json", "r") as openfile:
         jsonObject = json.load(openfile)
     #divides the json string into classes/relations
     classes = jsonObject[0]
@@ -159,9 +159,9 @@ def load(filename):
         returnClasses[className] = eachClass
     #loops through relationship json and decodes each peice creating new objects then adds them to a list
     for eachRelation in relations:
-        name = (str(eachRelation['source']) + str(eachRelation['destination'])) #I just concat SourceNameDestName to name the relationship object (can change to match how interface does it)  
+        name = (str(eachRelation['source']) + str(eachRelation['destination'])) #I just concat SourceNameDestName to name the relationship object (can change to match how interface does it)
         name = relationship(eachRelation['source'], eachRelation['destination'])
-        returnRelations.append(name) 
+        returnRelations.append(name)
     return (returnClasses, returnRelations)
 """
 
@@ -169,7 +169,7 @@ def load(filename):
 ##################################################################
 
 
-#test code for loading classes in dictionary 
+#test code for loading classes in dictionary
 """
 onetwo = relationship('one', 'two')
 threefour = relationship('three', 'four')

@@ -10,7 +10,7 @@ import pyfiglet # Install: pip install pyfiglet
 # Local Imports
 from UMLClass import addClass, deleteClass, renameClass, classIndex
 from attributes import addAttribute, deleteAttribute, renameAttribute
-from relationship import addRelationship, deleteRelationship
+from relationship import Add_relationship, Delete_relationship
 from interfaceCommands import *
 from saveload import *
 
@@ -48,12 +48,12 @@ class Interface():
             ### RELATIONSHIP COMMANDS ###
             elif cmd[0] == 'addRelationship':
                 if len(cmd) == 3:
-                    addRelationship(cmd[1], cmd[2])
+                    Add_relationship(cmd[1], cmd[2])
                 else:
                     print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
             elif cmd[0] == 'deleteRelationship':
                 if len(cmd) == 3:
-                    deleteRelationship(cmd[1], cmd[2])
+                    Delete_relationship(cmd[1], cmd[2])
                 else:
                     print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
             ### ATTRIBUTES COMMANDS ###
@@ -76,13 +76,13 @@ class Interface():
             ### SAVE/LOAD ###
             elif cmd[0] == 'save':
                 if len(cmd) == 2:
-                    save(classIndex, relationIndex, cmd[1])
+                    save(classIndex, listofrelationships, cmd[1])
                 else:
                     print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
                     #needs fixed
             elif cmd[0] == 'load':
                 if len(cmd) == 2:
-                    classIndex, relationIndex = load(cmd[1])
+                    classIndex, listofrelationships = load(cmd[1])
                 else:
                     print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
                 pass
@@ -108,7 +108,7 @@ class Interface():
             # Exit application
             elif cmd[0] == 'exit':
                 self.isRunning = False
-                exit(classIndex, relationIndex)
+                exit(classIndex, listofrelationships)
             elif cmd[0] == '':
                 pass
             else:

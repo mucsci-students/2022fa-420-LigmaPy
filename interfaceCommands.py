@@ -9,7 +9,7 @@ import json
 from prettytable import PrettyTable
 # Local Imports
 from UMLClass import classIndex, findClass
-from relationship import relationIndex
+from relationship import listofrelationships
 from saveload import save
 
 def listClasses():
@@ -60,9 +60,9 @@ def listRelationships():
         table = PrettyTable(['Source', 'Destination'])
         # Left align the table
         table.align = 'l'
-        for relation in relationIndex:
+        for source, destination in listofrelationships:
             # Add relationship to table
-            table.add_row([relation.source, relation.destination])
+            table.add_row([source, destination])
         # Display table
         print(table)
     else:
