@@ -1,5 +1,5 @@
 """
-    Author(s): Trevor Bender, Christian Sheperdson
+    Author(s): Trevor Bender, Christian Shepperson
     Filename: interface.py
     Description: Basic CLI interface and commands to go along with it.
 """
