@@ -50,9 +50,9 @@ def addAttribute(name, className):
     Create new attribute object
     Add that attribute to list of attributes in class
     """
-    if findAttribute(name) >= 0:
+    if findAttribute(name, className) >= 0:
         print('Attribute ', name, ' already exists in ', className, ' class.')
-    elif findAttribute(name) == -2:
+    elif findAttribute(name, className) == -2:
         newAttribute = attribute(name)
         index = C.findClass(className)
         C.classIndex[index].attributes.append(newAttribute)
@@ -66,7 +66,7 @@ def deleteAttribute(name, className):
     if findAttribute returns true then attribute does exist and we can continue
     deleting the attribute
     """
-    attributeIndex = findAttribute(name)
+    attributeIndex = findAttribute(name, className)
 
     if attributeIndex == -1:
         print(className, ' class does not exist.')
@@ -85,17 +85,17 @@ def renameAttribute(oldName, newName, className):
     However, must check findAttribute again to see if new name already exists. 
     if findAttribute
     """
-    if findAttribute(oldName) is True and findAttribute(newName) is False:
+    if findAttribute(oldName, className) is True and findAttribute(newName, className) is False:
         oldName.rename(newName)
         print(oldName, 'attribute has been renamed to', newName, 'in the', className, 'class!')
-    elif findAttribute(oldName):
+    elif findAttribute(oldName, className):
         print(oldName, 'attribute does not exist in the', className, 'class.')
     else:
         print(newName, 'is the name of an existing attribute in the', className, 'class.')
 
 
 ##################################### Driver Code ##############################################
-""""
+
 def main():
 
     while(1):
@@ -137,4 +137,3 @@ def main():
 
         else:
             print('Invalid command. Type \"help\" for list of valid commands.')
-"""
