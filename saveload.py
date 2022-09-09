@@ -31,12 +31,6 @@ def save(classes, relations, filename):
 
 ##################################################################
 
-onetwo = ('one', 'two')
-threefour = ('three', 'four')
-fivesix = ('five', 'six')
-
-r = [onetwo, threefour]
-listRelationships = [onetwo, threefour, fivesix]
 
 """
 loads filename from specified directory: open('filepath' + filename...)
@@ -106,6 +100,13 @@ def load(filename):
 #test code for storing classes in list
 
 """
+onetwo = ('one', 'two')
+threefour = ('three', 'four')
+fivesix = ('five', 'six')
+
+r = [onetwo, threefour]
+listRelationships = [onetwo, threefour, fivesix]
+
 class1 = UMLClass.UMLClass("class1")
 class2 = UMLClass.UMLClass('class2') 
 class3 = UMLClass.UMLClass('class3')
