@@ -3,7 +3,7 @@ import json
 from os.path import exists
 import os.path
 from UMLClass import UMLClass
-from relationship import relationship
+from relationship import UMLRelationship
 
 ##################################################################
 
@@ -48,7 +48,7 @@ def load(filename):
     fileExists = os.path.exists(filename + '.json')
     if not fileExists:    
         print("File not found")
-        return (UMLClass.classIndex,  relationship.listofrelationships)
+        return (UMLClass.classIndex,  UMLRelationship.listofrelationships)
     
     #opens the file and save contents as a json string
     with open(filename + ".json", "r") as openfile: 
