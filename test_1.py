@@ -1,7 +1,7 @@
 import pytest
-
 from UMLClass import *
 from relationship import *
+
 @pytest.fixture
 # runs through adding and deleting a realtionship
 def newMyClass():
@@ -32,7 +32,6 @@ def test_edit():
     x.Add_relationship('source','destination')
     y=x.Edit_relationship('source', 'destination',"newsource",'newdestination')
     testlist=Listofrelationships()
-
     listofdestinationclasses =(list(list(zip(*testlist))[1]))
     assert listofdestinationclasses[0]=='newdestination'
     listofsourceclasses =(list(list(zip(*testlist))[0]))

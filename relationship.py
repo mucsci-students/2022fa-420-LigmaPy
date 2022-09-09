@@ -1,7 +1,8 @@
 #Author Ammanuel Amare
-#9/5/22 :)
+#9/8/22 :)
 from UMLClass import *
 import sys,os
+
 # This list is used to store the relationships. 
 listofrelationships=[]
 class relationship:
@@ -12,6 +13,7 @@ class relationship:
         self.source = source
         #should we auto add the relationships?
         self.Add_relationship(source,destination)
+
 
 #@para source is thesource class for relationship 
 #@para Destination is the destination class for relationship
@@ -91,7 +93,6 @@ class relationship:
                 status = f"Successfully edited relationship {source} & {destination} \n The Relationship is now {newsource} & {newdestination}"
                 return status
 
-#This can be removed after testing
             except Exception as e:
                 status = f"Error: The {source} or {destination} does not exist."
                 exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -103,6 +104,8 @@ class relationship:
             status = f"Error: The {source} or {destination} does not exist."
             return status
     #returns the list of all relationships type: list[typle(str,str,str)]
+
 def Listofrelationships():
     return listofrelationships
  
+
