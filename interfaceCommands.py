@@ -10,6 +10,7 @@ from prettytable import PrettyTable
 # Local Imports
 from UMLClass import classIndex, findClass
 from relationship import relationIndex
+from saveload import save
 
 def listClasses():
     """
@@ -106,13 +107,15 @@ def help(cmd=None):
         else:
             print(f"Command not found: {cmd}\nType 'help' for a list of commands.")
 
-def exit():
+def exit(classIndex, relationIndex):
     """
         Exits the application
     """
     # Get input from user if they want to save
     exitChoice = input("Save progress? (Y/n)")
     if exitChoice.lower() == 'y' or exitChoice == '':
+        file = input("type file to save to:")
+        save(classIndex, relationIndex, file)
         print("SAVE PLACEHOLDER")
     elif exitChoice.lower() == 'n':
         print("Exiting")

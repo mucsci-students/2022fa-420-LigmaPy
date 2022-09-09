@@ -8,7 +8,7 @@
 import pyfiglet # Install: pip install pyfiglet
 
 # Local Imports
-from UMLClass import addClass, deleteClass, renameClass
+from UMLClass import addClass, deleteClass, renameClass, classIndex
 from attributes import addAttribute, deleteAttribute, renameAttribute
 from relationship import addRelationship, deleteRelationship
 from interfaceCommands import *
@@ -82,7 +82,7 @@ class Interface():
                     #needs fixed
             elif cmd[0] == 'load':
                 if len(cmd) == 2:
-                    load(cmd[1])
+                    classIndex, relationIndex = load(cmd[1])
                 else:
                     print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
                 pass
@@ -108,7 +108,7 @@ class Interface():
             # Exit application
             elif cmd[0] == 'exit':
                 self.isRunning = False
-                exit()
+                exit(classIndex, relationIndex)
             elif cmd[0] == '':
                 pass
             else:
