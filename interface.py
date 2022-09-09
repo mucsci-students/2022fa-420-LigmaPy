@@ -21,7 +21,7 @@ class Interface():
 
     '''
         Main loop to run the program.
-        Takes input from user and runs the 
+        Takes input from user and runs the
         corresponding commands.
     '''
     def run(self):
@@ -78,13 +78,13 @@ class Interface():
                 if len(cmd) == 2:
                     save(classIndex, relationIndex, cmd[1])
                 else:
-                    print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")   
-                    #needs fixed             
+                    print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
+                    #needs fixed
             elif cmd[0] == 'load':
                 if len(cmd) == 2:
                     load(cmd[1])
                 else:
-                    print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.") 
+                    print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
                 pass
             ### INTERFACE COMMANDS ###
             # List all classes and contents

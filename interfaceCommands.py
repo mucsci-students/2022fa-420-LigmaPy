@@ -17,12 +17,13 @@ def listClasses():
     """
     # Check if at least one class exists
     if len(classIndex) > 0:
+        table = PrettyTable()
         print()
         # print each classes name and attributes
         for c in classIndex:
             print(c.name + ":")
             for attr in c.attributes:
-                print("\t" + attr)
+                print(f"\t{attr.name}")
     else:
         print("\nNo classes have been added")
 
@@ -37,14 +38,14 @@ def listClass(name: str):
     # Check that the class exists and it has at least one attribute
     if index is not None and len(classIndex[index].attributes) > 0:
         print(f"\n {name} Attributes")
-        # Loop to print bottom border with 
+        # Loop to print bottom border with
         # length len(name) + len("Attributes") + 2
         for i in range((len(name) + 13)):
             print("*", end="")
         print()
         # Loop through all attributes of the class
         for attr in classIndex[index].attributes:
-            print(attr)
+            print(f" {attr.name}")
     else:
         print(f"\nClass \"{name}\" has no attributes")
 
@@ -76,7 +77,7 @@ def help(cmd=None):
     cmds = json.load(data)
     # Default help command - prints list of commands
     #   and their descriptions.
-    if(cmd is None):    
+    if(cmd is None):
         print('{:<20}{:<12}'.format('Command', 'Description'))
         print("***************************************************************************************")
         for i in cmds['commands']:
@@ -89,7 +90,7 @@ def help(cmd=None):
         #   input matches one of the existing commands.
         # If there is no match, print message stating so.
         for name in cmds["commands"]:
-            if cmd == name["name"]: 
+            if cmd == name["name"]:
                 command = name
                 break
         # Prints the usage and description of the specified command.
