@@ -12,7 +12,7 @@
 
 ## Authors
 [Ammanuel Amare](https://github.com/manwellaa)<br>
-[Arron Heinbaugh](https://github.com/aaheinba)<br>
+[Aaron Heinbaugh](https://github.com/aaheinba)<br>
 [Christian Shepperson](https://github.com/Sh3p)<br>
 [Julia Geesaman](https://github.com/jgeesaman)<br>
 [Samantha Noggle](https://github.com/astruxie)<br>
