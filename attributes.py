@@ -1,95 +1,120 @@
 """
-Julia Geesaman
-
-Attribute Class
-
-Adds an attribute, deletes an attribute, and renames an attribute
+Author: Julia Geesaman
+Filename: attributes.py
+Description: Adds, deletes, and renames an attribute
 """
 
 import UMLClass as C
 
+
+"""
+This is the attribute class.
+"""
 class attribute:
     
+    """
+    param name: name of the attribute
+    """
     def __init__ (self, name):
         self.name = name
 
+    """
+    param newName: new name for the attribute
+    """
     def rename(self, newName):
         self.name = newName
 
+"""
+This method finds whether the given class and attribute exist.
 
+param name: name of the attribute
+param className: class attribute is part of
+
+returns: -1 if given class does not exist
+         -2 if attribute does not exist in given class
+          i index of attribute, if attribute and class exist
+"""
 def findAttribute(name, className):
 
-    classIndex = findClass(className)
+    classIndex = C.findClass(className)
 
-    """ 
-    if classIndex returns None, class doesn't exist
-    can't proceed
-    """
+    # runs if class not found
     if classIndex is None:
         return -1
-    """
-    if classIndex returns anything but None, class does exist
-    can proceed
-    Need to look through class's attributes
-    If attribute is found in the list, return True
-        --> we can delete or rename an attribute
-    If attribute is not found in the list, return False
-        --> we can add an attribute
-    """
+    
     for i, a in enumerate(C.classIndex[classIndex].attributes):
         if a.name == name:
             return i
     return -2
 
+"""
+Creates a new attribute object and inserts it into given class' list of attributes
 
+param name: name of the attribute
+param className: name of class attribute should be added to
+"""
 def addAttribute(name, className):
-    """
-    if findAttribute returns false then attribute does not exist and we can continue 
-    with adding the attribute
 
-    Create new attribute object
-    Add that attribute to list of attributes in class
-    """
-    if findAttribute(name) >= 0:
+    attributeIndex = findAttribute(name, className)
+
+    # Runs if attribute with given name already exists in given class
+    if attributeIndex >= 0:
         print('Attribute ', name, ' already exists in ', className, ' class.')
-    elif findAttribute(name) == -2:
+    # Runs if attribute does not exist in given class
+    elif attributeIndex == -2:
         newAttribute = attribute(name)
         index = C.findClass(className)
         C.classIndex[index].attributes.append(newAttribute)
         print(name, 'attribute has been added to the', className, 'class!')
+    # Runs if given class does not exist
     else: 
         print(className, ' class does not exist.')
 
+"""
+Deletes an attribute object from a given class.
 
+param name: name of attribute to be deleted
+param className: name of class atrribute should be deleted from
+"""
 def deleteAttribute(name, className):
-    """
-    if findAttribute returns true then attribute does exist and we can continue
-    deleting the attribute
-    """
-    attributeIndex = findAttribute(name)
+   
+    attributeIndex = findAttribute(name, className)
 
+    # Runs if given class does not exist
     if attributeIndex == -1:
         print(className, ' class does not exist.')
+    # Runs if class and attribute exist
     elif attributeIndex >= 0:
         classIndex = C.findClass(className)
         C.classIndex[classIndex].attribute.pop(attributeIndex)
         print(name, "attribute has been deleted from", className, "class!")
+    # Runs if class exists but attribute does not
     else:
         print(name, "attribute does not exist in", className, "class.")
 
+"""
+Renames a given attribute
 
+param oldName: current name of attribute
+param newName: new name for attribute
+param className: name of class attribute exists within
+"""
 def renameAttribute(oldName, newName, className):
-    """
-    if findAttribute returns true then attribute does exist and we can continue
-    renaming the attribute
-    However, must check findAttribute again to see if new name already exists. 
-    if findAttribute
-    """
-    if findAttribute(oldName) is True and findAttribute(newName) is False:
+    
+    attIndexOld = findAttribute(oldName, className)
+    attIndexNew = findAttribute(newName, className)
+
+    # Runs if attribute exists and can be renamed to new name
+    if attIndexOld >= 0 and attIndexNew < 0:
         oldName.rename(newName)
         print(oldName, 'attribute has been renamed to', newName, 'in the', className, 'class!')
-    elif findAttribute(oldName):
+    # Runs if given attribute does not exist in given class
+    elif attIndexOld == -2:
         print(oldName, 'attribute does not exist in the', className, 'class.')
+    # Runs if given class does not exist
+    elif attIndexOld == -1:
+        print(className, 'class does not exist.')
+    # Runs if attribute already exists with new name in given class
     else:
         print(newName, 'is the name of an existing attribute in the', className, 'class.')
 
@@ -100,6 +125,7 @@ def main():
 
     while(1):
 
+        print("enter a command")
         userCommand = input("Waiting for a command...")
         userCommand = userCommand.split()
 
