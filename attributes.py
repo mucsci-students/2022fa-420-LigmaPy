@@ -59,16 +59,16 @@ def addAttribute(name, className):
 
     # Runs if attribute with given name already exists in given class
     if attributeIndex >= 0:
-        print('Attribute ', name, ' already exists in ', className, ' class.')
+        print(f'Attribute \"{name}\" already exists in \"{className}\" class.')
     # Runs if attribute does not exist in given class
     elif attributeIndex == -2:
         newAttribute = attribute(name)
         index = C.findClass(className)
         C.classIndex[index].attributes.append(newAttribute)
-        print(name, 'attribute has been added to the', className, 'class!')
+        print(f'\"{name}\" attribute has been added to the \"{className}\" class!')
     # Runs if given class does not exist
     else: 
-        print(className, ' class does not exist.')
+        return
 
 """
 Deletes an attribute object from a given class.
@@ -82,15 +82,15 @@ def deleteAttribute(name, className):
 
     # Runs if given class does not exist
     if attributeIndex == -1:
-        print(className, ' class does not exist.')
+        return
     # Runs if class and attribute exist
     elif attributeIndex >= 0:
         classIndex = C.findClass(className)
-        C.classIndex[classIndex].attribute.pop(attributeIndex)
-        print(name, "attribute has been deleted from", className, "class!")
+        C.classIndex[classIndex].attributes.pop(attributeIndex)
+        print(f'\"{name}\" attribute has been deleted from \"{className}\" class!')
     # Runs if class exists but attribute does not
     else:
-        print(name, "attribute does not exist in", className, "class.")
+        print(f'\"{name}\" attribute does not exist in \"{className}\" class.')
 
 """
 Renames a given attribute
@@ -106,17 +106,18 @@ def renameAttribute(oldName, newName, className):
 
     # Runs if attribute exists and can be renamed to new name
     if attIndexOld >= 0 and attIndexNew < 0:
-        oldName.rename(newName)
-        print(oldName, 'attribute has been renamed to', newName, 'in the', className, 'class!')
+        index = C.findClass(className)
+        C.classIndex[index].attributes[attIndexOld].rename(newName)
+        print(f'\"{oldName}\" attribute has been renamed to \"{newName}\" in the \"{className}\" class!')
     # Runs if given attribute does not exist in given class
     elif attIndexOld == -2:
-        print(oldName, 'attribute does not exist in the', className, 'class.')
+        print(f'\"{oldName}\" attribute does not exist in the \"{className}\" class.')
     # Runs if given class does not exist
     elif attIndexOld == -1:
-        print(className, 'class does not exist.')
+        return
     # Runs if attribute already exists with new name in given class
     else:
-        print(newName, 'is the name of an existing attribute in the', className, 'class.')
+        print(f'\"{newName}\" is the name of an existing attribute in the \"{className}\" class.')
 
 
 ##################################### Driver Code ##############################################
@@ -163,3 +164,6 @@ def main():
 
         else:
             print('Invalid command. Type \"help\" for list of valid commands.')
+
+if __name__=="__main__":
+    main()
