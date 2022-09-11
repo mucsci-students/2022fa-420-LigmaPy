@@ -77,7 +77,8 @@ def renameClass(oldName: str, newName: str):
     else:
         print("Rename failed")
 
-
+def classIndexx():
+    return classIndex
 ######################## Driver Code ########################
 
 def main():

@@ -2,8 +2,9 @@
 import json
 from os.path import exists
 import os.path
-import UMLClass
-import relationship
+from UMLClass import *
+from relationship import *
+from pathlib import Path
 
 ##################################################################
 
@@ -27,7 +28,9 @@ def save(classes, relations, filename):
     #saves json string to file
     with open(filename + ".json", "w") as outfile:
         outfile.write(jsonString)
+        print("File Saved.")
 
+# maybe return filename or flag?
 
 ##################################################################
 
@@ -40,24 +43,35 @@ currently loads from root folder
 :returns tuple(list[UMLclass], list[relationships]) 
 """
 def load(filename):
-    
-    #check if file exists returns original lists if not
-    fileExists = os.path.exists(filename + '.json')
-    if not fileExists:    
-        print("File not found")
-        return (UMLClass.classIndex, relationship.listofrelationships)
+    # find the file if not we will fail
+    try :
+        dir_path = os.path.dirname(os.path.realpath(filename))
+        os.chdir(dir_path)
+        fileExists = True
+
+    #used to print exception 
+    except Exception as e:
+        print(f"Error: The {filename} does not exist.")
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        print('{} {}:{}'.format(exc_type, fname, exc_tb.tb_lineno))
+        print(e)
+        return (UMLClass.classIndexx(), relationship.Listofrelationships())
+    # if not fileExists:    
+        # print("File not found")
+        # return (UMLClass.classIndexx(), relationship.Listofrelationships())
     
     #creates lists to return
     returnClasses = []
     returnRelations = []
     
     #checks if file is empty and returns empty lists
-    if os.stat(filename + ".json").st_size == 0:
+    if os.stat(filename).st_size == 0:
         return(returnClasses, returnRelations)    
     
     try:
     #opens the file and save contents as a json string
-        with open(filename + ".json", "r") as openfile: 
+        with open(filename, "r") as openfile: 
             jsonObject = json.load(openfile)
         
         #divides the json string into classes/relations
