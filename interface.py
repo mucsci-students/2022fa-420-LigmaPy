@@ -17,7 +17,6 @@ from saveload import *
 class Interface():
     def __init__(self):
         self.isRunning = True
-        self.run()
 
     '''
         Main loop to run the program.
@@ -116,6 +115,7 @@ class Interface():
 
 def main():
     app = Interface()
+    app.run()
 
 if __name__=="__main__":
     main()
