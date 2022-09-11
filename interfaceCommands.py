@@ -8,8 +8,8 @@
 import json
 from prettytable import PrettyTable
 # Local Imports
-from UMLClass import classIndex, findClass
-from relationship import listofrelationships
+import UMLClass
+import relationship
 from saveload import save
 
 def listClasses():
@@ -17,11 +17,11 @@ def listClasses():
         Lists all classes and their contents
     """
     # Check if at least one class exists
-    if len(classIndex) > 0:
+    if len(UMLClass.classIndex) > 0:
         table = PrettyTable()
         print()
         # print each classes name and attributes
-        for c in classIndex:
+        for c in UMLClass.classIndex:
             print(c.name + ":")
             for attr in c.attributes:
                 print(f"\t{attr.name}")
@@ -35,9 +35,9 @@ def listClass(name: str):
         :param name: Name of the class to display contents of
     """
     # Get index of class with name in classIndex list
-    index = findClass(name)
+    index = UMLClass.findClass(name)
     # Check that the class exists and it has at least one attribute
-    if index is not None and len(classIndex[index].attributes) > 0:
+    if index is not None and len(UMLClass.classIndex[index].attributes) > 0:
         print(f"\n {name} Attributes")
         # Loop to print bottom border with
         # length len(name) + len("Attributes") + 2
@@ -45,7 +45,7 @@ def listClass(name: str):
             print("*", end="")
         print()
         # Loop through all attributes of the class
-        for attr in classIndex[index].attributes:
+        for attr in UMLClass.classIndex[index].attributes:
             print(f" {attr.name}")
     else:
         print(f"\nClass \"{name}\" has no attributes")
@@ -55,12 +55,12 @@ def listRelationships():
         Lists all existing relationships between classes
     """
     print()
-    if len(relationIndex) > 0:
+    if len(relationship.listofrelationships) > 0:
         # List all relationships in relationIndex
         table = PrettyTable(['Source', 'Destination'])
         # Left align the table
         table.align = 'l'
-        for source, destination in listofrelationships:
+        for source, destination in relationship.listofrelationships:
             # Add relationship to table
             table.add_row([source, destination])
         # Display table

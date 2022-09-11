@@ -4,15 +4,16 @@ Samantha Noggle
 Adds a class, deletes a class, & renames a class
 '''
 
-from typing import List
-
 # List of all class objects the user has created
-# classIndex = []
+classIndex = []
 
 class UMLClass:
     def __init__(self, name: str):
         self.name = name
         self.attributes = []
+
+    def __repr__(self):
+        return f"{self.name}"
 
     def rename(self, newName):
         print(f"\nClass \"{self.name}\" was renamed to \"{newName}\"")
@@ -42,7 +43,7 @@ def findClass(name: str):
 
 def addClass(name: str):
     """
-    Creates and adds a new class
+    Creates and adds a new class 
     """
     if isNameUnique(name):
         newClass = UMLClass(name)
@@ -53,7 +54,7 @@ def addClass(name: str):
 
 
 def deleteClass(name: str):
-    """
+    """ 
     Deletes a class by it's name
     """
     index = findClass(name)
@@ -65,7 +66,7 @@ def deleteClass(name: str):
 
 
 def renameClass(oldName: str, newName: str):
-    """
+    """ 
     Renames a class from oldName to newName
     """
     if findClass(newName):
@@ -80,10 +81,8 @@ def renameClass(oldName: str, newName: str):
         print("Rename failed")
 
 
-classIndex : List[UMLClass] = []
-
 ######################## Driver Code ########################
-"""
+
 def main():
 
     # Not yet an exit function so it'll wait for commands forever
@@ -113,4 +112,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-"""

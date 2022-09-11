@@ -74,7 +74,7 @@ def Edit_relationship(source: str, destination: str):
     status=""
 # search
     sourceclass = findClass(source)
-    destinationclass = findclass(destination)
+    destinationclass = findClass(destination)
     #this will be great for debugging we can remove the Exception in prod.
     if sourceclass is not None and destinationclass is not None:
         try:

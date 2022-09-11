@@ -8,8 +8,10 @@
 import pyfiglet # Install: pip install pyfiglet
 
 # Local Imports
-from UMLClass import addClass, deleteClass, renameClass, classIndex
+import UMLClass
+from UMLClass import addClass, deleteClass, renameClass
 from attributes import addAttribute, deleteAttribute, renameAttribute
+import relationship
 from relationship import Add_relationship, Delete_relationship
 from interfaceCommands import *
 from saveload import *
@@ -26,6 +28,7 @@ class Interface():
     def run(self):
         # Prints a unicode art using package pyfiglet
         print(pyfiglet.figlet_format("UML Editor"))
+
         while self.isRunning:
             cmd = input(">> ").split(" ")
             ### CLASS COMMANDS ###
@@ -75,16 +78,18 @@ class Interface():
             ### SAVE/LOAD ###
             elif cmd[0] == 'save':
                 if len(cmd) == 2:
-                    save(classIndex, listofrelationships, cmd[1])
+                    save(UMLClass.classIndex, relationship.listofrelationships, cmd[1])
                 else:
                     print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
                     #needs fixed
             elif cmd[0] == 'load':
                 if len(cmd) == 2:
-                    classIndex, listofrelationships = load(cmd[1])
+
+                    ### FILLS LISTS, BUT DOES NOT GET LISTED WHEN COMMANDS ARE USED
+                    UMLClass.classIndex, relationship.listofrelationships = load(cmd[1])
+                    print(UMLClass.classIndex, relationship.listofrelationships)
                 else:
                     print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
-                pass
             ### INTERFACE COMMANDS ###
             # List all classes and contents
             elif cmd[0] == 'listClasses':
@@ -107,7 +112,7 @@ class Interface():
             # Exit application
             elif cmd[0] == 'exit':
                 self.isRunning = False
-                exit(classIndex, listofrelationships)
+                exit(UMLClass.classIndex, relationship.listofrelationships)
             elif cmd[0] == '':
                 pass
             else:
