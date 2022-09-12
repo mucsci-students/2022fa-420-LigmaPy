@@ -76,36 +76,3 @@ def renameClass(oldName: str, newName: str):
         classIndex[index].rename(newName)
     else:
         print("Rename failed")
-
-
-######################## Driver Code ########################
-
-def main():
-
-    # Not yet an exit function so it'll wait for commands forever
-    while(1):
-        command = input("Waiting for a command...\n")
-        command = command.split()
-
-        if len(command) > 1:
-            # Add a class
-            if command[0] == 'addClass':
-                addClass(command[1])
-            # Delete a class
-            elif command[0] == 'deleteClass':
-                deleteClass(command[1])
-            # Rename a class
-            elif command[0] == 'renameClass' and len(command) == 3:
-                renameClass(command[1], command[2])
-            # Error
-            else:
-                print(
-                    f"\n\"{command[0]}\" is not a command or too many arguments were passed.")
-                print("Type \"help\" for command syntax.")
-        else:
-            print("\nNot enough arguments.")
-            print("Type \"help\" for command syntax.")
-
-
-if __name__ == "__main__":
-    main()
