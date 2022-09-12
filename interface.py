@@ -10,7 +10,6 @@ import cmd
 # Local Imports
 import UMLClass
 import attributes
-# from attributes import addAttribute, deleteAttribute, renameAttribute
 import relationship
 from interface.interfaceCommands import *
 from saveload import *
@@ -69,10 +68,10 @@ class Interface(cmd.Cmd):
             print(f"Argument error")
     # Stores the current state to a JSON file
     def do_save(self, arg):
-        save(UMLClass.classIndex, relationship.listofrelationships, arg)
+        save(UMLClass.classIndex, relationship.relationIndex, arg)
     # Load a previous state from a JSON file
     def do_load(self, arg):
-        UMLClass.classIndex, relationship.listofrelationships = load(arg)
+        UMLClass.classIndex, relationship.relationIndex = load(arg)
     # List all classes and their contents
     def do_listClasses(self, arg):
         listClasses()
