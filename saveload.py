@@ -5,7 +5,7 @@ import os.path
 
 import UMLClass as u
 import relationship as r
-import attribute as a
+import attributes as a
 
 
 ##################################################################
