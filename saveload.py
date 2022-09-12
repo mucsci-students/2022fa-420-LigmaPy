@@ -29,7 +29,7 @@ def save(classes, relations, filename):
     t = (classes, relations)
     
     #encodes tuple above to json
-    jsonString = json.dumps(t, default=vars)
+    jsonString = json.dumps(t, default=vars, indent=4)
     
     #saves json string to file
     with open("UMLsavefiles/" + filename + ".json", "w") as outfile:
