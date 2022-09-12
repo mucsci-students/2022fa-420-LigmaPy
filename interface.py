@@ -9,10 +9,10 @@ import pyfiglet
 import cmd
 # Local Imports
 import UMLClass
-from attributes import addAttribute, deleteAttribute, renameAttribute
+import attributes
+# from attributes import addAttribute, deleteAttribute, renameAttribute
 import relationship
-from relationship import Add_relationship, Delete_relationship
-from interfaceCommands import *
+from interface.interfaceCommands import *
 from saveload import *
 
 class Interface(cmd.Cmd):
@@ -36,35 +36,35 @@ class Interface(cmd.Cmd):
     def do_addRelationship(self, arg):
         classes = arg.split()
         if len(classes) == 2:
-            Add_relationship(classes[0], classes[1])
+            relationship.addRelationship(classes[0], classes[1])
         else:
             print(f"Argument error")
     # Deletes an existing relationship between two classes
     def do_deleteRelationship(self, arg):
         classes = arg.split()
         if len(classes) == 2:
-            Delete_relationship(classes[0], classes[1])
+            relationship.deleteRelationship(classes[0], classes[1])
         else:
             print(f"Argument error")
     # Creates an attribute for the specified class
     def do_addAttribute(self, arg):
         args = arg.split()
         if len(args) == 2:
-            addAttribute(args[0], args[1])
+            attributes.addAttribute(args[0], args[1])
         else:
             print(f"Argument error")
     # Removes attribute from specified class
     def do_deleteAttribute(self, arg):
         args = arg.split()
         if len(args) == 2:
-            deleteAttribute(args[0], args[1])
+            attributes.deleteAttribute(args[0], args[1])
         else:
             print(f"Argument error")
     # Renames an attribute
     def do_renameAttribute(self, arg):
         args = arg.split()
         if len(args) == 3:
-            renameAttribute(args[0], args[1], args[2])
+            attributes.renameAttribute(args[0], args[1], args[2])
         else:
             print(f"Argument error")
     # Stores the current state to a JSON file

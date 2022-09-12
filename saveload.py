@@ -45,7 +45,7 @@ def load(filename):
     fileExists = os.path.exists(filename + '.json')
     if not fileExists:    
         print("File not found")
-        return (UMLClass.classIndex, relationship.listofrelationships)
+        return (UMLClass.classIndex, relationship.relationIndex)
     
     #creates lists to return
     returnClasses = []
@@ -90,7 +90,7 @@ def load(filename):
     #if error loading return original lists
     except Exception as e:
         print("Load failed")
-        return (UMLClass.classIndex, relationship.listofrelationships)
+        return (UMLClass.classIndex, relationship.relationIndex)
 
     
 
