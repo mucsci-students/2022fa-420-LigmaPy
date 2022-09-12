@@ -13,7 +13,6 @@ from prettytable import PrettyTable
 import UMLClass
 import relationship
 from saveload import save
-import interfaceCommands.json
 
 
 def listClasses():
@@ -77,7 +76,7 @@ def help(cmd=None):
 
         :param cmd: Name of the command to show usage of. Default is None
     """
-    data = open('commands.json')
+    data = open('interface/commands.json')
     cmds = json.load(data)
     # Default help command - prints list of commands
     #   and their descriptions.
