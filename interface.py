@@ -1,93 +1,104 @@
 """
-    Trevor Bender & Christian Sheperdson
-
-    Basic CLI interface and commands to go
-    along with it.
+    Author(s): Trevor Bender, Christian Shepperson
+    Filename: interface.py
+    Description: Basic CLI interface and commands to go along with it.
 """
 
+
 import pyfiglet
-# import json
-
+import cmd
 # Local Imports
-from UMLClass import addClass, deleteClass, renameClass
+import UMLClass
+from attributes import addAttribute, deleteAttribute, renameAttribute
+import relationship
+from relationship import Add_relationship, Delete_relationship
 from interfaceCommands import *
+from saveload import *
 
-class Interface():
-    def __init__(self):
-        self.isRunning = True
-        self.run()
-
-    '''
-        Main loop to run the program.
-        Takes input from user and runs the 
-        corresponding commands.
-    '''
-    def run(self):
-        # self.__welcomeMsg()
-        print(pyfiglet.figlet_format("UML Editor"))
-        while self.isRunning:
-            cmd = input(">> ").split(" ")
-            ### CLASS COMMANDS ###
-            if cmd[0] == 'addClass':
-                if len(cmd) == 2:
-                    addClass(cmd[1])
-                else:
-                    print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
-            elif cmd[0] == 'deleteClass':
-                if len(cmd) == 2:
-                    deleteClass(cmd[1])
-                else:
-                    print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
-            elif cmd[0] == 'renameClass':
-                if len(cmd) == 3:
-                    renameClass(cmd[1], cmd[2])
-                else:
-                    print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
-            ### INTERFACE COMMANDS ###
-            # List all classes and contents
-            elif cmd[0] == 'listClasses':
-                listClasses()
-            # List contents of a specified class
-            elif cmd[0] == 'listClass':
-                if len(cmd) == 2:
-                    listClass(cmd[1])
-                else:
-                    print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
-            # List all relationships that exist between classes
-            elif cmd[0] == 'listRelationships':
-                listRelationships()
-            # Help with a specified command
-            elif cmd[0] == 'help' and len(cmd) > 1:
-                help(cmd[1])
-            # Default help command
-            elif cmd[0] == 'help':
-                help()
-            # Exit application
-            elif cmd[0] == 'exit':
-                self.isRunning = False
-                exit()
-            elif cmd[0] == '':
-                pass
-            else:
-                print(f"Command not found: {cmd[0]}")
-
-    '''
-        Private
-        Shows a formatted welcome message to user. Only shown
-        at the startup of the program.
-    '''
-    def __welcomeMsg(self):
-        print("\t*****************************************")
-        print("\t*\t\t\t\t\t*")
-        print("\t*\t\tUML Editor\t\t*")
-        print("\t*\t\t Ligma Py\t\t*")
-        print("\t*\t\t\t\t\t*")
-        print("\t*****************************************")
-        print("\t    Type 'help' for a list of commands")
-        print("\t\t   Type 'exit' to quit\n")
+class Interface(cmd.Cmd):
+    # Welcome message
+    intro = pyfiglet.figlet_format("UML Editor")
+    prompt = ">> "
+    # Creates a uniquely named class
+    def do_addClass(self, arg):
+        UMLClass.addClass(arg)
+    # Removes a class
+    def do_deleteClass(self, arg):
+        UMLClass.deleteClass(arg)
+    # Changes the name of a class
+    def do_renameClass(self, arg):
+        names = arg.split()
+        if len(names) == 2:
+            UMLClass.renameClass(names[0], names[1])
+        else:
+            print(f"Argument error")
+    # Creates a relationship between two classes
+    def do_addRelationship(self, arg):
+        classes = arg.split()
+        if len(classes) == 2:
+            Add_relationship(classes[0], classes[1])
+        else:
+            print(f"Argument error")
+    # Deletes an existing relationship between two classes
+    def do_deleteRelationship(self, arg):
+        classes = arg.split()
+        if len(classes) == 2:
+            Delete_relationship(classes[0], classes[1])
+        else:
+            print(f"Argument error")
+    # Creates an attribute for the specified class
+    def do_addAttribute(self, arg):
+        args = arg.split()
+        if len(args) == 2:
+            addAttribute(args[0], args[1])
+        else:
+            print(f"Argument error")
+    # Removes attribute from specified class
+    def do_deleteAttribute(self, arg):
+        args = arg.split()
+        if len(args) == 2:
+            deleteAttribute(args[0], args[1])
+        else:
+            print(f"Argument error")
+    # Renames an attribute
+    def do_renameAttribute(self, arg):
+        args = arg.split()
+        if len(args) == 3:
+            renameAttribute(args[0], args[1], args[2])
+        else:
+            print(f"Argument error")
+    # Stores the current state to a JSON file
+    def do_save(self, arg):
+        save(UMLClass.classIndex, relationship.listofrelationships, arg)
+    # Load a previous state from a JSON file
+    def do_load(self, arg):
+        UMLClass.classIndex, relationship.listofrelationships = load(arg)
+    # List all classes and their contents
+    def do_listClasses(self, arg):
+        listClasses()
+    # Lists the contents of a specified class
+    def do_listClass(self, arg):
+        listClass(arg)
+    # Lists all existing relationships
+    def do_listRelationships(self, arg):
+        listRelationships()
+    # Prints a help message
+    def do_help(self, arg):
+        if len(arg) == 0:
+            help(arg)
+        elif len(arg) == 1:
+            help(arg)
+        else:
+            print(f"Argument error")
+    # Exits the program
+    def do_exit(self, arg):
+        exit(UMLClass.classIndex, relationship.listofrelationships)
+    # Overrides the emptyline method to avoid repetition of previous command
+    def emptyline(self):
+        pass
 
 def main():
-    app = Interface()
+    Interface().cmdloop()
 
 if __name__=="__main__":
     main()

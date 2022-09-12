@@ -1,43 +1,54 @@
 """
-    Trevor Bender and Christian Sheperdson
-
-    Commands to be used with the interface class
+    Author(s): Trevor Bender, Christian Shepperson
+    Filename: interfaceCommands.py
+    Description: Commands to be used with the interface class
 """
+
+# Imports
+import sys
 import json
-from UMLClass import classIndex, findClass
+from prettytable import PrettyTable
+# Local Imports
+import UMLClass
+import relationship
+from saveload import save
+import os.path
 
 def listClasses():
     """
         Lists all classes and their contents
     """
     # Check if at least one class exists
-    if len(classIndex) > 0:
+    if len(UMLClass.classIndex) > 0:
+        table = PrettyTable()
         print()
         # print each classes name and attributes
-        for c in classIndex:
+        for c in UMLClass.classIndex:
             print(c.name + ":")
             for attr in c.attributes:
-                print("\t" + attr)
+                print(f"\t{attr.name}")
     else:
         print("\nNo classes have been added")
 
 def listClass(name: str):
     """
         Lists a specified classes contents
+
+        :param name: Name of the class to display contents of
     """
     # Get index of class with name in classIndex list
-    index = findClass(name)
+    index = UMLClass.findClass(name)
     # Check that the class exists and it has at least one attribute
-    if index is not None and len(classIndex[index].attributes) > 0:
+    if index is not None and len(UMLClass.classIndex[index].attributes) > 0:
         print(f"\n {name} Attributes")
-        # Loop to print bottom border with 
+        # Loop to print bottom border with
         # length len(name) + len("Attributes") + 2
         for i in range((len(name) + 13)):
             print("*", end="")
         print()
         # Loop through all attributes of the class
-        for attr in classIndex[index].attributes:
-            print(attr)
+        for attr in UMLClass.classIndex[index].attributes:
+            print(f" {attr.name}")
     else:
         print(f"\nClass \"{name}\" has no attributes")
 
@@ -45,21 +56,31 @@ def listRelationships():
     """
         Lists all existing relationships between classes
     """
-    # Placeholder
-    print("[src 1] -> [dest 1]")
-    print("[src 2] -> [dest 2]")
-    print("...")
-    print("[src n] -> [dest n]")
+    print()
+    if len(relationship.listofrelationships) > 0:
+        # List all relationships in relationIndex
+        table = PrettyTable(['Source', 'Destination'])
+        # Left align the table
+        table.align = 'l'
+        for source, destination in relationship.listofrelationships:
+            # Add relationship to table
+            table.add_row([source, destination])
+        # Display table
+        print(table)
+    else:
+        print("No relationships found.")
 
 def help(cmd=None):
     """
         Lists how to use the application without leaving
+
+        :param cmd: Name of the command to show usage of. Default is None
     """
     data = open('commands.json')
     cmds = json.load(data)
     # Default help command - prints list of commands
     #   and their descriptions.
-    if(cmd is None):    
+    if(cmd is None):
         print('{:<20}{:<12}'.format('Command', 'Description'))
         print("***************************************************************************************")
         for i in cmds['commands']:
@@ -72,7 +93,7 @@ def help(cmd=None):
         #   input matches one of the existing commands.
         # If there is no match, print message stating so.
         for name in cmds["commands"]:
-            if cmd == name["name"]: 
+            if cmd == name["name"]:
                 command = name
                 break
         # Prints the usage and description of the specified command.
@@ -88,17 +109,22 @@ def help(cmd=None):
         else:
             print(f"Command not found: {cmd}\nType 'help' for a list of commands.")
 
-def exit():
+def exit(classIndex, relationIndex):
     """
         Exits the application
     """
-    # Set isRunning to false to stop the loop
-    # self.isRunning = False
+
+    # Check if there was a file loaded or previously saved, then check for modifications
+
     # Get input from user if they want to save
-    exitChoice = input("Save progress? (Y/n)")
+    exitChoice = input("Save progress? (Y/n) ")
     if exitChoice.lower() == 'y' or exitChoice == '':
-        print("SAVE PLACEHOLDER")
+        file = input("type file to save to: ")
+        save(classIndex, relationIndex, file)
+        print(os.path.realpath(file+".json"))
+        sys.exit()
     elif exitChoice.lower() == 'n':
         print("Exiting")
+        sys.exit()
     else:
         print("Invalid OPTION")
