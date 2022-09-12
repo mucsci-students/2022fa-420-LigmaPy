@@ -5,12 +5,14 @@
 """
 
 # Imports
+import sys
 import json
 from prettytable import PrettyTable
 # Local Imports
 import UMLClass
 import relationship
 from saveload import save
+import os.path
 
 def listClasses():
     """
@@ -111,13 +113,18 @@ def exit(classIndex, relationIndex):
     """
         Exits the application
     """
+
+    # Check if there was a file loaded or previously saved, then check for modifications
+
     # Get input from user if they want to save
-    exitChoice = input("Save progress? (Y/n)")
+    exitChoice = input("Save progress? (Y/n) ")
     if exitChoice.lower() == 'y' or exitChoice == '':
-        file = input("type file to save to:")
+        file = input("type file to save to: ")
         save(classIndex, relationIndex, file)
-        print("SAVE PLACEHOLDER")
+        print(os.path.realpath(file+".json"))
+        sys.exit()
     elif exitChoice.lower() == 'n':
         print("Exiting")
+        sys.exit()
     else:
         print("Invalid OPTION")
