@@ -7,52 +7,6 @@ import relationship as r
 import attribute as a
     
 
-
-onetwo = ('one', 'two')
-threefour = ('three', 'four')
-fivesix = ('five', 'six')
-
-r = [onetwo, threefour]
-listRelationships = [onetwo, threefour, fivesix]
-
-class1 = u.UMLClass("class1")
-class2 = u.UMLClass('class2') 
-class3 = u.UMLClass('class3')
-
-class attribute:
-    def __init__ (self, name):
-        self.name = name
-
-a1 = attribute('attr1')
-a2 = attribute('attr2')
-a3 = attribute('attr3')
-
-class1.attributes.append(a1)
-class1.attributes.append(a2)
-class1.attributes.append(a3)
-class2.attributes.append(a1)
-class2.attributes.append(a2)
-class2.attributes.append(a3)
-class3.attributes.append(a1)
-class3.attributes.append(a2)
-class3.attributes.append(a3)
-
-c = [class1, class2]
-listClass = [class1, class2, class3]
-
-
-listClass = [class1, class2, class3]
-
-onetwo = ('one', 'two')
-threefour = ('three', 'four')
-fivesix = ('five', 'six')
-
-r = [onetwo, threefour]
-
-listRelationships = [onetwo, threefour, fivesix]
-
-
-
 ##################################################################
 
 """
