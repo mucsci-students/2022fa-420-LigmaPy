@@ -5,122 +5,100 @@
 """
 
 
-import pyfiglet # Install: pip install pyfiglet
-
+import pyfiglet
+import cmd
 # Local Imports
 import UMLClass
-from UMLClass import addClass, deleteClass, renameClass
 from attributes import addAttribute, deleteAttribute, renameAttribute
 import relationship
 from relationship import Add_relationship, Delete_relationship
 from interfaceCommands import *
 from saveload import *
 
-class Interface():
-    def __init__(self):
-        self.isRunning = True
-
-    '''
-        Main loop to run the program.
-        Takes input from user and runs the
-        corresponding commands.
-    '''
-    def run(self):
-        # Prints a unicode art using package pyfiglet
-        print(pyfiglet.figlet_format("UML Editor"))
-
-        while self.isRunning:
-            cmd = input(">> ").split(" ")
-            ### CLASS COMMANDS ###
-            if cmd[0] == 'addClass':
-                if len(cmd) == 2:
-                    addClass(cmd[1])
-                else:
-                    print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
-            elif cmd[0] == 'deleteClass':
-                if len(cmd) == 2:
-                    deleteClass(cmd[1])
-                else:
-                    print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
-            elif cmd[0] == 'renameClass':
-                if len(cmd) == 3:
-                    renameClass(cmd[1], cmd[2])
-                else:
-                    print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
-            ### RELATIONSHIP COMMANDS ###
-            elif cmd[0] == 'addRelationship':
-                if len(cmd) == 3:
-                    Add_relationship(cmd[1], cmd[2])
-                else:
-                    print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
-            elif cmd[0] == 'deleteRelationship':
-                if len(cmd) == 3:
-                    Delete_relationship(cmd[1], cmd[2])
-                else:
-                    print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
-            ### ATTRIBUTES COMMANDS ###
-            #needs fixed
-            elif cmd[0] == 'addAttribute':
-                if len(cmd) == 3:
-                    addAttribute(cmd[1], cmd[2])
-                else:
-                    print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
-            elif cmd[0] == 'deleteAttribute':
-                if len(cmd) == 3:
-                    deleteAttribute(cmd[1], cmd[2])
-                else:
-                    print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
-            elif cmd[0] == 'renameAttribute':
-                if len(cmd) == 4:
-                    renameAttribute(cmd[1], cmd[2], cmd[3])
-                else:
-                    print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
-            ### SAVE/LOAD ###
-            elif cmd[0] == 'save':
-                if len(cmd) == 2:
-                    save(UMLClass.classIndex, relationship.listofrelationships, cmd[1])
-                else:
-                    print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
-                    #needs fixed
-            elif cmd[0] == 'load':
-                if len(cmd) == 2:
-
-                    ### FILLS LISTS, BUT DOES NOT GET LISTED WHEN COMMANDS ARE USED
-                    UMLClass.classIndex, relationship.listofrelationships = load(cmd[1])
-                    print(UMLClass.classIndex, relationship.listofrelationships)
-                else:
-                    print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
-            ### INTERFACE COMMANDS ###
-            # List all classes and contents
-            elif cmd[0] == 'listClasses':
-                listClasses()
-            # List contents of a specified class
-            elif cmd[0] == 'listClass':
-                if len(cmd) == 2:
-                    listClass(cmd[1])
-                else:
-                    print(f"Invalid syntax.\nType 'help {cmd[0]}' for correct usage.")
-            # List all relationships that exist between classes
-            elif cmd[0] == 'listRelationships':
-                listRelationships()
-            # Help with a specified command
-            elif cmd[0] == 'help' and len(cmd) > 1:
-                help(cmd[1])
-            # Default help command
-            elif cmd[0] == 'help':
-                help()
-            # Exit application
-            elif cmd[0] == 'exit':
-                self.isRunning = False
-                exit(UMLClass.classIndex, relationship.listofrelationships)
-            elif cmd[0] == '':
-                pass
-            else:
-                print(f"Command not found: {cmd[0]}")
+class Interface(cmd.Cmd):
+    # Welcome message
+    intro = pyfiglet.figlet_format("UML Editor")
+    prompt = ">> "
+    # Creates a uniquely named class
+    def do_addClass(self, arg):
+        UMLClass.addClass(arg)
+    # Removes a class
+    def do_deleteClass(self, arg):
+        UMLClass.deleteClass(arg)
+    # Changes the name of a class
+    def do_renameClass(self, arg):
+        names = arg.split()
+        if len(names) == 2:
+            UMLClass.renameClass(names[0], names[1])
+        else:
+            print(f"Argument error")
+    # Creates a relationship between two classes
+    def do_addRelationship(self, arg):
+        classes = arg.split()
+        if len(classes) == 2:
+            Add_relationship(classes[0], classes[1])
+        else:
+            print(f"Argument error")
+    # Deletes an existing relationship between two classes
+    def do_deleteRelationship(self, arg):
+        classes = arg.split()
+        if len(classes) == 2:
+            Delete_relationship(classes[0], classes[1])
+        else:
+            print(f"Argument error")
+    # Creates an attribute for the specified class
+    def do_addAttribute(self, arg):
+        args = arg.split()
+        if len(args) == 2:
+            addAttribute(args[0], args[1])
+        else:
+            print(f"Argument error")
+    # Removes attribute from specified class
+    def do_deleteAttribute(self, arg):
+        args = arg.split()
+        if len(args) == 2:
+            deleteAttribute(args[0], args[1])
+        else:
+            print(f"Argument error")
+    # Renames an attribute
+    def do_renameAttribute(self, arg):
+        args = arg.split()
+        if len(args) == 3:
+            renameAttribute(args[0], args[1], args[2])
+        else:
+            print(f"Argument error")
+    # Stores the current state to a JSON file
+    def do_save(self, arg):
+        save(UMLClass.classIndex, relationship.listofrelationships, arg)
+    # Load a previous state from a JSON file
+    def do_load(self, arg):
+        UMLClass.classIndex, relationship.listofrelationships = load(arg)
+    # List all classes and their contents
+    def do_listClasses(self, arg):
+        listClasses()
+    # Lists the contents of a specified class
+    def do_listClass(self, arg):
+        listClass(arg)
+    # Lists all existing relationships
+    def do_listRelationships(self, arg):
+        listRelationships()
+    # Prints a help message
+    def do_help(self, arg):
+        if len(arg) == 0:
+            help(arg)
+        elif len(arg) == 1:
+            help(arg)
+        else:
+            print(f"Argument error")
+    # Exits the program
+    def do_exit(self, arg):
+        exit(UMLClass.classIndex, relationship.listofrelationships)
+    # Overrides the emptyline method to avoid repetition of previous command
+    def emptyline(self):
+        pass
 
 def main():
-    app = Interface()
-    app.run()
+    Interface().cmdloop()
 
 if __name__=="__main__":
     main()
