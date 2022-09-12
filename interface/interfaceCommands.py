@@ -13,6 +13,8 @@ from prettytable import PrettyTable
 import UMLClass
 import relationship
 from saveload import save
+import interfaceCommands.json
+
 
 def listClasses():
     """
@@ -20,7 +22,6 @@ def listClasses():
     """
     # Check if at least one class exists
     if len(UMLClass.classIndex) > 0:
-        table = PrettyTable()
         print()
         # print each classes name and attributes
         for c in UMLClass.classIndex:

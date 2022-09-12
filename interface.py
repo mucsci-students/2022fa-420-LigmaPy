@@ -85,7 +85,7 @@ class Interface(cmd.Cmd):
     # Prints a help message
     def do_help(self, arg):
         if len(arg) == 0:
-            help(arg)
+            help()
         elif len(arg) == 1:
             help(arg)
         else:
