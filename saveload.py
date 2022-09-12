@@ -1,3 +1,8 @@
+"""
+Author: Aaron Heinbaugh
+Filename: saveload.py
+Description: Saves and loads a user's session as a json
+"""
 
 import json
 from os.path import exists
@@ -10,18 +15,19 @@ import attributes as a
 
 ##################################################################
 
-"""
-saves file as filename in specified directory: open('filepath' + filename...)
-currently saves in root folder
 
-
-:param param1: UMLclass list 
-:param param2: relationship list 
-:param param3: filename specified by user
-:returns: nothing
-"""
 def save(classes, relations, filename):
-    
+    """
+    saves file as filename in specified directory: open('filepath' + filename...)
+    currently saves in root folder
+
+
+    :param param1: UMLclass list 
+    :param param2: relationship list 
+    :param param3: filename specified by user
+    :returns: nothing
+    """
+
     fileExists = os.path.exists("UMLsavefiles")
     if not fileExists:    
         print("Created directory: UMLsavefiles")
@@ -43,17 +49,14 @@ def save(classes, relations, filename):
 ##################################################################
 
 
-"""
-loads filename from specified directory: open('filepath' + filename...)
-currently loads from root folder
+def load(filename): 
+    """
+    loads filename from specified directory: open('filepath' + filename...)
+    currently loads from root folder
 
-
-:param param1: the file name to load
-:returns: tuple(list[UMLclass], list[relationships]) 
-
-"""
-def load(filename):
-    
+    :param param1: the file name to load
+    :returns: tuple(list[UMLclass], list[relationships]) 
+    """
     #check if file exists returns original lists if not
 
     fileExists = os.path.exists("UMLsavefiles/" + filename + '.json')
