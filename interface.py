@@ -92,7 +92,7 @@ class Interface(cmd.Cmd):
             print(f"Argument error")
     # Exits the program
     def do_exit(self, arg):
-        exit(UMLClass.classIndex, relationship.listofrelationships)
+        exit(UMLClass.classIndex, relationship.relationIndex)
     # Overrides the emptyline method to avoid repetition of previous command
     def emptyline(self):
         pass
