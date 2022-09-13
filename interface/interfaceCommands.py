@@ -5,6 +5,7 @@
 """
 
 # Imports
+import os.path
 import sys
 import json
 from prettytable import PrettyTable
@@ -12,7 +13,7 @@ from prettytable import PrettyTable
 import UMLClass
 import relationship
 from saveload import save
-import os.path
+
 
 def listClasses():
     """
@@ -20,7 +21,6 @@ def listClasses():
     """
     # Check if at least one class exists
     if len(UMLClass.classIndex) > 0:
-        table = PrettyTable()
         print()
         # print each classes name and attributes
         for c in UMLClass.classIndex:
@@ -57,12 +57,12 @@ def listRelationships():
         Lists all existing relationships between classes
     """
     print()
-    if len(relationship.listofrelationships) > 0:
+    if len(relationship.relationIndex) > 0:
         # List all relationships in relationIndex
         table = PrettyTable(['Source', 'Destination'])
         # Left align the table
         table.align = 'l'
-        for source, destination in relationship.listofrelationships:
+        for source, destination in relationship.relationIndex:
             # Add relationship to table
             table.add_row([source, destination])
         # Display table
@@ -76,7 +76,7 @@ def help(cmd=None):
 
         :param cmd: Name of the command to show usage of. Default is None
     """
-    data = open('commands.json')
+    data = open('interface/commands.json')
     cmds = json.load(data)
     # Default help command - prints list of commands
     #   and their descriptions.
