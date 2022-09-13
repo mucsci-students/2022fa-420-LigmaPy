@@ -9,7 +9,7 @@
         "desc": "Adds a new uniquely named class"
     },
     {
-        "name": "removeClass",
+        "name": "deleteClass",
         "args": [{
             "name":"name",
             "desc": "Unique name of the class to be removed"
@@ -41,7 +41,7 @@
         "desc": "Creates a relationship between the source and destination classes"
     },
     {
-        "name": "removeRelationship",
+        "name": "deleteRelationship",
         "args": [{
             "name": "src",
             "desc": "Source class of the relationship to be deleted"
@@ -65,7 +65,7 @@
         "desc": "Adds an attribute with name 'name' to a specified class"
     },
     {
-        "name": "removeAttribute",
+        "name": "deleteAttribute",
         "args": [{
             "name": "class",
             "desc": "Name of the class to remove attribute from"
