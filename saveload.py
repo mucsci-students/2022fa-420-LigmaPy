@@ -13,8 +13,8 @@ import relationship as r
 import attributes as a
 
 
-##################################################################
 
+##################################################################
 
 def save(classes, relations, filename):
     """
@@ -27,6 +27,12 @@ def save(classes, relations, filename):
     :param param3: filename specified by user
     :returns: nothing
     """
+
+    fileExists = os.path.exists("UMLsavefiles")
+    if not fileExists:    
+        print("Created directory: UMLsavefiles")
+        os.mkdir("UMLsavefiles")
+    
 
     fileExists = os.path.exists("UMLsavefiles")
     if not fileExists:    
@@ -57,11 +63,12 @@ def load(filename):
     :param param1: the file name to load
     :returns: tuple(list[UMLclass], list[relationships]) 
     """
-    #check if file exists returns original lists if not
 
+    #check if file exists returns original lists if not
     fileExists = os.path.exists("UMLsavefiles/" + filename + '.json')
     if not fileExists:    
         print("File not found")
+
         return (u.classIndex, r.relationIndex)
 
     
@@ -111,7 +118,6 @@ def load(filename):
     #if error loading return original lists
     except Exception as e:
         print("Load failed")
-
         return (u.classIndex, r.relationIndex)
  
 
