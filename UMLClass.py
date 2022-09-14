@@ -1,11 +1,12 @@
-'''
-Samantha Noggle
+"""
+Author: Sam Noggle
+Filename: UMLClass.py
+Description: Adds, renames, and deletes a class object
+"""
 
-Adds a class, deletes a class, & renames a class
-'''
+from typing import List
+import relationship
 
-# List of all class objects the user has created
-classIndex = []
 
 class UMLClass:
     def __init__(self, name: str):
@@ -18,9 +19,12 @@ class UMLClass:
 
 
 def isNameUnique(name: str):
-    '''
+    """
     Checks classIndex for duplicate names
-    '''
+
+    :param name: a string of which name to check if it is unique
+    :returns: True if the name is unique
+    """
     for c in classIndex:
         if c.name == name:
             return False
@@ -30,6 +34,10 @@ def isNameUnique(name: str):
 def findClass(name: str):
     """
     Finds a class object by name and returns it's index
+
+    :param name: the name of which class to find 
+    :returns: the index of that class in classIndex if it is found 
+                or None if it was not found 
     """
     for i, c in enumerate(classIndex):
         if c.name == name:
@@ -40,7 +48,9 @@ def findClass(name: str):
 
 def addClass(name: str):
     """
-    Creates and adds a new class 
+    Creates and adds a new class to the classIndex
+
+    :param name: the name of the new class
     """
     if isNameUnique(name):
         newClass = UMLClass(name)
@@ -53,10 +63,18 @@ def addClass(name: str):
 def deleteClass(name: str):
     """ 
     Deletes a class by it's name
+
+    :param name: the name of the class to delete
     """
     index = findClass(name)
     if index is not None:
         classIndex.pop(index)
+
+        # Remove relationships 
+        for relation in relationship.relationIndex:
+            if relation.source == name or relation.destination:
+                relationship.deleteRelationship(relation.source, relation.destination)
+
         print(f"\nClass \"{name}\" has been deleted.")
     else:
         print("Deletion failed")
@@ -65,6 +83,9 @@ def deleteClass(name: str):
 def renameClass(oldName: str, newName: str):
     """ 
     Renames a class from oldName to newName
+
+    :param oldName: the target class's name
+    :param newName: the new name for the target class
     """
     if findClass(newName):
         print(f"\nA class already exists with the name \"{newName}\"")
@@ -74,11 +95,18 @@ def renameClass(oldName: str, newName: str):
     index = findClass(oldName)
     if index is not None:
         classIndex[index].rename(newName)
+        
+        # Update it's relationships
+        for i, relation in enumerate(relationship.relationIndex):
+            # Check source
+            if relation.source == oldName:
+                relationship.relationIndex[i].source = newName
+            # Check destination
+            elif relation.destination == oldName:
+                relationship.relationIndex[i].destination = newName
     else:
         print("Rename failed")
 
-def classIndexx():
-    return classIndex
 ######################## Driver Code ########################
 
 def main():
@@ -110,3 +138,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# List of all class objects the user has created
+classIndex: List[UMLClass] = []
+
