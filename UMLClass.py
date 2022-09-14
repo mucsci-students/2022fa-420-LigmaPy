@@ -52,6 +52,9 @@ def addClass(name: str):
 
     :param name: the name of the new class
     """
+    if len(name.strip()) == 0:
+        print("Class name cannot be empty.")
+        return
     if isNameUnique(name):
         newClass = UMLClass(name)
         classIndex.append(newClass)

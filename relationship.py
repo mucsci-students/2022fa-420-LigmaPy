@@ -49,7 +49,9 @@ def addRelationship(source: str, destination: str):
 
         :returns: The message of the status of adding a relationship
     """
-
+    if source == destination:
+        print("Source class cannot be the same a destination class.")
+        return
     # Check if both source and destination classes exist
     if UMLClass.findClass(source) is not None and UMLClass.findClass(destination) is not None:
         for relation in relationIndex:
