@@ -68,12 +68,13 @@ def deleteClass(name: str):
     """
     index = findClass(name)
     if index is not None:
-        classIndex.pop(index)
 
         # Remove relationships 
         for relation in relationship.relationIndex:
             if relation.source == name or relation.destination:
                 relationship.deleteRelationship(relation.source, relation.destination)
+
+        classIndex.pop(index)
 
         print(f"\nClass \"{name}\" has been deleted.")
     else:
