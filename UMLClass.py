@@ -68,13 +68,15 @@ def deleteClass(name: str):
     """
     index = findClass(name)
     if index is not None:
-        classIndex.pop(index)
-
+        listToDel = []
         # Remove relationships 
         for relation in relationship.relationIndex:
-            if relation.source == name or relation.destination:
-                relationship.deleteRelationship(relation.source, relation.destination)
-
+            if relation.source == name or relation.destination == name:
+                listToDel.append(relation)
+                #relationship.deleteRelationship(relation.source, relation.destination)
+        for each in listToDel:
+            relationship.deleteRelationship(each.source,each.destination)
+        classIndex.pop(index)
         print(f"\nClass \"{name}\" has been deleted.")
     else:
         print("Deletion failed")
