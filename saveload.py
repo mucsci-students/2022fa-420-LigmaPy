@@ -103,5 +103,3 @@ def load(filename):
         print("Load failed")
         return (u.classIndex, r.relationIndex)
  
-
-##################################################################
