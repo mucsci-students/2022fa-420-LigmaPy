@@ -5,6 +5,7 @@ Description: Adds, renames, and deletes a class object
 """
 
 from typing import List
+import relationship
 
 
 class UMLClass:
@@ -68,6 +69,12 @@ def deleteClass(name: str):
     index = findClass(name)
     if index is not None:
         classIndex.pop(index)
+
+        # Remove relationships 
+        for relation in relationship.relationIndex:
+            if relation.source == name or relation.destination:
+                relationship.deleteRelationship(relation.source, relation.destination)
+
         print(f"\nClass \"{name}\" has been deleted.")
     else:
         print("Deletion failed")
@@ -88,6 +95,15 @@ def renameClass(oldName: str, newName: str):
     index = findClass(oldName)
     if index is not None:
         classIndex[index].rename(newName)
+        
+        # Update it's relationships
+        for i, relation in enumerate(relationship.relationIndex):
+            # Check source
+            if relation.source == oldName:
+                relationship.relationIndex[i].source = newName
+            # Check destination
+            elif relation.destination == oldName:
+                relationship.relationIndex[i].destination = newName
     else:
         print("Rename failed")
 
