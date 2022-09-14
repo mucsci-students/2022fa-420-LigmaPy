@@ -1,0 +1,30 @@
+[
+    [
+        {
+            "name": "one",
+            "attributes": []
+        },
+        {
+            "name": "two",
+            "attributes": []
+        },
+        {
+            "name": "three",
+            "attributes": []
+        }
+    ],
+    [
+        {
+            "source": "one",
+            "destination": "two"
+        },
+        {
+            "source": "two",
+            "destination": "three"
+        },
+        {
+            "source": "one",
+            "destination": "three"
+        }
+    ]
+]

@@ -115,17 +115,14 @@ def renameAttribute(oldName, newName, className):
     if attIndexOld >= 0 and attIndexNew < 0:
         index = C.findClass(className)
         C.classIndex[index].attributes[attIndexOld].rename(newName)
-        print(
-            f'\"{oldName}\" attribute has been renamed to \"{newName}\" in the \"{className}\" class!')
+        print(f'\"{oldName}\" attribute has been renamed to \"{newName}\" in the \"{className}\" class!')
     # Runs if given attribute does not exist in given class
     elif attIndexOld == -2:
-        print(
-            f'\"{oldName}\" attribute does not exist in the \"{className}\" class.')
+        print(f'\"{oldName}\" attribute does not exist in the \"{className}\" class.')
     # Runs if given class does not exist
     elif attIndexOld == -1:
         print(f"\nClass \"{className}\" does not exist")
         return
     # Runs if attribute already exists with new name in given class
     else:
-        print(
-            f'\"{newName}\" is the name of an existing attribute in the \"{className}\" class.')
+        print(f'\"{newName}\" is the name of an existing attribute in the \"{className}\" class.')

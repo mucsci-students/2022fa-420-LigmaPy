@@ -70,7 +70,7 @@ def deleteClass(name: str):
 
         # Remove relationships 
         for relation in relationship.relationIndex:
-            if relation.source == name or relation.destination:
+            if relation.source == name or relation.destination == name:
                 relationship.deleteRelationship(relation.source, relation.destination)
 
         classIndex.pop(index)
