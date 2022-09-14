@@ -5,6 +5,7 @@
 """
 
 # Imports
+import os.path
 import sys
 import json
 from prettytable import PrettyTable
@@ -12,7 +13,7 @@ from prettytable import PrettyTable
 import UMLClass
 import relationship
 from saveload import save
-import os.path
+import UMLException
 
 def listClasses():
     """
@@ -20,7 +21,6 @@ def listClasses():
     """
     # Check if at least one class exists
     if len(UMLClass.classIndex) > 0:
-        table = PrettyTable()
         print()
         # print each classes name and attributes
         for c in UMLClass.classIndex:
@@ -33,7 +33,6 @@ def listClasses():
 def listClass(name: str):
     """
         Lists a specified classes contents
-
         :param name: Name of the class to display contents of
     """
     # Get index of class with name in classIndex list
@@ -57,14 +56,14 @@ def listRelationships():
         Lists all existing relationships between classes
     """
     print()
-    if len(relationship.listofrelationships) > 0:
+    if len(relationship.relationIndex) > 0:
         # List all relationships in relationIndex
         table = PrettyTable(['Source', 'Destination'])
         # Left align the table
         table.align = 'l'
-        for source, destination in relationship.listofrelationships:
+        for relation in relationship.relationIndex:
             # Add relationship to table
-            table.add_row([source, destination])
+            table.add_row([relation.source, relation.destination])
         # Display table
         print(table)
     else:
@@ -73,10 +72,9 @@ def listRelationships():
 def help(cmd=None):
     """
         Lists how to use the application without leaving
-
         :param cmd: Name of the command to show usage of. Default is None
     """
-    data = open('commands.json')
+    data = open('interface/commands.json')
     cmds = json.load(data)
     # Default help command - prints list of commands
     #   and their descriptions.
@@ -107,7 +105,8 @@ def help(cmd=None):
             for option in command["args"]:
                 print('{:<12}{:<12}'.format(option['name'], option['desc']))
         else:
-            print(f"Command not found: {cmd}\nType 'help' for a list of commands.")
+ #           print(f"Command not found: {cmd}\nType 'help' for a list of commands.")
+            print(UMLException.UMLException("Command not found", f"{cmd}"))
 
 def exit(classIndex, relationIndex):
     """
@@ -127,4 +126,5 @@ def exit(classIndex, relationIndex):
         print("Exiting")
         sys.exit()
     else:
-        print("Invalid OPTION")
+        print(UMLException.UMLException("Invalid option"))
+#        print("Invalid OPTION")

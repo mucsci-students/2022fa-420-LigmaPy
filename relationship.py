@@ -1,98 +1,89 @@
-#Author Ammanuel Amare
-#9/5/22 :)
-from UMLClass import *
-# This list is used to store the relationships. 
-listofrelationships=[]
-class relationship:
-    # This is the constructor, you will need 3 paramaters to initialize the class
-    # Every relationship has a source ,destination, and a type
-    def __init__(self,source,destination):
-        self.destination = destination
+"""
+Author : Ammanuel Amare
+Filename : relationship.py
+Description : Adds and deletes relationships
+"""
+from typing import List
+# Local Imports
+import UMLClass
+
+###################################################################################################
+
+class UMLRelationship:
+    def __init__(self, source: str, destination: str):
         self.source = source
+        self.destination = destination
 
-#@para source is thesource class for relationship 
-#@para Destination is the destination class for relationship
-#@para tpe is the type of relationship defined between the classes
-# returns a string with needed information, can be a boolean value in the future. 
-#this is how you will add relationship to class
-    def Add_relationship(self,source: str, destination: str):
-        
-        status =""
-        #findclass returns index of item in golobal list 
-        sourceclass = findClass(source)
-        destinationclass = findClass(destination)
-        #both lists will be needed for testing.
-        # this will take the second item of the tuple and convert it into a list 
-#        listofdestinationclasses =(list(list(zip(*listofrelationships))[1]))
-        
-        # this will take the first item of the tuple and convert it into a list 
-#        listofsourceclasses =(list(list(zip(*listofrelationships))[0]))
+        print(f"\nRelationship added: {repr(self)}")
 
-        if sourceclass is not None and destinationclass is not None:
-            # Create tuple to later be appened to list of relationships.
-            newrelationship = (source, destination)
-            for item in listofrelationships:
-                #if we find the relationship already exists we will log a error
-                if item == newrelationship:
-                    status = f" Error: Relationship already exists."
-                    return status
-            listofrelationships.append(newrelationship)
-            status =f"Relationship for {source} & {destination} added"
-            return status
-        else:
-            status = f" The {source} or {destination} class does not exist."
-            return status
+    def __repr__(self):
+        return f"[{self.source}] - [{self.destination}]"
 
-    #@para source is thesource class for relationship 
-    #@para destination is the destination class for relationship
-    #@para tpe is the type of relationship defined between the classes
-    def Delete_relationship(self,source: str, destination: str):
-        status =""
-        #Here we will need to search the source and destination to confrim they exist 
-        sourceclass = findClass(source)
-        destinationclass = findClass(destination)
+###################################################################################################
 
-        if sourceclass is not None and destinationclass is not None:
-            newrelationship = (source, destination)
+def findRelationship(source: str, destination: str):
 
-            for item in listofrelationships:
+    """
+        Searches for Relationship (source, destination) in relationIndex
 
-                if item == newrelationship:
-                    # if we find the relationship remove it.
-                    listofrelationships.remove(newrelationship)
-                    status = "Successfully deleted relationship."
-                    return status
-        else:
-            status = f"The {source} or {destination} does not exist"
-            return status
-        
-    #@para source is thesource class for relationship 
-    #@para Destination is the destination class for relationship
-    #@para tpe is the type of relationship defined between the classes
-    # Edit a relationship, needs to be discussed if we can create on the fly relationships. 
-    def Edit_relationship(self,source: str, destination: str):
-        status=""
-    # search
-        sourceclass = findClass(source)
-        destinationclass = findclass(destination)
-        #this will be great for debugging we can remove the Exception in prod. 
-        if sourceclass is not None and destinationclass is not None:
-            try:
-                newrelationship = (sourceclass, destinationclass)
-                listofrelationships.remove(newrelationship)
-                Add_relationship(sourceclass, destinationclass)
-                status = f"Successfully edited relationship {source} & {destination}"
+        :param source: Source class of the relationship
+        :param destination: Destination class of the relationship
 
-            except Exception as e:
-                status = f"Error: The {source} or {destination} does not exist."
-                exc_type, exc_obj, exc_tb = sys.exc_info()
-                fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-                print('{} {}:{}'.format(exc_type, fname, exc_tb.tb_lineno))
-                print(e)
-                return status
-        else:
-            status = f"Error: The {source} or {destination} does not exist."
-            return status
-    #returns the list of all relationships type: list[typle(str,str,str)]
-    def Listofrelationships():
-        return listofrelationships
+        :returns: Index of the relationship in relationIndex if it exists, otherwise -1
+    """
+
+    relationLoc = 0
+    # Search for relationship in relationIndex
+    for relation in relationIndex:
+        if source == relation.source and destination == relation.destination:
+            return relationLoc
+        relationLoc+=1
+    return -1
+
+def addRelationship(source: str, destination: str):
+    """
+        Creates a relationship between to classes.
+
+        :param source: Name of the source class
+        :param destination: Name of the destination class
+
+        :returns: The message of the status of adding a relationship
+    """
+
+    # Check if both source and destination classes exist
+    if UMLClass.findClass(source) is not None and UMLClass.findClass(destination) is not None:
+        for relation in relationIndex:
+            # Check if relationship already exists
+            if source == relation.source and destination == relation.destination:
+                print(f"Error: Relationship already exists.")
+                return
+        # Append the new relationship to the relationIndex list
+        newRelation = UMLRelationship(source, destination)
+        relationIndex.append(newRelation)
+    else:
+        print(f"The {source} or {destination} class does not exist.")
+
+def deleteRelationship(source: str, destination: str):
+    """
+        Removes an existing relationship between two classes.
+
+        :param source: Name of the source class
+        :param destination: Name of the destination class
+
+        :returns: The status of the relationship deletion
+    """
+    # Check if source and destination class exist
+    if UMLClass.findClass(source) is not None and UMLClass.findClass(destination) is not None:
+
+        index = findRelationship(source, destination)
+        deletedRelation = relationIndex[index]
+        if index > -1:
+            relationIndex.pop(index)
+
+        print(f"\nDeleted Relationship: {repr(deletedRelation)}")
+    else:
+        print(f"Relationship does not exist: [{source}] - [{destination}]")
+
+###################################################################################################
+
+relationIndex : List[UMLRelationship]= []
