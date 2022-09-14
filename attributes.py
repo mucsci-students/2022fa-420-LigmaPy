@@ -72,6 +72,7 @@ def addAttribute(name, className):
         print(f'\"{name}\" attribute has been added to the \"{className}\" class!')
     # Runs if given class does not exist
     else:
+        print(f"\nClass \"{className}\" does not exist")
         return
 
 
@@ -86,6 +87,7 @@ def deleteAttribute(name, className):
 
     # Runs if given class does not exist
     if attributeIndex == -1:
+        print(f"\nClass \"{className}\" does not exist")
         return
     # Runs if class and attribute exist
     elif attributeIndex >= 0:
@@ -121,6 +123,7 @@ def renameAttribute(oldName, newName, className):
             f'\"{oldName}\" attribute does not exist in the \"{className}\" class.')
     # Runs if given class does not exist
     elif attIndexOld == -1:
+        print(f"\nClass \"{className}\" does not exist")
         return
     # Runs if attribute already exists with new name in given class
     else:
