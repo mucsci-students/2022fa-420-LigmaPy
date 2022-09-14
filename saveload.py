@@ -13,14 +13,13 @@ import relationship as r
 import attributes as a
 
 
-
 ##################################################################
+
 
 def save(classes, relations, filename):
     """
     saves file as filename in specified directory: open('filepath' + filename...)
     currently saves in root folder
-
 
     :param param1: UMLclass list 
     :param param2: relationship list 
@@ -28,18 +27,12 @@ def save(classes, relations, filename):
     :returns: nothing
     """
 
+    #checks if folder exists and creates it if it doesn't
     fileExists = os.path.exists("UMLsavefiles")
     if not fileExists:    
         print("Created directory: UMLsavefiles")
         os.mkdir("UMLsavefiles")
     
-
-    fileExists = os.path.exists("UMLsavefiles")
-    if not fileExists:    
-        print("Created directory: UMLsavefiles")
-        os.mkdir("UMLsavefiles")
-    
-
     #combines both into a tuple
     t = (classes, relations)
     
@@ -47,7 +40,6 @@ def save(classes, relations, filename):
     jsonString = json.dumps(t, default=vars, indent=4)
     
     #saves json string to file
-
     with open("UMLsavefiles/" + filename + ".json", "w") as outfile:
         outfile.write(jsonString)
 
@@ -63,12 +55,11 @@ def load(filename):
     :param param1: the file name to load
     :returns: tuple(list[UMLclass], list[relationships]) 
     """
-
+    
     #check if file exists returns original lists if not
     fileExists = os.path.exists("UMLsavefiles/" + filename + '.json')
     if not fileExists:    
         print("File not found")
-
         return (u.classIndex, r.relationIndex)
 
     
@@ -90,7 +81,7 @@ def load(filename):
         classes = jsonObject[0]
         relations = jsonObject[1]
 
-        #loops through classes json and decodes each piece creating new objects then adds them to a dictionary
+        #loops through classes json and decodes each piece creating new objects then adds them to a list
         for eachClass in classes:
             className = str(eachClass['name'])
             attributesList = eachClass['attributes']
@@ -98,20 +89,12 @@ def load(filename):
             className = u.UMLClass(className)
             for eachAttribute in attributesList:
                 className.attributes.append(a.attribute(eachAttribute['name']))
-
             returnClasses.append(className)
         
-        #loops through relationship json and decodes each piece creating new tuples then adds them to a list
-        for eachRelation in relations:
-            eachRelationTuple = (eachRelation[0], eachRelation[1])
-            returnRelations.append(eachRelationTuple)
-
-            #code below is for returning relationship objects 
-            """
-            #name = (str(eachRelation['source']) + str(eachRelation['destination'])) #I just concat SourceNameDestName to name the relationship object (can change to match how interface does it)  
-            #name = relationship(eachRelation['source'], eachRelation['destination'])
-            #returnRelations.append(name) 
-            """ 
+        #loops through relationship json and decodes each piece creating new objects then adds them to a list
+        for eachRelation in relations:    
+            name = r.UMLRelationship(eachRelation['source'], eachRelation['destination'])
+            returnRelations.append(name) 
 
         return (returnClasses, returnRelations)
     
