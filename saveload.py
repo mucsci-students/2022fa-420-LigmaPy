@@ -12,8 +12,8 @@ import UMLClass as u
 import relationship as r
 import attributes as a
 
-##################################################################
 
+##################################################################
 
 
 def save(classes, relations, filename):
@@ -26,7 +26,6 @@ def save(classes, relations, filename):
     :param param3: filename specified by user
     :returns: nothing
     """
-
 
     #checks if folder exists and creates it if it doesn't
     fileExists = os.path.exists("UMLsavefiles")
@@ -56,7 +55,7 @@ def load(filename):
     :param param1: the file name to load
     :returns: tuple(list[UMLclass], list[relationships]) 
     """
-
+    
     #check if file exists returns original lists if not
     fileExists = os.path.exists("UMLsavefiles/" + filename + '.json')
     if not fileExists:    
