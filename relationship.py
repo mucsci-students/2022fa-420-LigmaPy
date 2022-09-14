@@ -1,112 +1,89 @@
 """
-Author: Ammanuel Amare
-Filename: relationship.py
-Description: Adds, deletes, & edits relationships between classes
+Author : Ammanuel Amare
+Filename : relationship.py
+Description : Adds and deletes relationships
 """
+from typing import List
+# Local Imports
+import UMLClass
 
-from UMLClass import *
+###################################################################################################
 
-# This list is used to store the relationships
-relationIndex = []
-
-
-class relationship:
-    """
-    This is the constructor, you will need 3 paramaters to initialize the class
-    Every relationship has a source and destination
-    """
-    def __init__(self, source, destination):
-        self.destination = destination
+class UMLRelationship:
+    def __init__(self, source: str, destination: str):
         self.source = source
+        self.destination = destination
 
+        print(f"\nRelationship added: {repr(self)}")
+
+    def __repr__(self):
+        return f"[{self.source}] - [{self.destination}]"
+
+###################################################################################################
+
+def findRelationship(source: str, destination: str):
+
+    """
+        Searches for Relationship (source, destination) in relationIndex
+
+        :param source: Source class of the relationship
+        :param destination: Destination class of the relationship
+
+        :returns: Index of the relationship in relationIndex if it exists, otherwise -1
+    """
+
+    relationLoc = 0
+    # Search for relationship in relationIndex
+    for relation in relationIndex:
+        if source == relation.source and destination == relation.destination:
+            return relationLoc
+        relationLoc+=1
+    return -1
 
 def addRelationship(source: str, destination: str):
     """
-    Adds a relationship to a class
+        Creates a relationship between to classes.
 
-    :param source: the source class for relationship
-    :param destination: the destination class for relationship
-    :return: a string with needed information, can be a boolean value in the future
+        :param source: Name of the source class
+        :param destination: Name of the destination class
+
+        :returns: The message of the status of adding a relationship
     """
 
-    status = ""
-    # findclass returns index of item in golobal list
-    sourceClass = findClass(source)
-    destinationClass = findClass(destination)
-
-    if sourceClass is not None and destinationClass is not None:
-        # Create tuple to later be appened to list of relationships
-        newRelationship = (source, destination)
-        for item in relationIndex:
-            # if we find the relationship already exists we will log a error
-            if item == newRelationship:
-                status = f" Error: Relationship already exists."
-                return status
-        relationIndex.append(newRelationship)
-        status = f"Relationship for {source} & {destination} added"
-        return status
+    # Check if both source and destination classes exist
+    if UMLClass.findClass(source) is not None and UMLClass.findClass(destination) is not None:
+        for relation in relationIndex:
+            # Check if relationship already exists
+            if source == relation.source and destination == relation.destination:
+                print(f"Error: Relationship already exists.")
+                return
+        # Append the new relationship to the relationIndex list
+        newRelation = UMLRelationship(source, destination)
+        relationIndex.append(newRelation)
     else:
-        status = f" The {source} or {destination} class does not exist."
-        return status
-
+        print(f"The {source} or {destination} class does not exist.")
 
 def deleteRelationship(source: str, destination: str):
     """
-    Deletes a relationship
+        Removes an existing relationship between two classes.
 
-    :param source: the source class for relationship
-    :param destination: the destination class for relationship
-    :return: A string containing the outcome of the function
+        :param source: Name of the source class
+        :param destination: Name of the destination class
+
+        :returns: The status of the relationship deletion
     """
+    # Check if source and destination class exist
+    if UMLClass.findClass(source) is not None and UMLClass.findClass(destination) is not None:
 
-    status = ""
-    # Here we will need to search the source and destination to confrim they exist
-    sourceClass = findClass(source)
-    destinationClass = findClass(destination)
+        index = findRelationship(source, destination)
+        deletedRelation = relationIndex[index]
+        if index > -1:
+            relationIndex.pop(index)
 
-    if sourceClass is not None and destinationClass is not None:
-        newRelationship = (source, destination)
-
-        for item in relationIndex:
-
-            if item == newRelationship:
-                # if we find the relationship remove it
-                relationIndex.remove(newRelationship)
-                status = "Successfully deleted relationship."
-                return status
+        print(f"\nDeleted Relationship: {repr(deletedRelation)}")
     else:
-        status = f"The {source} or {destination} does not exist"
-        return status
+        print(f"Relationship does not exist: [{source}] - [{destination}]")
 
+###################################################################################################
 
-def editRelationship(source: str, destination: str):
-    """
-    Edits a relationship, needs to be discussed if we can create on the fly relationships
-
-    :param source: the source class for relationship
-    :param destination: the destination class for relationship
-    :returns: A string containing the outcome of the function
-    """
-
-    status = ""
-    # search
-    sourceClass = findClass(source)
-    destinationClass = findClass(destination)
-    # this will be great for debugging we can remove the Exception in prod
-    if sourceClass is not None and destinationClass is not None:
-        try:
-            newRelationship = (sourceClass, destinationClass)
-            relationIndex.remove(newRelationship)
-            addRelationship(sourceClass, destinationClass)
-            status = f"Successfully edited relationship {source} & {destination}"
-
-        except Exception as e:
-            status = f"Error: The {source} or {destination} does not exist."
-            # exc_type, exc_obj, exc_tb = sys.exc_info()
-            # fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            # print('{} {}:{}'.format(exc_type, fname, exc_tb.tb_lineno))
-            # print(e)
-            return status
-    else:
-        status = f"Error: The {source} or {destination} does not exist."
-        return status
+relationIndex : List[UMLRelationship]= []
