@@ -69,52 +69,14 @@ def listRelationships():
     else:
         print("No relationships found.")
 
-def help(cmd=None):
-    """
-        Lists how to use the application without leaving
-        :param cmd: Name of the command to show usage of. Default is None
-    """
-    data = open('interface/commands.json')
-    cmds = json.load(data)
-    # Default help command - prints list of commands
-    #   and their descriptions.
-    if(cmd is None):
-        print('{:<20}{:<12}'.format('Command', 'Description'))
-        print("***************************************************************************************")
-        for i in cmds['commands']:
-            newLine = '{:<20}{:<12}'.format(i['name'], i['desc'])
-            print(newLine)
-        print("***************************************************************************************")
-    else:
-        command = None
-        # Loops through list off commands and checks if the
-        #   input matches one of the existing commands.
-        # If there is no match, print message stating so.
-        for name in cmds["commands"]:
-            if cmd == name["name"]:
-                command = name
-                break
-        # Prints the usage and description of the specified command.
-        if command is not None:
-            # Displays the syntax of the command
-            print("Usage: " + cmd, end="")
-            for option in command["args"]:
-                print(f" [{option['name']}]", end="")
-            print(f"\n\n\t{command['desc']}\n")
-            # Displays the arguments and their descriptions
-            for option in command["args"]:
-                print('{:<12}{:<12}'.format(option['name'], option['desc']))
-        else:
- #           print(f"Command not found: {cmd}\nType 'help' for a list of commands.")
-            print(UMLException.UMLException("Command not found", f"{cmd}"))
+"""
+    help Command handled by cmd Module.
+"""
 
 def exit(classIndex, relationIndex):
     """
         Exits the application
     """
-
-    # Check if there was a file loaded or previously saved, then check for modifications
-
     # Get input from user if they want to save
     exitChoice = input("Save progress? (Y/n) ")
     if exitChoice.lower() == 'y' or exitChoice == '':
@@ -127,4 +89,3 @@ def exit(classIndex, relationIndex):
         sys.exit()
     else:
         print(UMLException.UMLException("Invalid option"))
-#        print("Invalid OPTION")
