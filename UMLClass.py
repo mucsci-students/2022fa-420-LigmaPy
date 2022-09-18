@@ -42,7 +42,6 @@ def findClass(name: str):
     for i, c in enumerate(classIndex):
         if c.name == name:
             return i
-    print(f"\nClass \"{name}\" does not exist")
     return None
 
 
@@ -82,6 +81,7 @@ def deleteClass(name: str):
         classIndex.pop(index)
         print(f"\nClass \"{name}\" has been deleted.")
     else:
+        print(f"\nClass \"{name}\" does not exist")
         print("Deletion failed")
 
 
@@ -110,6 +110,7 @@ def renameClass(oldName: str, newName: str):
             elif relation.destination == oldName:
                 relationship.relationIndex[i].destination = newName
     else:
+        print(f"\nClass \"{oldName}\" does not exist")
         print("Rename failed")
 
 

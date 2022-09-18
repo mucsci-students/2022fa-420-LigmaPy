@@ -7,6 +7,7 @@ Description: Saves and loads a user's session as a json
 import json
 from os.path import exists
 import os.path
+from pathvalidate import is_valid_filename
 
 import UMLClass as u
 import relationship as r
@@ -26,6 +27,15 @@ def save(classes, relations, filename):
     :param param3: filename specified by user
     :returns: nothing
     """
+    filename = filename
+    
+    #checks if file name is valid
+    if not is_valid_filename(filename):
+        print("Invalid file name.")
+        return
+    
+    if filename.endswith('.json'):
+        filename = filename[:-5]
 
     #checks if folder exists and creates it if it doesn't
     fileExists = os.path.exists("UMLsavefiles")
