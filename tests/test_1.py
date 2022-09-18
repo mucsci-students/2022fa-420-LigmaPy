@@ -1,27 +1,27 @@
-
-
-
+from __future__ import print_function
+from pytest import fixture
 import pytest
+import logging
 
 from UMLClass import *
 from relationship import *
+from saveload import *
+from pathlib import Path
+
 @pytest.fixture
 # runs through adding and deleting a realtionship
-def newMyClass():
-    x=relationship('type','source','destination')
-    addClass('test1')
-    addClass('test2')
-    addClass('test3')
-    x.Add_relationship('test1', 'test2', 'test3')
-    print(x.type)
-    z=x.Delete_relationship('test1', 'test2', 'test3')
-    print(listofrelationships.__len__())
-    assert len(listofrelationships)==0
+def newMyClass(caplog):
 
+        x=UMLRelationship('source','destination')
+        addClass('test1')
+        addClass('test2')
+        addClass('test3')
+        addRelationship( 'test2', 'test3')
+        deleteRelationship( 'test2', 'test3')
+        print(relationIndex.__len__())
+        return x
 
-    myClassInstance = relationship('1','2','3')
-    return myClassInstance
+def test_aMethod(newMyClass,caplog):
+        typetest = newMyClass.source
+        typetest2= newMyClass.destination
 
-def test_aMethod(newMyClass):
-    typetest = newMyClass.type
-    assert typetest
