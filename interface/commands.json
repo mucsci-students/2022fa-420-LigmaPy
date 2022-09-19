@@ -1,0 +1,143 @@
+{
+    "commands":[
+    {
+        "name": "addClass", 
+        "args": [{
+            "name": "name",
+            "desc": "Unique name of the class to be added"
+        }], 
+        "desc": "Adds a new uniquely named class"
+    },
+    {
+        "name": "deleteClass",
+        "args": [{
+            "name":"name",
+            "desc": "Unique name of the class to be removed"
+        }],
+        "desc": "Removes the class with name and its contents"
+    },
+    {
+        "name": "renameClass",
+        "args": [{
+            "name": "old",
+            "desc": "Name of class to be renamed"
+        },
+        {
+            "name": "new",
+            "desc": "New name for class"
+        }],
+        "desc": "Updates a classes name"
+    },
+    {
+        "name": "addRelationship",
+        "args": [{
+            "name": "src",
+            "desc": "Source class of relationship to be added"
+        },
+        {
+            "name": "dest",
+            "desc": "Destination class of relationship to be added"
+        }],
+        "desc": "Creates a relationship between the source and destination classes"
+    },
+    {
+        "name": "deleteRelationship",
+        "args": [{
+            "name": "src",
+            "desc": "Source class of the relationship to be deleted"
+        },
+        {
+            "name": "dest",
+            "desc": "Destination class of the relationship to be deleted"
+        }],
+        "desc": "Removes a relationship between the source and destination classes"
+    },
+    {
+        "name": "addAttribute",
+        "args": [{
+            "name": "class",
+            "desc": "Name of the class to add the attribute to"
+        },
+        {
+            "name": "name",
+            "desc": "Name of the attrubute to be added"
+        }],
+        "desc": "Adds an attribute with name 'name' to a specified class"
+    },
+    {
+        "name": "deleteAttribute",
+        "args": [{
+            "name": "class",
+            "desc": "Name of the class to remove attribute from"
+        },
+        {
+            "name": "name",
+            "desc": "Name of attribute to be removed"
+        }],
+        "desc": "Removes an attribute from a class"
+    },
+    {
+        "name": "renameAttribute",
+        "args": [{
+            "name": "class",
+            "desc": "Name of the class containing the attribute to be renamed"
+        },
+        {
+            "name": "old",
+            "desc": "Current name of the attribute to be renamed"
+        },
+        {
+            "name": "new",
+            "desc": "Name to change attribute to"
+        }],
+        "desc": "Updates an attributes name from old to new in class"
+    },
+    {
+        "name": "save",
+        "args": [{
+            "name": "filename",
+            "desc": "Name of the file to save to"
+        }],
+        "desc": "Saves the current state to a json file with name filename"
+    },
+    {
+        "name": "load",
+        "args": [{
+            "name": "filename",
+            "desc": "Name of the file to load from"
+        }],
+        "desc": "Loads the current state stored in filename"
+    },
+    {
+        "name": "listClasses",
+        "args": [],
+        "desc": "Displays a list of all classes and their contents"
+    },
+    {
+        "name": "listClass",
+        "args": [{
+            "name": "name",
+            "desc": "Name of the class to display contents of"
+        }],
+        "desc": "Displays a list of the specified classes contents"
+    },
+    {
+        "name": "listRelationships",
+        "args": [],
+        "desc": "Lists all relationships that exist between classes"
+    },
+    {
+        "name": "help",
+        "args": [{
+            "name": "cmd",
+            "desc": "Name of the command to display syntax"
+        }],
+        "desc": "A list of commands and how to use them"
+    },
+    {
+        "name": "exit",
+        "args": [],
+        "desc": "Exits the application"
+    }
+    
+]}
