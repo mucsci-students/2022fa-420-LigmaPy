@@ -7,7 +7,7 @@ import pandas as pd
 #TO-DO need to remove print statments 
 class Model():
     def __init__(self):
-        self.data=Load_data
+        self.data=[]
 
     def Load_data(self):
         path_to_json = 'UMLsavefiles/'
