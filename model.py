@@ -55,5 +55,3 @@ class Model():
     def Get_relationship(self,source, destination):
         relationships.findRelationship(source, destination)
         return "TO-DO"
-
-
