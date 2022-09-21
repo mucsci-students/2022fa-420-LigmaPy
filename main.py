@@ -1,3 +1,4 @@
+# Entry point
 from controller import Controller
 
 if __name__ == '__main__':
