@@ -18,6 +18,7 @@ def newMyClass(caplog):
         addClass('test3')
         addRelationship( 'test2', 'test3')
         deleteRelationship( 'test2', 'test3')
+        addRelationship( 'test1', 'test2')
         print(relationIndex.__len__())
         return x
 
