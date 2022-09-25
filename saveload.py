@@ -139,7 +139,8 @@ def load(filename):
     fileExists = os.path.exists("UMLsavefiles/" + filename + '.json')
     if not fileExists:    
         print("File not found")
-        return (u.classIndex, r.relationIndex)
+        return
+        #return (u.classIndex, r.relationIndex)
 
     
     #creates lists to return
@@ -149,7 +150,10 @@ def load(filename):
     #checks if file is empty and returns empty lists
 
     if os.stat("UMLsavefiles/" + filename + ".json").st_size == 0:
-        return(returnClasses, returnRelations)    
+        u.classIndex = returnClasses
+        r.relationIndex = returnRelations
+        return
+        #return(returnClasses, returnRelations)    
     
     try:
         #opens the file and save contents as a json string
@@ -188,11 +192,15 @@ def load(filename):
                 if each.name == d:
                     dest = each
             returnRelations.append(r.UMLRelationship(sorc, dest, t))
-                
-        return (returnClasses, returnRelations)
+
+        u.classIndex = returnClasses
+        r.relationIndex = returnRelations       
+        return 
+        #return (returnClasses, returnRelations)
     
     #if error loading return original lists
     except Exception as e:
         print("Load failed")
-        return (u.classIndex, r.relationIndex)
+        return
+        #return (u.classIndex, r.relationIndex)
  
