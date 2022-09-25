@@ -85,7 +85,7 @@ class Controller():
         # Pass data to view
         user_input = self.view.viewPanel.v_entry.get()
         try:
-            result = self.model.Add_relationship(user_input)
+            result = self.model.Remove_class(user_input)
         except ValueError:
             result = 'Failure'
         self.view.viewPanel.v_num.set(result)
@@ -100,3 +100,8 @@ class Controller():
             result = 'Failure'
         self.view.viewPanel.v_num.set(result)
 
+    def save(self):
+        self.model.Save()
+        
+    def load(self):
+        self.model.Load()

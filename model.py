@@ -25,11 +25,11 @@ class Model():
             return "Saved successfully!"
     
     def Add_class(self,classname):
-        UMLClass.addClass(className)
+        UMLClass.addClass(classname)
         return f"Added {classname} to List of Classes"
 
     def Remove_class(self,classname):
-        UMLClass.deleteClass(className)
+        UMLClass.deleteClass(classname)
         return f'Removed {classname} from List of Classes'
 
     def Rename_class(self,oldName, newName):
