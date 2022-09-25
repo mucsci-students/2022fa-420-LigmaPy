@@ -11,10 +11,72 @@ from pathvalidate import is_valid_filename
 
 import UMLClass as u
 import relationship as r
-import attributes as a
+import methods as m
+import fields as f
+import params as p
 
 
 ##################################################################
+
+# Test code
+"""
+class UMLClass:
+    def __init__(self, name: str):
+            self.name = name
+            self.fields = []
+            self.methods = []
+        
+class UMLMethod:
+    def __init__(self, name: str, returnType = None):
+        self.name = name
+        self.return_type = returnType
+        self.params = []
+
+class UMLField:
+    def __init__ (self, name: str , type = None):
+        self.name = name
+        self.type = type
+    
+class UMLParameters:
+    def __init__ (self, name: str , type = None):
+        self.name = name
+        self.type = type
+
+class UMLRelationship:
+    def __init__ (self, source, destination, type):
+        self.source = source
+        self.destination = destination
+        self.type = type
+
+tire = UMLClass("Tire")
+tiref1 = UMLField('diameter', 'float')
+tiref2 = UMLField("psi", "float")
+tiref3 = UMLField("brand", 'string')
+tirem1 = UMLMethod('setPSI', 'void')
+tirem1p1 = UMLParameters("new_psi", "string")
+tirem1.params.append(tirem1p1)
+tire.fields.append(tiref1)
+tire.fields.append(tiref2)
+tire.fields.append(tiref3)
+tire.methods.append(tirem1)
+
+car = UMLClass("Car")
+carf1 = UMLField("make", 'string')
+carf2 = UMLField("model", 'string')
+carf3 = UMLField("year", "int")
+carm1 = UMLMethod("drive", "void")
+car.fields.append(carf1)
+car.fields.append(carf2)
+car.fields.append(carf3)
+car.methods.append(carm1)
+
+u.classIndex.append(tire)
+u.classIndex.append(car)
+
+r1 = UMLRelationship(tire, car, "composition")
+
+r.relationIndex.append(r1)
+"""
 
 
 def save(classes, relations, filename):
@@ -43,8 +105,13 @@ def save(classes, relations, filename):
         print("Created directory: UMLsavefiles")
         os.mkdir("UMLsavefiles")
     
-    #combines both into a tuple
-    t = (classes, relations)
+    #converts each relation class object to just the name
+    for each in relations:
+        each.source = each.source.name
+        each.destination = each.destination.name
+    
+    #combines both into a dictionary
+    t = {"classes": classes, "relationships": relations}
     
     #encodes tuple above to json
     jsonString = json.dumps(t, default=vars, indent=4)
@@ -53,7 +120,7 @@ def save(classes, relations, filename):
     with open("UMLsavefiles/" + filename + ".json", "w") as outfile:
         outfile.write(jsonString)
 
-
+#save(u.classIndex, r.relationIndex, "testfile")
 ##################################################################
 
 
@@ -65,7 +132,9 @@ def load(filename):
     :param param1: the file name to load
     :returns: tuple(list[UMLclass], list[relationships]) 
     """
-    
+    if filename.endswith('.json'):
+        filename = filename[:-5]
+        
     #check if file exists returns original lists if not
     fileExists = os.path.exists("UMLsavefiles/" + filename + '.json')
     if not fileExists:    
@@ -86,26 +155,40 @@ def load(filename):
         #opens the file and save contents as a json string
         with open("UMLsavefiles/" + filename + ".json", "r") as openfile: 
             jsonObject = json.load(openfile)
+
+        classes = jsonObject["classes"]
+        relationships = jsonObject["relationships"]
         
-        #divides the json string into classes/relations
-        classes = jsonObject[0]
-        relations = jsonObject[1]
-
-        #loops through classes json and decodes each piece creating new objects then adds them to a list
-        for eachClass in classes:
-            className = str(eachClass['name'])
-            attributesList = eachClass['attributes']
-
-            className = u.UMLClass(className)
-            for eachAttribute in attributesList:
-                className.attributes.append(a.attribute(eachAttribute['name']))
-            returnClasses.append(className)
+        #creates new class object for each json class and adds them to return list
+        for c in classes:
+            name = c['name']
+            classObj = u.UMLClass(name)
+            fields = c['fields']
+            for fld in fields:
+                classObj.fields.append(f.UMLField(fld['name'],fld['type']))
+            methods = c['methods']
+            for meth in methods:
+                mName = meth["name"]
+                mType = meth["return_type"]
+                methodObj = m.UMLMethod(mName, mType)
+                mParams = meth['params']
+                for p in mParams:
+                    methodObj.params.append(p.UMLParameters(p['name'],p['type']))
+                classObj.methods.append(methodObj)
+            returnClasses.append(classObj)
         
-        #loops through relationship json and decodes each piece creating new objects then adds them to a list
-        for eachRelation in relations:    
-            name = r.UMLRelationship(eachRelation['source'], eachRelation['destination'])
-            returnRelations.append(name) 
-
+        #creates new relation for each json relation and adds them to return list
+        for r in relationships:
+            s = r['source']
+            d = r['destination']
+            t = r['type']
+            for each in returnClasses:
+                if each.name == s:
+                    sorc = each
+                if each.name == d:
+                    dest = each
+            returnRelations.append(r.UMLRelationship(sorc, dest, t))
+                
         return (returnClasses, returnRelations)
     
     #if error loading return original lists
