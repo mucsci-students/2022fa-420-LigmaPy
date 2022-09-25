@@ -105,7 +105,10 @@ def load(filename):
         for eachRelation in relations:    
             name = r.UMLRelationship(eachRelation['source'], eachRelation['destination'])
             returnRelations.append(name) 
-
+            
+        #apapend global lists
+        r.relationIndex.append(returnRelations)
+        u.classIndex.append(returnClasses)
         return (returnClasses, returnRelations)
     
     #if error loading return original lists
@@ -113,3 +116,4 @@ def load(filename):
         print("Load failed")
         return (u.classIndex, r.relationIndex)
  
+load('testfile')

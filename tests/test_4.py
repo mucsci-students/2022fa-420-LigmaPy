@@ -6,7 +6,7 @@ import UMLClass as UMLClass
 def test_model():
     test_model= model.Model()
 
-    save=test_model.Load_data()
+    save=test_model.Load_data('testfile')
     test1=relationships.relationIndex  
     print(test1)
     assert  type(save[0][0])==(UMLClass.UMLClass)

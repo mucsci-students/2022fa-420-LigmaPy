@@ -9,20 +9,40 @@ class Model():
     def __init__(self):
         self.data=[]
 
-    def Load_data(self):
-        path_to_json = 'UMLsavefiles/'
-        json_files = [pos_json for pos_json in os.listdir(path_to_json) if pos_json.endswith('.json')]
-        print(json_files)  # this is the most recent json file in the directory
-        return saveload.load(json_files[0].strip('.json'))
-    def Save(self, classes,relationships, filename):
-        oldtime=os.path.getmtime('UMLsaefiles/') 
-        #TO-DO need to test if file was created. 
-        saveload.save(classes, relationships, filename)
-        newtime=os.path.getmtime('UMLsaefiles/') 
-        if oldtime == newtime:
-            return "Failed to save (new filename)"
-        else:
-            return "Saved successfully!"
+#update so it clears local lists before append 
+    def Load_data(self, file):
+        save= saveload.load(filename=file)
+        classes=save[0]
+        relationships=[1]
+        cleanclasses=[]
+        cleanrel=[]
+        for items in classes:
+            cleanclasses.append(items.name)
+        for items in relationships:
+            cleanrel.append(items.__repr__())
+            
+        returnstring=(cleanclasses.__str__(),cleanrel.__str__())
+        return returnstring
+        # if no filename is given we can find the most recent file and load it 
+        # try:
+        #     path_to_json = 'UMLsavefiles/'
+        #     json_files = [pos_json for pos_json in os.listdir(path_to_json) if pos_json.endswith('.json')]
+        #     print(json_files)  # this is the most recent json file in the directory
+        #     return saveload.load(json_files[0].strip('.json'))
+        # except ValueError: 
+        #     return "No Recent Save Files Found"
+        
+    
+    def Save_data(self, file):
+        return saveload.save(filename=file,classes=UMLClass.classIndex,relations=relationships.relationIndex)
+        # oldtime=os.path.getmtime('UMLsaefiles/') 
+        # #TO-DO need to test if file was created. 
+        # saveload.save(UMLClass.classIndex, relationships.relationIndex, filename)
+        # newtime=os.path.getmtime('UMLsaefiles/') 
+        # if oldtime == newtime:
+        #     return "Failed to save (new filename)"
+        # else:
+        #     return "Saved successfully!"
     
     def Add_class(self,classname):
         UMLClass.addClass(classname)
@@ -37,22 +57,29 @@ class Model():
         return f'Renamed {oldName} to {newName}'
 
     def Find_class(self, className):
-        if UMLClass.findClass(className)==True:
+        if UMLClass.findClass(className)!=None:
             return f'Found {className}'
-        else:
-            return f'Not Found {className}'
+        elif UMLClass.findClass(className)==None:
+            return f' {className} Not Found'
 
     def Add_relationship(self,source,destination):
         relationships.addRelationship(source, destination)
-        return "TO-DO"
+        return "f'Relationship created between {source} and {destination}'"
 
 
     def Remove_relationship(self,source,destination):
         relationships.deleteRelationship(source, destination)
-        return "TO-DO"
+        return "f'Deleted relationship between {source} and {destination}'"
 
         
     def Get_relationship(self,source, destination):
         relationships.findRelationship(source, destination)
-        return "TO-DO"
+        return f'Relationship found between {source} and {destination}'
 
+    def List_relationships(self):
+        return relationships.relationIndex
+
+    def List_classes(self):
+        return UMLClass.classIndex
+    
+    
