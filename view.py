@@ -82,6 +82,3 @@ class ViewPanel():
         self.btn10.bind("<Button>", controller.getlistofrelationships)
         
         #self.btn8.grid(row=4, column=0)
-        
-       
-        
