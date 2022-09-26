@@ -154,8 +154,8 @@ class Interface(cmd.Cmd):
     def emptyline(self):
         pass
 
-def main():
-    Interface().cmdloop()
+# def display():
+#     Interface().cmdloop()
 
-if __name__=="__main__":
-    main()
+# if __name__=="__main__":
+#     main()

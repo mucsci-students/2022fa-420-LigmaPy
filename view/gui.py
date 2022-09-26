@@ -6,8 +6,8 @@ Description : Constructs and displays the gui
 
 import tkinter as tk
 # Local imports
-import UMLNotebook as notebook
-import UMLOutput as can
+from . import UMLNotebook as notebook
+from . import UMLOutput as can
 
 def display():
     """
