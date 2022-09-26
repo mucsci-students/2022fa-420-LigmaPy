@@ -25,23 +25,23 @@ def createNotebook(frame : tk.Frame):
     tabControl = ttk.Notebook(frame)
     # Class tab
     classTab = tk.Frame(master=tabControl, bg='#bcade0')
-    tabControl.add(classTab, text="Class")
+    tabControl.add(classTab, text=f'{"Class":^20s}')
     b.classTabContents(classTab)
     # Relationship tab
     relationTab = tk.Frame(master=tabControl, bg='#bcade0')
-    tabControl.add(relationTab, text="Relationship")
+    tabControl.add(relationTab, text=f'{"Relationship":^20s}')
     b.relationTabContents(relationTab)
     # Field tab
     fieldTab = tk.Frame(master=tabControl, bg='#bcade0')
-    tabControl.add(fieldTab, text="Field")
+    tabControl.add(fieldTab, text=f'{"Field":^20s}')
     b.fieldTabContent(fieldTab)
     # Method tab
     methTab = tk.Frame(master=tabControl, bg='#bcade0')
-    tabControl.add(methTab, text="Method")
+    tabControl.add(methTab, text=f'{"Method":^20s}')
     b.methodTabContent(methTab)
     # Parameter tab
     paramTab = tk.Frame(master=tabControl, bg='#bcade0')
-    tabControl.add(paramTab, text="Parameter")
+    tabControl.add(paramTab, text=f'{"Parameter":^20s}')
     b.parameterTabContents(paramTab)
 
     return tabControl
