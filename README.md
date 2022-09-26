@@ -22,8 +22,9 @@ python3 -m pip install -r requirements.txt
 3. In a terminal, navigate to the `/2022fa-420-Ligmapy/` directory.
 4. To run the UML editor type:
 ```bash
-python interface.py
+python uml.py [--cli]
 ```
+Note: Add the --cli flag to run the CLI editor
 
 ## CLI Commands
 
