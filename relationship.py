@@ -10,9 +10,10 @@ import UMLClass
 ###################################################################################################
 
 class UMLRelationship:
-    def __init__(self, source: str, destination: str):
+    def __init__(self, source: str, destination: str, type:str):
         self.source = source
         self.destination = destination
+        self.type = type
 
         print(f"\nRelationship added: {repr(self)}")
 
@@ -85,7 +86,9 @@ def deleteRelationship(source: str, destination: str):
         print(f"\nDeleted Relationship: {repr(deletedRelation)}")
     else:
         print(f"Relationship does not exist: [{source}] - [{destination}]")
-
+        
+def editType(self, newType:str):
+    self.type = newType
 ###################################################################################################
 
 relationIndex : List[UMLRelationship]= []
