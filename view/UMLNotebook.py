@@ -5,9 +5,8 @@ Description : Constructs the tkinter Notebook to switch between tabs.
 """
 import tkinter as tk
 from tkinter import ttk
-
 # Local imports
-import buttons as b
+from . import buttons as b
 
 def createNotebook(frame : tk.Frame):
     """
