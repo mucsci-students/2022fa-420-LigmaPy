@@ -15,7 +15,7 @@ def display():
     """
     root = tk.Tk()
     root.title("UML Editor")
-
+    
     root.rowconfigure(0, weight=1)
     root.rowconfigure(1, weight=1)
     root.columnconfigure(1, weight=1)
@@ -28,8 +28,12 @@ def display():
     root.geometry(f"{screenWidth}x{screenHeight}")
     # Create the notebook (tabs) for UML modifications
     pane = notebook.createNotebook(inputFrame)
-
+    # Enables the ability to Ctrl-Tab through notebook tabs
+    pane.enable_traversal()
+    
+    # Position inputFrame on the grid layout
     inputFrame.grid(row=0, column=0, sticky="nsew", rowspan=2)
+    # Configure the inputFrame grid
     inputFrame.rowconfigure(0, weight=1)
     inputFrame.columnconfigure(1, weight=1)
     pane.grid(row=0, column=0, sticky="nsew", rowspan=2)
@@ -41,11 +45,10 @@ def display():
     outputFrame.grid(row=0, column=1, sticky="nswe", rowspan=2)
     outputFrame.rowconfigure(0, weight=1)
     outputFrame.columnconfigure(1, weight=1)
-
+    # Pack the canvas and allow it to fill the rest of the grid layout
     canvas.pack(fill=tk.BOTH, expand=1)
-
+    # Position the canvas on the grid
     canvas.grid(row=0, column=1, sticky="nswe", rowspan=2)
-
     # Adds menubar to the root window
     root.config(menu=menubar(root))
     root.mainloop()
