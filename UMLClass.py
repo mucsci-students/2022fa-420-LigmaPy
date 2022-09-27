@@ -15,9 +15,7 @@ class UMLClass:
         self.methods = []
 
     def rename(self, newName):
-        print(f"\nClass \"{self.name}\" was renamed to \"{newName}\"")
         self.name = newName
-
 
 def isNameUnique(name: str):
     """
@@ -51,23 +49,26 @@ def addClass(name: str):
     Creates and adds a new class to the classIndex
 
     :param name: the name of the new class
+    :returns: -1 if the class name is empty
+              -2 if the class name already exists
+               1 if the class was created
     """
     if len(name.strip()) == 0:
-        print("Class name cannot be empty.")
-        return
+        return -1
     if isNameUnique(name):
         newClass = UMLClass(name)
         classIndex.append(newClass)
-        print(f"\nClass \"{newClass.name}\" has been created!")
+        return 1
     else:
-        print(f"\nClass \"{name}\" already exists, could not create.")
-
+        return -2
 
 def deleteClass(name: str):
     """ 
     Deletes a class by it's name
 
     :param name: the name of the class to delete
+    :returns: -1 if the class does not exist
+               1 if the class deletion was successful
     """
     index = findClass(name)
     if index is not None:
@@ -80,10 +81,9 @@ def deleteClass(name: str):
         for each in listToDel:
             relationship.deleteRelationship(each.source,each.destination)
         classIndex.pop(index)
-        print(f"\nClass \"{name}\" has been deleted.")
+        return 1
     else:
-        print(f"\nClass \"{name}\" does not exist")
-        print("Deletion failed")
+        return -1
 
 
 def renameClass(oldName: str, newName: str):
@@ -92,11 +92,12 @@ def renameClass(oldName: str, newName: str):
 
     :param oldName: the target class's name
     :param newName: the new name for the target class
+    :returns: -1 if a class already exists with the new name
+              -2 if the class to rename does not exist
+               1 if the rename was successful
     """
     if findClass(newName):
-        print(f"\nA class already exists with the name \"{newName}\"")
-        print("Rename failed")
-        return
+        return -1
 
     index = findClass(oldName)
     if index is not None:
@@ -110,9 +111,9 @@ def renameClass(oldName: str, newName: str):
             # Check destination
             elif relation.destination == oldName:
                 relationship.relationIndex[i].destination = newName
+        return 1
     else:
-        print(f"\nClass \"{oldName}\" does not exist")
-        print("Rename failed")
+        return -2
 
 
 # List of all class objects the user has created
