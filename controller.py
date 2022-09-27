@@ -1,6 +1,6 @@
 import tkinter as Tk
 from model import Model
-from view import View
+from View import View
 
 
 # to-do trim user input 
