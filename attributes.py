@@ -210,31 +210,62 @@ def deleteField(name, className):
     else:
         return -2
 
-def renameAttribute(oldName, newName, className):
+def renameMethod(oldName, newName, className):
     """
-    Renames a given attribute
+    Renames a given method
 
-    :param oldName: current name of attribute
-    :param newName: new name for attribute
-    :param className: name of class attribute exists within
+    :param oldName: current name of method
+    :param newName: new name for method
+    :param className: name of class method exists within
+    :returns: -1 if given class does not exist
+              -2 if given method does not exist in class
+              -3 if the new name is already in use in class
     """
 
-    attIndexOld = findAttribute(oldName, className)
-    attIndexNew = findAttribute(newName, className)
+    attIndexOld = findMethod(oldName, className)
+    attIndexNew = findMethod(newName, className)
 
-    # Runs if attribute exists and can be renamed to new name
+    # Runs if method exists and can be renamed to new name
     if attIndexOld >= 0 and attIndexNew < 0:
         index = C.findClass(className)
-        C.classIndex[index].attributes[attIndexOld].rename(newName)
-        print(f'\"{oldName}\" attribute has been renamed to \"{newName}\" in the \"{className}\" class!')
-    # Runs if given attribute does not exist in given class
+        C.classIndex[index].methods[attIndexOld].rename(newName)
+        return 1
+    # Runs if given method does not exist in given class
     elif attIndexOld == -2:
-        print(
-            f'\"{oldName}\" attribute does not exist in the \"{className}\" class.')
+        return -2
     # Runs if given class does not exist
     elif attIndexOld == -1:
-        print(f"\nClass \"{className}\" does not exist")
-        return
-    # Runs if attribute already exists with new name in given class
+        return -1
+    # Runs if method already exists with new name in given class
     else:
-        print(f'\"{newName}\" is the name of an existing attribute in the \"{className}\" class.')
+        return -3
+
+def renameField(oldName, newName, className):
+    """
+    Renames a given field
+
+    :param oldName: current name of field
+    :param newName: new name for field
+    :param className: name of class field exists within
+    :returns: -1 if given class does not exist
+              -2 if given field does not exist in class
+              -3 if the new name is already in use in class
+    """
+
+    attIndexOld = findField(oldName, className)
+    attIndexNew = findField(newName, className)
+
+    # Runs if field exists and can be renamed to new name
+    if attIndexOld >= 0 and attIndexNew < 0:
+        index = C.findClass(className)
+        C.classIndex[index].fields[attIndexOld].rename(newName)
+        return 1
+    # Runs if given field does not exist in given class
+    elif attIndexOld == -2:
+        return -2
+    # Runs if given class does not exist
+    elif attIndexOld == -1:
+        return -1
+    # Runs if field already exists with new name in given class
+    else:
+        return -3
