@@ -1,5 +1,5 @@
 """
-Author : Ammanuel Amare
+Author : Ammanuel Amare, Christian Shepperson
 Filename : relationship.py
 Description : Adds and deletes relationships
 """
@@ -20,6 +20,12 @@ class UMLRelationship:
     def __repr__(self):
         return f"[{self.source}] - [{self.destination}]"
 
+    #changes the type of the relationship
+    def editType(self, newType:str):
+
+        self.type = newType
+        return 1
+
 ###################################################################################################
 
 def findRelationship(source: str, destination: str):
@@ -39,6 +45,7 @@ def findRelationship(source: str, destination: str):
         if source == relation.source and destination == relation.destination:
             return relationLoc
         relationLoc+=1
+    #search error
     return -1
 
 def addRelationship(source: str, destination: str):
@@ -51,20 +58,18 @@ def addRelationship(source: str, destination: str):
         :returns: The message of the status of adding a relationship
     """
     if source == destination:
-        print("Source class cannot be the same a destination class.")
-        return
+        return -1
     # Check if both source and destination classes exist
     if UMLClass.findClass(source) is not None and UMLClass.findClass(destination) is not None:
         for relation in relationIndex:
             # Check if relationship already exists
             if source == relation.source and destination == relation.destination:
-                print(f"Error: Relationship already exists.")
-                return
+                return -1
         # Append the new relationship to the relationIndex list
         newRelation = UMLRelationship(source, destination)
         relationIndex.append(newRelation)
     else:
-        print(f"The {source} or {destination} class does not exist.")
+        return -1
 
 def deleteRelationship(source: str, destination: str):
     """
@@ -83,12 +88,11 @@ def deleteRelationship(source: str, destination: str):
         if index > -1:
             relationIndex.pop(index)
 
-        print(f"\nDeleted Relationship: {repr(deletedRelation)}")
+        return 1
     else:
-        print(f"Relationship does not exist: [{source}] - [{destination}]")
+        #source and destination do not exist
+        return -1
         
-def editType(self, newType:str):
-    self.type = newType
 ###################################################################################################
 
 relationIndex : List[UMLRelationship]= []
