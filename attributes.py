@@ -1,15 +1,17 @@
 """
-Author: Julia Geesaman
+Authors: Julia Geesaman, Sam Noggle
 Filename: attributes.py
-Description: Adds, deletes, and renames an attribute
+Description: Adds, deletes, and renames an attribute (method or field)
 """
+
+# make class have a sep list for methods and fields 
 
 import UMLClass as C
 
 
-class attribute:
+class attribute():
     """
-    This is the attribute class.
+    This is the attribute super class.
     """
 
     def __init__(self, name):
@@ -26,6 +28,28 @@ class attribute:
 
         self.name = newName
 
+class method(attribute):
+    def __init__(self, name : str, retType : str):
+        super().__init__(name)
+        self.return_type = retType
+        self.params = []
+    
+    def getParam(self, paramName : str):
+        for param in self.params:
+            if param.name == paramName:
+                return param
+
+# UNFINISHED
+class field(attribute):
+    def __init__(self, name : str, t : str):
+        super().__init__(name)
+        self.type = t
+
+    def changeType(self, newName : str):
+        self.name = newName
+
+
+###########################################################
 
 def findAttribute(name, className):
     """
