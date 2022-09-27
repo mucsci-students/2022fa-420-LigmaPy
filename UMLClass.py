@@ -11,7 +11,8 @@ import relationship
 class UMLClass:
     def __init__(self, name: str):
         self.name = name
-        self.attributes = []
+        self.fields = []
+        self.methods = []
 
     def rename(self, newName):
         print(f"\nClass \"{self.name}\" was renamed to \"{newName}\"")

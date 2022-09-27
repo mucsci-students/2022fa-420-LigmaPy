@@ -4,8 +4,6 @@ Filename: attributes.py
 Description: Adds, deletes, and renames an attribute (method or field)
 """
 
-# make class have a sep list for methods and fields 
-
 import UMLClass as C
 
 
@@ -34,12 +32,17 @@ class method(attribute):
         self.return_type = retType
         self.params = []
     
-    def getParam(self, paramName : str):
-        for param in self.params:
-            if param.name == paramName:
-                return param
+    def findParam(self, paramName : str):
+        """
+        Searches the method's parameter list for a parameter by name
 
-# UNFINISHED
+        :param paramName: The name of the parameter to find
+        :return: The index of where that parameter is in the list
+        """
+        for i, param in enumerate(self.params):
+            if param.name == paramName:
+                return i
+
 class field(attribute):
     def __init__(self, name : str, t : str):
         super().__init__(name)
@@ -51,16 +54,16 @@ class field(attribute):
 
 ###########################################################
 
-def findAttribute(name, className):
+def findMethod(name, className):
     """
-    This method finds whether the given class and attribute exist.
+    Finds whether the given method exists in a class
 
-    :param name: name of the attribute
-    :param className: class attribute is part of
+    :param name: name of the method
+    :param className: class method is part of
 
     :returns: -1 if given class does not exist
-            -2 if attribute does not exist in given class
-            i index of attribute, if attribute and class exist
+            -2 if method does not exist in given class
+            i index of method, if method and class exist
     """
 
     classIndex = C.findClass(className)
@@ -69,35 +72,89 @@ def findAttribute(name, className):
     if classIndex is None:
         return -1
 
-    for i, a in enumerate(C.classIndex[classIndex].attributes):
+    for i, a in enumerate(C.classIndex[classIndex].methods):
+        if a.name == name:
+            return i
+    return -2
+
+def findField(name, className):
+    """
+    Finds whether the given field exists in a class
+
+    :param name: name of the field
+    :param className: class field is part of
+
+    :returns: -1 if given class does not exist
+              -2 if field does not exist in given class
+               i index of field, if field and class exist
+    """
+
+    classIndex = C.findClass(className)
+
+    # runs if class not found
+    if classIndex is None:
+        return -1
+
+    for i, a in enumerate(C.classIndex[classIndex].fields):
         if a.name == name:
             return i
     return -2
 
 
-def addAttribute(name, className):
-    """
-    Creates a new attribute object and inserts it into given class' list of attributes
 
-    :param name: name of the attribute
-    :param className: name of class attribute should be added to
+def addMethod(name : str, className : str, ret_type : str):
+    """
+    Creates a new method object and inserts it into given class' list of methods
+
+    :param name: name of the method
+    :param className: name of class method should be added to
+    :param ret_type: The type that the method will return
+    :returns: -1 if the class does not exist
+              -2 if the method already exists
+               1 on successful add
     """
 
-    attributeIndex = findAttribute(name, className)
+    existingMethod = findMethod(name, className, ret_type)
 
     # Runs if attribute with given name already exists in given class
-    if attributeIndex >= 0:
-        print(f'Attribute \"{name}\" already exists in \"{className}\" class.')
+    if existingMethod >= 0:
+        return -2
     # Runs if attribute does not exist in given class
-    elif attributeIndex == -2:
-        newAttribute = attribute(name)
+    elif existingMethod == -2:
+        newMethod = method(name, ret_type)
         index = C.findClass(className)
-        C.classIndex[index].attributes.append(newAttribute)
-        print(f'\"{name}\" attribute has been added to the \"{className}\" class!')
+        C.classIndex[index].methods.append(newMethod)
+        return 1
     # Runs if given class does not exist
     else:
-        print(f"\nClass \"{className}\" does not exist")
-        return
+        return -1
+
+def addField(name, className, t):
+    """
+    Creates a new field object and inserts it into given class' list of fields
+
+    :param name: name of the field
+    :param className: name of class field should be added to
+    :param t: The type of the field
+    :returns: -1 if the class does not exist
+              -2 if the field already exists
+               1 on successful add
+    """
+
+    existingField = findField(name, className, t)
+
+    # Runs if attribute with given name already exists in given class
+    if existingField >= 0:
+        return -2
+    # Runs if attribute does not exist in given class
+    elif existingField == -2:
+        newField = field(name, t)
+        index = C.findClass(className)
+        C.classIndex[index].fields.append(newField)
+        return 1
+    # Runs if given class does not exist
+    else:
+        return -1
 
 
 def deleteAttribute(name, className):
