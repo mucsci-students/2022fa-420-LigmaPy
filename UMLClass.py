@@ -17,6 +17,7 @@ class UMLClass:
     def rename(self, newName):
         self.name = newName
 
+
 def isNameUnique(name: str):
     """
     Checks classIndex for duplicate names
@@ -62,6 +63,7 @@ def addClass(name: str):
     else:
         return -2
 
+
 def deleteClass(name: str):
     """ 
     Deletes a class by it's name
@@ -73,13 +75,13 @@ def deleteClass(name: str):
     index = findClass(name)
     if index is not None:
         listToDel = []
-        # Remove relationships 
+        # Remove relationships
         for relation in relationship.relationIndex:
             if relation.source == name or relation.destination == name:
                 listToDel.append(relation)
                 #relationship.deleteRelationship(relation.source, relation.destination)
         for each in listToDel:
-            relationship.deleteRelationship(each.source,each.destination)
+            relationship.deleteRelationship(each.source, each.destination)
         classIndex.pop(index)
         return 1
     else:
@@ -102,7 +104,7 @@ def renameClass(oldName: str, newName: str):
     index = findClass(oldName)
     if index is not None:
         classIndex[index].rename(newName)
-        
+
         # Update it's relationships
         for i, relation in enumerate(relationship.relationIndex):
             # Check source

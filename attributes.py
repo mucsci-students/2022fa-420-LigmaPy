@@ -26,35 +26,26 @@ class attribute():
 
         self.name = newName
 
+
 class method(attribute):
-    def __init__(self, name : str, retType : str):
+    def __init__(self, name: str, retType: str):
         super().__init__(name)
         self.return_type = retType
         self.params = []
-    
-    def findParam(self, paramName : str):
-        """
-        Searches the method's parameter list for a parameter by name
 
-        :param paramName: The name of the parameter to find
-        :return: The index of where that parameter is in the list
-        """
-        for i, param in enumerate(self.params):
-            if param.name == paramName:
-                return i
 
 class field(attribute):
-    def __init__(self, name : str, t : str):
+    def __init__(self, name: str, t: str):
         super().__init__(name)
         self.type = t
 
-    def changeType(self, newName : str):
+    def changeType(self, newName: str):
         self.name = newName
 
 
 ###########################################################
 
-# Each of these have been specialized into methods and fields. 
+# Each of these have been specialized into methods and fields.
 # We could possibly merge these into one, and require another
 # parameter passed to specify which type - but this is up
 # to us. Just a design thing
@@ -82,6 +73,7 @@ def findMethod(name, className):
             return i
     return -2
 
+
 def findField(name, className):
     """
     Finds whether the given field exists in a class
@@ -106,8 +98,7 @@ def findField(name, className):
     return -2
 
 
-
-def addMethod(name : str, className : str, ret_type : str):
+def addMethod(name: str, className: str, ret_type: str):
     """
     Creates a new method object and inserts it into given class' list of methods
 
@@ -133,6 +124,7 @@ def addMethod(name : str, className : str, ret_type : str):
     # Runs if given class does not exist
     else:
         return -1
+
 
 def addField(name, className, t):
     """
@@ -186,6 +178,7 @@ def deleteMethod(name, className):
     else:
         return -2
 
+
 def deleteField(name, className):
     """
     Deletes a field object from a given class.
@@ -209,6 +202,7 @@ def deleteField(name, className):
     # Runs if class exists but field does not
     else:
         return -2
+
 
 def renameMethod(oldName, newName, className):
     """
@@ -239,6 +233,7 @@ def renameMethod(oldName, newName, className):
     # Runs if method already exists with new name in given class
     else:
         return -3
+
 
 def renameField(oldName, newName, className):
     """
