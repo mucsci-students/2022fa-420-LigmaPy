@@ -54,6 +54,11 @@ class field(attribute):
 
 ###########################################################
 
+# Each of these have been specialized into methods and fields. 
+# We could possibly merge these into one, and require another
+# parameter passed to specify which type - but this is up
+# to us. Just a design thing
+
 def findMethod(name, className):
     """
     Finds whether the given method exists in a class
@@ -157,28 +162,53 @@ def addField(name, className, t):
         return -1
 
 
-def deleteAttribute(name, className):
+def deleteMethod(name, className):
     """
-    Deletes an attribute object from a given class.
+    Deletes a method object from a given class.
 
-    :param name: name of attribute to be deleted
-    :param className: name of class atrribute should be deleted from
+    :param name: name of method to be deleted
+    :param className: name of class method should be deleted from
+    :returns: -1 if the class does not exist
+              -2 if the method does not exist
+               1 on successful deletion
     """
-    attributeIndex = findAttribute(name, className)
+    methIndex = findMethod(name, className)
 
     # Runs if given class does not exist
-    if attributeIndex == -1:
-        print(f"\nClass \"{className}\" does not exist")
-        return
+    if methIndex == -1:
+        return -1
     # Runs if class and attribute exist
-    elif attributeIndex >= 0:
+    elif methIndex >= 0:
         classIndex = C.findClass(className)
-        C.classIndex[classIndex].attributes.pop(attributeIndex)
-        print(f'\"{name}\" attribute has been deleted from \"{className}\" class!')
-    # Runs if class exists but attribute does not
+        C.classIndex[classIndex].methods.pop(methIndex)
+        return 1
+    # Runs if class exists but method does not
     else:
-        print(f'\"{name}\" attribute does not exist in \"{className}\" class.')
+        return -2
 
+def deleteField(name, className):
+    """
+    Deletes a field object from a given class.
+
+    :param name: name of field to be deleted
+    :param className: name of class field should be deleted from
+    :returns: -1 if the class does not exist
+              -2 if the field does not exist
+               1 on successful deletion
+    """
+    fieldIndex = findField(name, className)
+
+    # Runs if given class does not exist
+    if fieldIndex == -1:
+        return -1
+    # Runs if class and attribute exist
+    elif fieldIndex >= 0:
+        classIndex = C.findClass(className)
+        C.classIndex[classIndex].fields.pop(fieldIndex)
+        return 1
+    # Runs if class exists but field does not
+    else:
+        return -2
 
 def renameAttribute(oldName, newName, className):
     """
