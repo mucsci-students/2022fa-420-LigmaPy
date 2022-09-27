@@ -1,15 +1,15 @@
 """
-Author: Julia Geesaman
+Authors: Julia Geesaman, Sam Noggle
 Filename: attributes.py
-Description: Adds, deletes, and renames an attribute
+Description: Adds, deletes, and renames an attribute (method or field)
 """
 
 import UMLClass as C
 
 
-class attribute:
+class attribute():
     """
-    This is the attribute class.
+    This is the attribute super class.
     """
 
     def __init__(self, name):
@@ -26,17 +26,49 @@ class attribute:
 
         self.name = newName
 
+class method(attribute):
+    def __init__(self, name : str, retType : str):
+        super().__init__(name)
+        self.return_type = retType
+        self.params = []
+    
+    def findParam(self, paramName : str):
+        """
+        Searches the method's parameter list for a parameter by name
 
-def findAttribute(name, className):
+        :param paramName: The name of the parameter to find
+        :return: The index of where that parameter is in the list
+        """
+        for i, param in enumerate(self.params):
+            if param.name == paramName:
+                return i
+
+class field(attribute):
+    def __init__(self, name : str, t : str):
+        super().__init__(name)
+        self.type = t
+
+    def changeType(self, newName : str):
+        self.name = newName
+
+
+###########################################################
+
+# Each of these have been specialized into methods and fields. 
+# We could possibly merge these into one, and require another
+# parameter passed to specify which type - but this is up
+# to us. Just a design thing
+
+def findMethod(name, className):
     """
-    This method finds whether the given class and attribute exist.
+    Finds whether the given method exists in a class
 
-    :param name: name of the attribute
-    :param className: class attribute is part of
+    :param name: name of the method
+    :param className: class method is part of
 
     :returns: -1 if given class does not exist
-            -2 if attribute does not exist in given class
-            i index of attribute, if attribute and class exist
+            -2 if method does not exist in given class
+            i index of method, if method and class exist
     """
 
     classIndex = C.findClass(className)
@@ -45,85 +77,195 @@ def findAttribute(name, className):
     if classIndex is None:
         return -1
 
-    for i, a in enumerate(C.classIndex[classIndex].attributes):
+    for i, a in enumerate(C.classIndex[classIndex].methods):
+        if a.name == name:
+            return i
+    return -2
+
+def findField(name, className):
+    """
+    Finds whether the given field exists in a class
+
+    :param name: name of the field
+    :param className: class field is part of
+
+    :returns: -1 if given class does not exist
+              -2 if field does not exist in given class
+               i index of field, if field and class exist
+    """
+
+    classIndex = C.findClass(className)
+
+    # runs if class not found
+    if classIndex is None:
+        return -1
+
+    for i, a in enumerate(C.classIndex[classIndex].fields):
         if a.name == name:
             return i
     return -2
 
 
-def addAttribute(name, className):
-    """
-    Creates a new attribute object and inserts it into given class' list of attributes
 
-    :param name: name of the attribute
-    :param className: name of class attribute should be added to
+def addMethod(name : str, className : str, ret_type : str):
+    """
+    Creates a new method object and inserts it into given class' list of methods
+
+    :param name: name of the method
+    :param className: name of class method should be added to
+    :param ret_type: The type that the method will return
+    :returns: -1 if the class does not exist
+              -2 if the method already exists
+               1 on successful add
     """
 
-    attributeIndex = findAttribute(name, className)
+    existingMethod = findMethod(name, className, ret_type)
 
     # Runs if attribute with given name already exists in given class
-    if attributeIndex >= 0:
-        print(f'Attribute \"{name}\" already exists in \"{className}\" class.')
+    if existingMethod >= 0:
+        return -2
     # Runs if attribute does not exist in given class
-    elif attributeIndex == -2:
-        newAttribute = attribute(name)
+    elif existingMethod == -2:
+        newMethod = method(name, ret_type)
         index = C.findClass(className)
-        C.classIndex[index].attributes.append(newAttribute)
-        print(f'\"{name}\" attribute has been added to the \"{className}\" class!')
+        C.classIndex[index].methods.append(newMethod)
+        return 1
     # Runs if given class does not exist
     else:
-        print(f"\nClass \"{className}\" does not exist")
-        return
+        return -1
 
-
-def deleteAttribute(name, className):
+def addField(name, className, t):
     """
-    Deletes an attribute object from a given class.
+    Creates a new field object and inserts it into given class' list of fields
 
-    :param name: name of attribute to be deleted
-    :param className: name of class atrribute should be deleted from
+    :param name: name of the field
+    :param className: name of class field should be added to
+    :param t: The type of the field
+    :returns: -1 if the class does not exist
+              -2 if the field already exists
+               1 on successful add
     """
-    attributeIndex = findAttribute(name, className)
+
+    existingField = findField(name, className, t)
+
+    # Runs if attribute with given name already exists in given class
+    if existingField >= 0:
+        return -2
+    # Runs if attribute does not exist in given class
+    elif existingField == -2:
+        newField = field(name, t)
+        index = C.findClass(className)
+        C.classIndex[index].fields.append(newField)
+        return 1
+    # Runs if given class does not exist
+    else:
+        return -1
+
+
+def deleteMethod(name, className):
+    """
+    Deletes a method object from a given class.
+
+    :param name: name of method to be deleted
+    :param className: name of class method should be deleted from
+    :returns: -1 if the class does not exist
+              -2 if the method does not exist
+               1 on successful deletion
+    """
+    methIndex = findMethod(name, className)
 
     # Runs if given class does not exist
-    if attributeIndex == -1:
-        print(f"\nClass \"{className}\" does not exist")
-        return
+    if methIndex == -1:
+        return -1
     # Runs if class and attribute exist
-    elif attributeIndex >= 0:
+    elif methIndex >= 0:
         classIndex = C.findClass(className)
-        C.classIndex[classIndex].attributes.pop(attributeIndex)
-        print(f'\"{name}\" attribute has been deleted from \"{className}\" class!')
-    # Runs if class exists but attribute does not
+        C.classIndex[classIndex].methods.pop(methIndex)
+        return 1
+    # Runs if class exists but method does not
     else:
-        print(f'\"{name}\" attribute does not exist in \"{className}\" class.')
+        return -2
 
-
-def renameAttribute(oldName, newName, className):
+def deleteField(name, className):
     """
-    Renames a given attribute
+    Deletes a field object from a given class.
 
-    :param oldName: current name of attribute
-    :param newName: new name for attribute
-    :param className: name of class attribute exists within
+    :param name: name of field to be deleted
+    :param className: name of class field should be deleted from
+    :returns: -1 if the class does not exist
+              -2 if the field does not exist
+               1 on successful deletion
+    """
+    fieldIndex = findField(name, className)
+
+    # Runs if given class does not exist
+    if fieldIndex == -1:
+        return -1
+    # Runs if class and attribute exist
+    elif fieldIndex >= 0:
+        classIndex = C.findClass(className)
+        C.classIndex[classIndex].fields.pop(fieldIndex)
+        return 1
+    # Runs if class exists but field does not
+    else:
+        return -2
+
+def renameMethod(oldName, newName, className):
+    """
+    Renames a given method
+
+    :param oldName: current name of method
+    :param newName: new name for method
+    :param className: name of class method exists within
+    :returns: -1 if given class does not exist
+              -2 if given method does not exist in class
+              -3 if the new name is already in use in class
     """
 
-    attIndexOld = findAttribute(oldName, className)
-    attIndexNew = findAttribute(newName, className)
+    attIndexOld = findMethod(oldName, className)
+    attIndexNew = findMethod(newName, className)
 
-    # Runs if attribute exists and can be renamed to new name
+    # Runs if method exists and can be renamed to new name
     if attIndexOld >= 0 and attIndexNew < 0:
         index = C.findClass(className)
-        C.classIndex[index].attributes[attIndexOld].rename(newName)
-        print(f'\"{oldName}\" attribute has been renamed to \"{newName}\" in the \"{className}\" class!')
-    # Runs if given attribute does not exist in given class
+        C.classIndex[index].methods[attIndexOld].rename(newName)
+        return 1
+    # Runs if given method does not exist in given class
     elif attIndexOld == -2:
-        print(
-            f'\"{oldName}\" attribute does not exist in the \"{className}\" class.')
+        return -2
     # Runs if given class does not exist
     elif attIndexOld == -1:
-        print(f"\nClass \"{className}\" does not exist")
-        return
-    # Runs if attribute already exists with new name in given class
+        return -1
+    # Runs if method already exists with new name in given class
     else:
-        print(f'\"{newName}\" is the name of an existing attribute in the \"{className}\" class.')
+        return -3
+
+def renameField(oldName, newName, className):
+    """
+    Renames a given field
+
+    :param oldName: current name of field
+    :param newName: new name for field
+    :param className: name of class field exists within
+    :returns: -1 if given class does not exist
+              -2 if given field does not exist in class
+              -3 if the new name is already in use in class
+    """
+
+    attIndexOld = findField(oldName, className)
+    attIndexNew = findField(newName, className)
+
+    # Runs if field exists and can be renamed to new name
+    if attIndexOld >= 0 and attIndexNew < 0:
+        index = C.findClass(className)
+        C.classIndex[index].fields[attIndexOld].rename(newName)
+        return 1
+    # Runs if given field does not exist in given class
+    elif attIndexOld == -2:
+        return -2
+    # Runs if given class does not exist
+    elif attIndexOld == -1:
+        return -1
+    # Runs if field already exists with new name in given class
+    else:
+        return -3
