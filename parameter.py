@@ -55,7 +55,7 @@ def addParameter(name:list, methodName:str, className:str):
     # Runs if class doesn't exist
     if classIndex == None:
         print(f"Class \"{className}\" does not exist.")
-        return     
+        return -1
 
     # Runs if method doesn't exist within given class
     if methodIndex == -2:
@@ -77,7 +77,7 @@ def addParameter(name:list, methodName:str, className:str):
             newParameter = parameter(params[i], types[i])
             C.classIndex[classIndex].attributes[methodIndex].params.append(newParameter)
             print(f"Successfully added parameter \"{params[i]}\" to method \"{methodName}\"!")
-        return
+        return 
     
     for i, p in enumerate(paramIndex):
         if p > 0:
@@ -100,7 +100,7 @@ def deleteParameter(name:list, methodName:str, className:str):
     # Runs if class does not exist
     if classIndex == None:
         print(f"Class \"{className}\" does not exist.")
-        return     
+        return
 
     # Runs if method does not exist
     if methodIndex == -2:
@@ -178,5 +178,4 @@ def changeParameter(oldName:list, newName:list, methodName:str, className:str):
     # Runs if able to rename parameters
     deleteParameter(oldName, methodName, className)
     addParameter(newName, methodName, className)
-
     
