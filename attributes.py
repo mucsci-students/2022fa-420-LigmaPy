@@ -31,17 +31,6 @@ class method(attribute):
         super().__init__(name)
         self.return_type = retType
         self.params = []
-    
-    def findParam(self, paramName : str):
-        """
-        Searches the method's parameter list for a parameter by name
-
-        :param paramName: The name of the parameter to find
-        :return: The index of where that parameter is in the list
-        """
-        for i, param in enumerate(self.params):
-            if param.name == paramName:
-                return i
 
 class field(attribute):
     def __init__(self, name : str, t : str):
