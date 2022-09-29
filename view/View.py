@@ -6,7 +6,10 @@ Description : Constructs and displays the gui
 
 import tkinter as tk
 #import UMLNotebook as notebook
-from tkinter import RIGHT, VERTICAL, Y, OptionMenu, StringVar, ttk
+from tkinter import RIGHT, VERTICAL, Y, OptionMenu, StringVar, ttk, filedialog
+#from .. import saveload as s
+#from .. import relationship as r
+#from .. import UMLClass as c
 
 class View(tk.Tk):
     def __init__(self, controller):
@@ -28,6 +31,7 @@ class View(tk.Tk):
         self.paramNew = None
         self.paramType = None
         self.paramTypeNew = None
+        self.fileName = None
         self.geometry("800x600")
         self.title("UML Editor")
         screenWidth = self.winfo_screenwidth()
@@ -67,8 +71,8 @@ class View(tk.Tk):
     def makeMenu(self):
         menubar = tk.Menu(self)
         filemenu = tk.Menu(menubar, tearoff=0)
-        filemenu.add_command(label="Open", command= lambda : self.controller.load())
-        filemenu.add_command(label="Save", command= lambda : self.controller.save())
+        filemenu.add_command(label="Open", command= lambda : self.controller.clickLoadButton())
+        filemenu.add_command(label="Save", command= lambda : self.controller.clickSaveButton())
         filemenu.add_separator()
         filemenu.add_command(label="Exit", command=self.quit)
         # Help menu
@@ -266,7 +270,29 @@ class View(tk.Tk):
         cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
         cancel.grid(row=6, column=1)  
 
+    def save(self):
+        self.fileName = filedialog.asksaveasfilename(title="Open File", filetypes=[("Json Files", "*.json")])
+        
+        """
+        inputlabel1 = tk.Label(self.inputFrame, text='Enter file name to save as:')
+        inputlabel1.grid(row=0, columnspan=2) 
+        e1 = tk.Entry(self.inputFrame, width=50)
+        e1.grid(row=1, columnspan=2)
+        def output():
+            # Error check here????
+            self.fileName = e1.get()
+            self.controller.clickSaveButton()
+            print(self.className)
+        ok = tk.Button(self.inputFrame, text='Save', command=lambda: output())
+        ok.grid(row=4, column=0)
+        cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
+        cancel.grid(row=4, column=1)
+        """
 
+    def load(self):
+        self.fileName = filedialog.askopenfilename(title="Open File", filetypes=[("Json Files", "*.json")])
+        
+    
     #creates the add class frame upon clicking add class
     def makeAddClassFrame(self):
         inputlabel1 = tk.Label(self.inputFrame, text='Enter Class name to add')

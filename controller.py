@@ -1,7 +1,8 @@
 from view.View import View as v
 import relationship as r
 import UMLClass as u
-#import saveload as s
+import saveload as s
+import relationship as r
 
 class Controller:
     def __init__(self):
@@ -26,7 +27,6 @@ class Controller:
 
     def clickUpdateTypeButton(self):
         self.view.makeMessage("update relation type w/ " + root.view.source + " " + root.view.destination + " " + root.view.relationshipTypeNew)
-        self.view.makeMessage()
 
     def clickDeleteRelationButton(self):
         print("do add relationship stuff")
@@ -176,13 +176,25 @@ class Controller:
         print("List the relationships")
         self.view.makeMessage()
 
-    def save(self):
+    def clickSaveButton(self):
         print("call save")
-        self.view.makeMessage('call save')
+        self.view.save()
+        message = s.saveGUI(u.classIndex, r.relationIndex, self.view.fileName)
+        #self.view.inputFrame.destroy()
+        #self.view.makeInputFrame()
+        #self.view.save()
+        if message == "":
+            self.view.makeMessage('Saved successfully')
+        else:
+            self.view.makeMessage(message)
 
-    def load(self):
+
+    def clickLoadButton(self):
         print("call load")
-        self.view.makeMessage("call load")
+        self.view.load()
+        print(self.view.fileName)
+        message = s.loadGUI(self.view.fileName)
+        self.view.makeMessage(message)
 
 root = Controller()
 root.main()

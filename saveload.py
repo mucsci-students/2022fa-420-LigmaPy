@@ -8,18 +8,18 @@ import json
 from os.path import exists
 import os.path
 from pathvalidate import is_valid_filename
+import copy
 
 import UMLClass as u
 import relationship as r
-import methods as m
-import fields as f
-import params as p
+import attributes as a
+import parameter as p
 
 
 ##################################################################
-
-# Test code
 """
+# Test code
+
 class UMLClass:
     def __init__(self, name: str):
             self.name = name
@@ -76,8 +76,8 @@ u.classIndex.append(car)
 r1 = UMLRelationship(tire, car, "composition")
 
 r.relationIndex.append(r1)
-"""
 
+"""
 
 def save(classes, relations, filename):
     """
@@ -87,14 +87,17 @@ def save(classes, relations, filename):
     :param param1: UMLclass list 
     :param param2: relationship list 
     :param param3: filename specified by user
-    :returns: nothing
+    :returns: (string) error message or "" if succesful
     """
+    
+    returnMessage = ""
     filename = filename
     
     #checks if file name is valid
     if not is_valid_filename(filename):
-        print("Invalid file name.")
-        return
+        returnMessage = "Invalid file name."
+        print("Invalid file name")
+        return returnMessage
     
     if filename.endswith('.json'):
         filename = filename[:-5]
@@ -105,13 +108,15 @@ def save(classes, relations, filename):
         print("Created directory: UMLsavefiles")
         os.mkdir("UMLsavefiles")
     
+    #copy original list so we dont change original
+    relationConvert = copy.deepcopy(relations)
     #converts each relation class object to just the name
-    for each in relations:
+    for each in relationConvert:
         each.source = each.source.name
         each.destination = each.destination.name
     
     #combines both into a dictionary
-    t = {"classes": classes, "relationships": relations}
+    t = {"classes": classes, "relationships": relationConvert}
     
     #encodes tuple above to json
     jsonString = json.dumps(t, default=vars, indent=4)
@@ -119,7 +124,45 @@ def save(classes, relations, filename):
     #saves json string to file
     with open("UMLsavefiles/" + filename + ".json", "w") as outfile:
         outfile.write(jsonString)
+    
+    return returnMessage
 
+
+def saveGUI(classes, relations, filename):
+    """
+    saves file as filename in specified directory: open('filepath' + filename...)
+    currently saves in root folder
+
+    :param param1: UMLclass list 
+    :param param2: relationship list 
+    :param param3: filename specified by user
+    :returns: (string) error message or "" if succesful
+    """
+    
+    returnMessage = ""
+    filename = filename
+    
+    if filename.endswith('.json'):
+        filename = filename[:-5]
+
+    #copy original list so we dont change original
+    relationConvert = copy.deepcopy(relations)
+    #converts each relation class object to just the name
+    for each in relationConvert:
+        each.source = each.source.name
+        each.destination = each.destination.name
+    
+    #combines both into a dictionary
+    t = {"classes": classes, "relationships": relationConvert}
+    
+    #encodes tuple above to json
+    jsonString = json.dumps(t, default=vars, indent=4)
+    
+    #saves json string to file
+    with open(filename, "w") as outfile:
+        outfile.write(jsonString)
+    
+    return returnMessage
 #save(u.classIndex, r.relationIndex, "testfile")
 ##################################################################
 
@@ -169,23 +212,23 @@ def load(filename):
             classObj = u.UMLClass(name)
             fields = c['fields']
             for fld in fields:
-                classObj.fields.append(f.UMLField(fld['name'],fld['type']))
+                classObj.fields.append(a.field(fld['name'],fld['type']))
             methods = c['methods']
             for meth in methods:
                 mName = meth["name"]
                 mType = meth["return_type"]
-                methodObj = m.UMLMethod(mName, mType)
+                methodObj = a.method(mName, mType)
                 mParams = meth['params']
-                for p in mParams:
-                    methodObj.params.append(p.UMLParameters(p['name'],p['type']))
+                for par in mParams:
+                    methodObj.params.append(p.parameter(par['name'],par['type']))
                 classObj.methods.append(methodObj)
             returnClasses.append(classObj)
         
         #creates new relation for each json relation and adds them to return list
-        for r in relationships:
-            s = r['source']
-            d = r['destination']
-            t = r['type']
+        for rel in relationships:
+            s = rel['source']
+            d = rel['destination']
+            t = rel['type']
             for each in returnClasses:
                 if each.name == s:
                     sorc = each
@@ -204,3 +247,73 @@ def load(filename):
         return
         #return (u.classIndex, r.relationIndex)
  
+def loadGUI(filename): 
+    """
+    loads filename from specified directory: open('filepath' + filename...)
+    currently loads from root folder
+
+    :param param1: the file name to load
+    :returns: tuple(list[UMLclass], list[relationships]) 
+    """
+    #creates lists to return
+    returnClasses = []
+    returnRelations = []
+    message = ""
+    #checks if file is empty and returns empty lists
+
+    if os.stat(filename).st_size == 0:
+        u.classIndex = returnClasses
+        r.relationIndex = returnRelations
+        message = "Loaded empty file"
+        return message
+        #return(returnClasses, returnRelations)    
+    
+    try:
+        #opens the file and save contents as a json string
+        with open(filename, "r") as openfile: 
+            jsonObject = json.load(openfile)
+
+        classes = jsonObject["classes"]
+        relationships = jsonObject["relationships"]
+        
+        #creates new class object for each json class and adds them to return list
+        for c in classes:
+            name = c['name']
+            classObj = u.UMLClass(name)
+            fields = c['fields']
+            for fld in fields:
+                classObj.fields.append(a.field(fld['name'],fld['type']))
+            methods = c['methods']
+            for meth in methods:
+                mName = meth["name"]
+                mType = meth["return_type"]
+                methodObj = a.method(mName, mType)
+                mParams = meth['params']
+                for par in mParams:
+                    methodObj.params.append(p.parameter(par['name'],par['type']))
+                classObj.methods.append(methodObj)
+            returnClasses.append(classObj)
+        
+        #creates new relation for each json relation and adds them to return list
+        for rel in relationships:
+            s = rel['source']
+            d = rel['destination']
+            t = rel['type']
+            for each in returnClasses:
+                if each.name == s:
+                    sorc = each
+                if each.name == d:
+                    dest = each
+            returnRelations.append(r.UMLRelationship(sorc, dest, t))
+
+        u.classIndex = returnClasses
+        r.relationIndex = returnRelations       
+        message = "Loaded successfully"
+        return message
+        #return (returnClasses, returnRelations)
+    
+    #if error loading return original lists
+    except Exception as e:
+        print("Load failed")
+        message = "Load failed"
+        return message
