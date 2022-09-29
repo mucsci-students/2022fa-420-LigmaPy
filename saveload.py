@@ -11,9 +11,9 @@ from pathvalidate import is_valid_filename
 
 import UMLClass as u
 import relationship as r
-import methods as m
-import fields as f
-import params as p
+#import methods as m
+#import fields as f
+#import params as p
 
 
 ##################################################################
@@ -79,7 +79,7 @@ r.relationIndex.append(r1)
 """
 
 
-def save(classes, relations, filename):
+def save(classes: list[u.UMLClass], relations: list[r.UMLRelationship], filename):
     """
     saves file as filename in specified directory: open('filepath' + filename...)
     currently saves in root folder
@@ -89,7 +89,6 @@ def save(classes, relations, filename):
     :param param3: filename specified by user
     :returns: nothing
     """
-    filename = filename
     
     #checks if file name is valid
     if not is_valid_filename(filename):
@@ -105,10 +104,12 @@ def save(classes, relations, filename):
         print("Created directory: UMLsavefiles")
         os.mkdir("UMLsavefiles")
     
+    #failures occur when relations is empty should be checked before calling save
+    
     #converts each relation class object to just the name
-    for each in relations:
-        each.source = each.source.name
-        each.destination = each.destination.name
+    # for each in relations:
+    #     each.source = each.source.name
+    #     each.destination = each.destination.name
     
     #combines both into a dictionary
     t = {"classes": classes, "relationships": relations}
@@ -183,8 +184,8 @@ def load(filename):
         
 
         #loops through relationship json and decodes each piece creating new objects then adds them to a list
-        for eachRelation in relations:    
-            name = r.UMLRelationship(eachRelation['source'], eachRelation['destination'])
+        for eachRelation in relationships:    
+            name = r.UMLRelationship(eachRelation['source'], eachRelation['destination'], eachRelation['type'])
             returnRelations.append(name) 
             
         #apapend global lists

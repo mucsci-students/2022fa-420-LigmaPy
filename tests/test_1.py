@@ -12,13 +12,13 @@ from pathlib import Path
 # runs through adding and deleting a realtionship
 def newMyClass(caplog):
 
-        x=UMLRelationship('source','destination')
+        x=UMLRelationship('source','destination',type='1')
         addClass('test1')
         addClass('test2')
         addClass('test3')
-        addRelationship( 'test2', 'test3')
+        addRelationship( 'test2', 'test3','testrel')
         deleteRelationship( 'test2', 'test3')
-        addRelationship( 'test1', 'test2')
+        addRelationship( 'test1', 'test2', 'testrel')
         print(relationIndex.__len__())
         return x
 

@@ -68,12 +68,9 @@ class Controller():
     def action_list_classes(self):
         classlist=[]
         result= self.model.List_classes()
-        if result== None:
-            result="No Classes"
-        else:
-            for item in result:
-                classlist.append(item.__str__())
-            self.view.viewPanel.v_num.set(classlist.__str__())
+        for items in result:
+            classlist.append(items.__repr__())
+        self.view.viewPanel.v_num.set(classlist)
 
 
     def actiontogetrelationship(self):
@@ -119,7 +116,7 @@ class Controller():
         user_input = self.view.viewPanel.v_entry.get()
         clean_input=user_input.split(' ')
         try:
-            result = self.model.Add_relationship(clean_input[0],clean_input[1])
+            result = self.model.Add_relationship(clean_input[0],clean_input[1],clean_input[2])
         except ValueError:
             result = 'Failure'
         self.view.viewPanel.v_num.set(result)

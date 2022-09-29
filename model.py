@@ -9,11 +9,10 @@ class Model():
     def __init__(self):
         self.data=[]
 
-#update so it clears local lists before append 
     def Load_data(self, file):
         save= saveload.load(filename=file)
         classes=save[0]
-        relationships=[1]
+        relationships=save[1]
         cleanclasses=[]
         cleanrel=[]
         for items in classes:
@@ -34,7 +33,8 @@ class Model():
         
     
     def Save_data(self, file):
-        return saveload.save(filename=file,classes=UMLClass.classIndex,relations=relationships.relationIndex)
+        saveload.save(classes=UMLClass.classIndex,relations=relationships.relationIndex,filename=file)
+        return "Saved Data"
         # oldtime=os.path.getmtime('UMLsaefiles/') 
         # #TO-DO need to test if file was created. 
         # saveload.save(UMLClass.classIndex, relationships.relationIndex, filename)
@@ -62,8 +62,8 @@ class Model():
         elif UMLClass.findClass(className)==None:
             return f' {className} Not Found'
 
-    def Add_relationship(self,source,destination):
-        relationships.addRelationship(source, destination)
+    def Add_relationship(self,source,destination,reltype):
+        relationships.addRelationship(source, destination, reltype)
         return "f'Relationship created between {source} and {destination}'"
 
 

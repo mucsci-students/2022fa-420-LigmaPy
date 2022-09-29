@@ -9,11 +9,11 @@ from pathlib import Path
 #@pytest.fixture
 def test_file():
 
-    x=UMLRelationship('source','destination')
+    x=UMLRelationship('source','destination',"type")
     addClass('test4')
     addClass('test5')
-    addAttribute('test4','test5')
-    addRelationship( 'test2', 'test3')
+    #addAttribute('test4','test5')
+    addRelationship( 'test2', 'test3',"type")
     deleteRelationship( 'test2', 'test3')
     listofrelationships=relationIndex
     classIndexx=classIndex
