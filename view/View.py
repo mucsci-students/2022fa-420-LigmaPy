@@ -4,12 +4,11 @@ Filename    : View.py
 Description : Constructs and displays the gui
 """
 
+from cgitb import text
 import tkinter as tk
 #import UMLNotebook as notebook
 from tkinter import RIGHT, VERTICAL, Y, OptionMenu, StringVar, ttk, filedialog
-#from .. import saveload as s
-#from .. import relationship as r
-#from .. import UMLClass as c
+
 
 class View(tk.Tk):
     def __init__(self, controller):
@@ -75,10 +74,18 @@ class View(tk.Tk):
         filemenu.add_command(label="Save", command= lambda : self.controller.clickSaveButton())
         filemenu.add_separator()
         filemenu.add_command(label="Exit", command=self.quit)
+        menubar.add_cascade(label="File", menu=filemenu)
         # Help menu
         helpmenu = tk.Menu(menubar, tearoff=0)
         helpmenu.add_command(label="Commands", command=None)
-        menubar.add_cascade(label="File", menu=filemenu)
+        menubar.add_cascade(label="Help", menu=helpmenu)
+        # List stuff menu
+        listmenu = tk.Menu(menubar,tearoff=0)
+        listmenu.add_command(label="List class", command = lambda : self.listClassFrame())
+        listmenu.add_command(label="List all classes", command = lambda : self.controller.clickListAllClassesButton())
+        listmenu.add_command(label="List Relationships", command= lambda : self.controller.clickListRelationsButton())
+        listmenu.add_command(label="Clear", command= lambda : self.clearScreen())
+        menubar.add_cascade(label="List", menu=listmenu)
         self.config(menu=menubar)
 
     def makeButtonFrame(self):
@@ -214,6 +221,11 @@ class View(tk.Tk):
         self.canvas.grid(row=0, column=1, sticky="nswe", rowspan=2)    
         self.makeScrollBar()
 
+    def clearScreen(self):
+        self.outputFrame.destroy()
+        self.makeOutputFrame()
+        self.remake()
+
     def printAllClassesToCanvas(self, list):
         self.canvas.destroy()
         self.scrollbar.destroy()
@@ -221,6 +233,19 @@ class View(tk.Tk):
         t = ''
         for c in list:
             t += classToString(c)
+        self.canvas.create_text(100, 500, text= t, fill="black", font=('Helvetica 10 bold'))
+        #self.canvas.pack(fill=tk.BOTH, expand=1)
+        self.canvas.grid(row=0, column=1, sticky="nswe", rowspan=2)  
+        self.makeScrollBar()
+
+
+    def printRelationsToCanvase(self, list):
+        self.canvas.destroy()
+        self.scrollbar.destroy()
+        self.canvas = tk.Canvas(self.outputFrame, bg='white')
+        t = ''
+        for r in list:
+            t += relationToString(r)
         self.canvas.create_text(100, 500, text= t, fill="black", font=('Helvetica 10 bold'))
         #self.canvas.pack(fill=tk.BOTH, expand=1)
         self.canvas.grid(row=0, column=1, sticky="nswe", rowspan=2)  
@@ -271,7 +296,7 @@ class View(tk.Tk):
         cancel.grid(row=6, column=1)  
 
     def save(self):
-        self.fileName = filedialog.asksaveasfilename(title="Open File", filetypes=[("Json Files", "*.json")])
+        self.fileName = filedialog.asksaveasfilename(title="Open File", filetypes=[("JSON File", "*.json")])
         
         """
         inputlabel1 = tk.Label(self.inputFrame, text='Enter file name to save as:')
@@ -290,7 +315,7 @@ class View(tk.Tk):
         """
 
     def load(self):
-        self.fileName = filedialog.askopenfilename(title="Open File", filetypes=[("Json Files", "*.json")])
+        self.fileName = filedialog.askopenfilename(title="Open File", filetypes=[("JSON File", "*.json")])
         
     
     #creates the add class frame upon clicking add class
@@ -758,6 +783,7 @@ class View(tk.Tk):
         def output():
             # Error check here????
             self.className = e1.get()
+            self.controller.clickListClassButton()
             print(self.className)
         ok = tk.Button(self.inputFrame, text='List Class', command=lambda: output())
         ok.grid(row=4, column=0)
@@ -877,5 +903,14 @@ def classToString(c):
         string += "        " + each.return_type + " " + each.name + "(" + parameters + ")\n"
     string += "\n"
     return string
+
+def relationToString(r):
+    string = ""
+    string += "Relationship:\n"
+    string += "    Source: " + r.source.name + "\n"
+    string += "    Destination: " + r.destination.name + "\n"
+    string += "    Type: " + r.type + "\n\n"
+    return string
+
 #view = View(None)
 #view.main()

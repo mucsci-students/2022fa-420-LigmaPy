@@ -13,7 +13,7 @@ import copy
 import UMLClass as u
 import relationship as r
 import attributes as a
-import parameter as p
+#import parameter as p
 
 
 ##################################################################
@@ -159,7 +159,7 @@ def saveGUI(classes, relations, filename):
     jsonString = json.dumps(t, default=vars, indent=4)
     
     #saves json string to file
-    with open(filename, "w") as outfile:
+    with open(filename + ".json", "w") as outfile:
         outfile.write(jsonString)
     
     return returnMessage

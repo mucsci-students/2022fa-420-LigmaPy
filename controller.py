@@ -4,6 +4,68 @@ import UMLClass as u
 import saveload as s
 import relationship as r
 
+# Test code since nothing is hooked up
+"""
+class UMLClass:
+    def __init__(self, name: str):
+            self.name = name
+            self.fields = []
+            self.methods = []
+        
+class UMLMethod:
+    def __init__(self, name: str, returnType = None):
+        self.name = name
+        self.return_type = returnType
+        self.params = []
+
+class UMLField:
+    def __init__ (self, name: str , type = None):
+        self.name = name
+        self.type = type
+    
+class UMLParameters:
+    def __init__ (self, name: str , type = None):
+        self.name = name
+        self.type = type
+
+class UMLRelationship:
+    def __init__ (self, source, destination, type):
+        self.source = source
+        self.destination = destination
+        self.type = type
+
+tire = UMLClass("Tire")
+tiref1 = UMLField('diameter', 'float')
+tiref2 = UMLField("psi", "float")
+tiref3 = UMLField("brand", 'string')
+tirem1 = UMLMethod('setPSI', 'void')
+tirem1p1 = UMLParameters("new_psi", "string")
+tirem1.params.append(tirem1p1)
+tire.fields.append(tiref1)
+tire.fields.append(tiref2)
+tire.fields.append(tiref3)
+tire.methods.append(tirem1)
+
+car = UMLClass("Car")
+carf1 = UMLField("make", 'string')
+carf2 = UMLField("model", 'string')
+carf3 = UMLField("year", "int")
+carm1 = UMLMethod("drive", "void")
+car.fields.append(carf1)
+car.fields.append(carf2)
+car.fields.append(carf3)
+car.methods.append(carm1)
+
+u.classIndex.append(tire)
+u.classIndex.append(car)
+
+r1 = UMLRelationship(tire, car, "composition")
+r2 = UMLRelationship(car, tire, "Whatever")
+
+r.relationIndex.append(r1)
+r.relationIndex.append(r2)
+"""
+
 class Controller:
     def __init__(self):
         self.view = v(self)
@@ -161,25 +223,11 @@ class Controller:
         self.view.makeChangeParamInputFrame()
         self.view.makeMessage('call deleteParam on: ' + self.view.className + " " + self.view.method + " " + self.view.param + " call addparam on: "  + self.view.className + " " + self.view.method + ' ' + self.view.paramNew + " " + self.view.paramType)
 
-    #button not made yet
-    def clickListAllClasses(self):
-        print("print all classes")
-        self.view.makeMessage()
-    
-    #button not made yet
-    def clickListClass(self):
-        print("list the class")
-        self.view.makeMessage()
-
-    #button not made yet
-    def clickListRelationships(self):
-        print("List the relationships")
-        self.view.makeMessage()
-
     def clickSaveButton(self):
         print("call save")
         self.view.save()
         message = s.saveGUI(u.classIndex, r.relationIndex, self.view.fileName)
+        print(u.classIndex)
         #self.view.inputFrame.destroy()
         #self.view.makeInputFrame()
         #self.view.save()
@@ -188,7 +236,6 @@ class Controller:
         else:
             self.view.makeMessage(message)
 
-
     def clickLoadButton(self):
         print("call load")
         self.view.load()
@@ -196,5 +243,37 @@ class Controller:
         message = s.loadGUI(self.view.fileName)
         self.view.makeMessage(message)
 
+    def clickListClassButton(self):
+        name = self.view.className
+        index = u.findClass(name)
+        if index == None:
+            self.view.inputFrame.destroy()
+            self.view.makeInputFrame()
+            self.view.makeListClassFrame()
+            self.view.makeMessage('Class does not exist')
+        else:
+            self.view.printClassToCanvas(u.classIndex[index])
+            self.view.inputFrame.destroy()
+            self.view.makeInputFrame()
+            self.view.makeListClassFrame()
+
+    def clickListAllClassesButton(self):
+        self.view.remake()
+        if len(u.classIndex) == 0:
+            self.view.makeMessage('No classes to list')
+        else:
+            self.view.printAllClassesToCanvas(u.classIndex)
+            self.view.remake()
+
+    def clickListRelationsButton(self):
+        self.view.remake()
+        if len(r.relationIndex) == 0:
+            self.view.makeMessage("No relationships to list")
+        else:
+            self.view.printRelationsToCanvase(r.relationIndex)
+            self.view.remake()
+
 root = Controller()
 root.main()
+
+
