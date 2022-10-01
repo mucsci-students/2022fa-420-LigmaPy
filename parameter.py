@@ -31,6 +31,7 @@ def findParameter(name, methodIndex, classIndex):
               i: index of parameter, if parameter exists within given method within given class 
     """
     for i, p in enumerate(C.classIndex[classIndex].methods[methodIndex].params):
+
         if p.name == name:
             return i
     return -1
@@ -45,6 +46,7 @@ def addParameter(name:list, methodName:str, className:str):
     """
     
     classIndex = C.findClass(className)
+
     methodIndex = A.findMethod(methodName, className)
 
     # Runs if class doesn't exist
@@ -56,6 +58,7 @@ def addParameter(name:list, methodName:str, className:str):
     if methodIndex == -2:
         print(f"Method \"{methodName}\" does not exist in class \"{className}\".")
         return -2
+
     
     # Separates list name into list of params and list of types
     params = list(zip(*name))[0]
@@ -66,11 +69,14 @@ def addParameter(name:list, methodName:str, className:str):
     for i, n in enumerate(params):
         #paramIndex[i] = findParameter(n, methodIndex, classIndex)
         paramIndex.append(findParameter(n, methodIndex, classIndex))
+    
     # Runs if none of the given parameters already exist in given method
     if paramIndex[0] == -1 and all(ele == paramIndex[0] for ele in paramIndex):
         for i, p in enumerate(paramIndex):
             newParameter = parameter(params[i], types[i])
+
             C.classIndex[classIndex].methods[methodIndex].params.append(newParameter)
+
             print(f"Successfully added parameter \"{params[i]}\" to method \"{methodName}\"!")
         return 
     
@@ -78,6 +84,7 @@ def addParameter(name:list, methodName:str, className:str):
         if p > 0:
             print(f"Parameter \"{params[i]}\" already exists in method \"{methodName}\".")
     return -3
+
 
 
 def deleteParameter(name:list, methodName:str, className:str):
@@ -95,6 +102,7 @@ def deleteParameter(name:list, methodName:str, className:str):
     if cIndex == None:
         print(f"Class \"{className}\" does not exist.")
         return -1
+
 
     # Runs if method does not exist
     if methodIndex == -2:
@@ -128,11 +136,13 @@ def deleteParameter(name:list, methodName:str, className:str):
     for i, n in enumerate(params):
         #paramIndex[i] = findParameter(n, classIndex, methodIndex)
         paramIndex.append(findParameter(n, classIndex, methodIndex))
+
     # Runs if any given parameters do not exist
     if -1 in paramIndex:
         for i, p in enumerate(paramIndex):
             if p == -1:
                 print(f"Parameter \"{param[i]}\" does not exist within method \"{methodName}\".")
+
         return -3
 
     for i, param in enumerate(paramIndex):  
@@ -164,6 +174,7 @@ def changeParameter(oldName:list, newName:list, methodName:str, className:str):
     :param methodName: name of the method parameter should be added to
     :param className: name of class containing the method the parameters will be added to
     """
+
     cIndex = C.findClass(className)
     methodIndex = A.findMethod(methodName, className)
 
@@ -203,6 +214,7 @@ def changeParameter(oldName:list, newName:list, methodName:str, className:str):
 
 
 """
+
     # Separates list name into list of params and list of types
     oldParams = list(zip(*oldName))[0]
     newParams = list(zip(*newName))[0]
@@ -211,19 +223,23 @@ def changeParameter(oldName:list, newName:list, methodName:str, className:str):
     newParamIndex = []
 
     for i, n in enumerate(oldName):
+
         #oldParamIndex[i] = findParameter(n, classIndex, methodIndex)
         oldParamIndex.append(findParameter(n, classIndex, methodIndex))
 
     for i, n in enumerate(newName):
         #newParamIndex[i] = findParameter(n, classIndex, methodIndex)
         newParamIndex.append(findParameter(n, classIndex, methodIndex))
+
     
     # Runs if any old parameters do not exist
     if -1 in oldParamIndex:
         for i, p in enumerate(oldParamIndex):
             if p == -1:
                 print(f"Parameter \"{oldName[i]}\" does not exist within method \"{methodName}\".")
+
         return -3
+
 
     # Runs if any new parameters already exist
     if -1 in newParamIndex:
@@ -235,4 +251,5 @@ def changeParameter(oldName:list, newName:list, methodName:str, className:str):
     # Runs if able to rename parameters
     #deleteParameter(oldName, methodName, className)
     #addParameter(newName, methodName, className)
+
     
