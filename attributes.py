@@ -119,7 +119,7 @@ def addMethod(name : str, className : str, ret_type : str):
                1 on successful add
     """
 
-    existingMethod = findMethod(name, className, ret_type)
+    existingMethod = findMethod(name, className)
 
     # Runs if attribute with given name already exists in given class
     if existingMethod >= 0:
@@ -146,7 +146,7 @@ def addField(name, className, t):
                1 on successful add
     """
 
-    existingField = findField(name, className, t)
+    existingField = findField(name, className)
 
     # Runs if attribute with given name already exists in given class
     if existingField >= 0:

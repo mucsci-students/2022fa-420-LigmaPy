@@ -3,6 +3,8 @@ import relationship as r
 import UMLClass as u
 import saveload as s
 import relationship as r
+import attributes as a
+import parameter as p
 
 # Test code since nothing is hooked up
 """
@@ -74,155 +76,411 @@ class Controller:
         self.view.main()
 
     def clickAddClassButton(self):
-        self.view.makeMessage("call addClass with: " + root.view.className)
+        num = u.addClass(root.view.className)
+        if num == -1:
+            root.view.inputFrame.destroy()
+            root.view.makeInputFrame()
+            root.view.makeAddClassFrame()
+            self.view.makeMessage("Class name cannot be empty.")
+        elif num == -2:
+            root.view.inputFrame.destroy()
+            root.view.makeInputFrame()
+            root.view.makeAddClassFrame()
+            self.view.makeMessage(f"\nClass \"{root.view.className}\" already exists, could not create.")            
+        else:
+            root.view.remake()
+            root.view.makeAddClassFrame()
+            self.view.makeMessage(f"\nClass \"{root.view.className}\" has been created!")
 
     def clickDeleteClassButton(self):
-        self.view.makeMessage("call deleteClass with: " + root.view.className)
+        num = u.deleteClass(root.view.className)
+        if num == -1:
+            root.view.remake()
+            root.view.makeDeleteClassFrame()
+            self.view.makeMessage(f"\nClass \"{ root.view.className}\" does not exist")
+        else:
+            root.view.remake()
+            root.view.makeDeleteClassFrame()
+            self.view.makeMessage(f"\nClass \"{root.view.className}\" has been deleted.")
 
     def clickRenameClassButton(self):
-        print("do rename class stuff")
-        self.view.makeMessage("call rename class with: " + root.view.className + " " + root.view.classNameNew)
-
+        num = u.renameClass(root.view.className, root.view.classNameNew)
+        if num == -1:
+            root.view.remake()
+            root.view.makeRenameClassFrame()
+            self.view.makeMessage(f"\nA class already exists with the name \"{root.view.classNameNew}\"")
+        elif num == -2:
+            root.view.remake()
+            root.view.makeRenameClassFrame()
+            self.view.makeMessage(f"\nClass \"{root.view.className}\" does not exist")
+        else:
+            root.view.remake()
+            root.view.makeRenameClassFrame()
+            self.view.makeMessage("Class renamed")
+        
     def clickAddRelationButton(self):
-        print("do add relationship stuff")
-        self.view.makeMessage("call addRelation with: " + root.view.source + " " + root.view.destination + " " + root.view.relationshipType )
+        num = r.addRelationship( root.view.source, root.view.destination, root.view.relationshipType)
+        if num == -2:
+            self.view.remake()
+            self.view.makeAddRelationFrame()
+            self.view.makeMessage("Source and destination cannot be the same")
+        elif num == -1:
+            self.view.remake()
+            self.view.makeAddRelationFrame()
+            self.view.makeMessage("Source or destination does not exist")
+        elif num == -3:
+            self.view.remake()
+            self.view.makeAddRelationFrame()
+            self.view.makeMessage("Relationship already exists")
+        else:
+            self.view.remake()
+            self.view.makeAddRelationFrame() 
+            self.view.makeMessage("Relationship added")
 
     def clickUpdateTypeButton(self):
-        self.view.makeMessage("update relation type w/ " + root.view.source + " " + root.view.destination + " " + root.view.relationshipTypeNew)
-
+        num = r.updateType( root.view.source, root.view.destination, root.view.relationshipTypeNew)
+        if num == -1:
+            self.view.remake()
+            self.view.makeUpdateRelationType()
+            self.view.makeMessage("Relationship does not exist")
+        else:
+            self.view.remake()
+            self.view.makeUpdateRelationType()
+            self.view.makeMessage("Relationship type updated")       
+    
     def clickDeleteRelationButton(self):
-        print("do add relationship stuff")
-        self.view.makeMessage("call deleteRelation with: " + root.view.source + " " + root.view.destination  )
+        num = r.deleteRelationship( root.view.source, root.view.destination)
+        if num == -1:
+            self.view.remake()
+            self.view.makeDeleteRelationFrame()
+            self.view.makeMessage("Relationship does not exist")
+        else:
+            self.view.remake()
+            self.view.makeDeleteRelationFrame()
+            self.view.makeMessage("Relationship deleted")
 
     def clickAddFieldButton(self):
-        print("do add feild stuff")
-        self.view.makeMessage("call add field with: " + root.view.className + " " + root.view.field + " " + root.view.fieldType)
+        num = a.addField(root.view.field, root.view.className, root.view.fieldType)
+        if num == -1:
+            self.view.remake()
+            self.view.makeAddFieldFrame()
+            self.view.makeMessage("Class does not exist")
+        elif num == -2:
+            self.view.remake()
+            self.view.makeAddFieldFrame()
+            self.view.makeMessage("Field already exists")
+        else:
+            self.view.remake()
+            self.view.makeAddFieldFrame()
+            self.view.makeMessage("Field added")
 
     def clickDeleteFieldButton(self):   
-        print("do delete feild stuff")
-        self.view.makeMessage('call deleteField with ' + root.view.className + " " + root.view.field )
+        num = a.deleteField(root.view.field, root.view.className)
+        if num == -1:
+            self.view.remake()
+            self.view.makeDeleteFieldFrame()
+            self.view.makeMessage("Class does not exist")
+        elif num == -2:
+            self.view.remake()
+            self.view.makeDeleteFieldFrame()
+            self.view.makeMessage("Field does not exist")
+        else:
+            self.view.remake()
+            self.view.makeDeleteFieldFrame()
+            self.view.makeMessage("Field deleted")
 
     def clickRenameFieldButton(self):
-        print("do rename fields stuff")
-        self.view.makeMessage("call renameField with " + root.view.className + " " + root.view.field + " " + root.view.feildNew)
-
+        num = a.renameField(root.view.field, root.view.feildNew, root.view.className)
+        if num == -1:
+            self.view.remake()
+            self.view.makeRenameFieldFrame()
+            self.view.makeMessage("Class does not exist")
+        elif num == -2:
+            self.view.remake()
+            self.view.makeRenameFieldFrame()
+            self.view.makeMessage("Field does not exists to rename")
+        elif num == -3:
+            self.view.remake()
+            self.view.makeRenameFieldFrame()
+            self.view.makeMessage("Another field already exists with that name")
+        else:
+            self.view.remake()
+            self.view.makeDeleteFieldFrame()
+            self.view.makeMessage("Field renamed")
+    
     def clickAddMethodAndParamsButton(self):
-        print("add method with no params")
         #error checking example (doesnt actually error check)
         #its just an example of how to remake the window and send error message if input is faulty
-        if root.view.className == "error":
-            #remake window and send error message
+        num = a.addMethod(self.view.method, self.view.className, self.view.methodReturnType)
+        if num == -1:
             root.view.inputFrame.destroy()
             root.view.makeInputFrame()
             root.view.makeAddMethodFrame()
-            self.view.makeMessage('test entered cant proceed')
-            return
-        #otherwise make param window to add params 
-        # and send success message     
-        self.view.inputFrame.destroy()
-        self.view.makeInputFrame()
-        self.view.makeParamInputFrame()
-        self.view.makeMessage('call addMethod with:' + self.view.className + " " + self.view.method + " " + self.view.methodReturnType)
+            self.view.makeMessage("Class does not exist")
+        elif num == -2:
+            root.view.inputFrame.destroy()
+            root.view.makeInputFrame()
+            root.view.makeAddMethodFrame()
+            self.view.makeMessage("Method already exists")
+        else:    
+            #otherwise make param window to add params 
+            # and send success message     
+            self.view.inputFrame.destroy()
+            self.view.makeInputFrame()
+            self.view.makeParamInputFrame()
+            self.view.makeMessage("Method added, please enter parameter(s)")
 
     def clickAddMethodWithoutParamsButton(self):
-        self.view.makeMessage('call addMethod with:' + self.view.className + " " + self.view.method + " " + self.view.methodReturnType)
+        num = a.addMethod(self.view.method, self.view.className, self.view.methodReturnType)
+        if num == -1:
+            root.view.inputFrame.destroy()
+            root.view.makeInputFrame()
+            root.view.makeAddMethodFrame()
+            self.view.makeMessage("Class does not exist")
+        elif num == -2:
+            root.view.inputFrame.destroy()
+            root.view.makeInputFrame()
+            root.view.makeAddMethodFrame()
+            self.view.makeMessage("Method already exists")
+        else:    
+            #otherwise make param window to add params 
+            # and send success message     
+            self.view.inputFrame.destroy()
+            self.view.makeInputFrame()
+            self.view.makeAddMethodFrame()
+            self.view.makeMessage("Method added")
 
     def clickAddParamButton(self):
-        print("add params ")
-        self.view.inputFrame.destroy()
-        self.view.makeInputFrame()
-        self.view.makeParamInputFrame()
-        self.view.makeMessage("call addParam with " + root.view.className + " " + root.view.method + " " + root.view.param + " " + root.view.paramType )
+        if len(self.view.param) == 0:
+            root.view.inputFrame.destroy()
+            root.view.makeInputFrame()
+            root.view.makeParamInputFrame()
+            self.view.makeMessage('Parameter name cannot be empty')
+            return 
+        l = [(root.view.param, root.view.paramType)]
+        num = p.addParameter(l, self.view.method, self.view.className)
+        if num == -1:
+            self.view.inputFrame.destroy()
+            self.view.makeInputFrame()
+            self.view.makeParamInputFrame()
+            self.view.makeMessage("Class does not exist")
+        elif num == -2:
+            self.view.inputFrame.destroy()
+            self.view.makeInputFrame()
+            self.view.makeParamInputFrame()
+            self.view.makeMessage("Method does not exist in class")
+        elif num == -3:
+            self.view.inputFrame.destroy()
+            self.view.makeInputFrame()
+            self.view.makeParamInputFrame()
+            self.view.makeMessage("Parameter already exists in method")
+        else:
+            self.view.inputFrame.destroy()
+            self.view.makeInputFrame()
+            self.view.makeParamInputFrame()
+            self.view.makeMessage("Parameter added")            
 
     def clickDeleteMethodButton(self):
-        print("do delete method stuff")
-        self.view.makeMessage("call deleteMethod w/ " + self.view.className + " " + self.view.method)
+        num = a.deleteMethod(self.view.method, self.view.className)
+        if num == -1:
+            self.view.remake()
+            self.view.makeDeleteMethodFrame()
+            self.view.makeMessage("Class does not exist")
+        elif num == -2:
+            self.view.remake()
+            self.view.makeDeleteMethodFrame()
+            self.view.makeMessage("Method does not exist")  
+        else:
+            self.view.remake()
+            self.view.makeDeleteMethodFrame()
+            self.view.makeMessage("Method Deleted")          
+
 
     def clickUpdateMethodButton(self):
-        print("do update method stuff")
-        self.view.makeMessage('call renameMethod w/ ' + self.view.className + " " + self.view.method + " " + self.view.methodNew)
+        num = a.renameMethod(self.view.method, self.view.methodNew, self.view.className)
+        if num == -1:    
+            self.view.remake()
+            self.view.makeRenameMethodFrame()
+            self.view.makeMessage('Class does not exist')
+        elif num == -2:    
+            self.view.remake()
+            self.view.makeRenameMethodFrame()
+            self.view.makeMessage('Method does not exist to rename')
+        elif num == -3:    
+            self.view.remake()
+            self.view.makeRenameMethodFrame()
+            self.view.makeMessage('New method name already exists')
+        else:    
+            self.view.remake()
+            self.view.makeRenameMethodFrame()
+            self.view.makeMessage('Method renamed')
 
     def clickAddParamToMethodButton(self):
-        #error checking 
-        if root.view.className == "error":
+        num = a.findMethod(self.view.method, self.view.className)
+        if num == -1:
             #remake window and send error message
             root.view.inputFrame.destroy()
             root.view.makeInputFrame()
             root.view.makeAddParamFrame()
-            self.view.makeMessage('error entered cant proceed')
-            return
-        #otherwise make param window to add params 
+            self.view.makeMessage('Class does not exist')
+        elif num == -2:
+            root.view.inputFrame.destroy()
+            root.view.makeInputFrame()
+            root.view.makeAddParamFrame()
+            self.view.makeMessage('Method does not exist in class')
+        else:
         # and send success message     
-        self.view.inputFrame.destroy()
-        self.view.makeInputFrame()
-        self.view.makeParamInputFrame()
-        self.view.makeMessage('add params to :' + self.view.className + " " + self.view.method )
-    
+            self.view.inputFrame.destroy()
+            self.view.makeInputFrame()
+            self.view.makeParamInputFrame()
+            #self.view.makeMessage("Add parameter(s) to Class: " +self.view.className + " Method: " + self.view.method)
+ 
     def clickDeleteParamButton(self):
-        #error checking 
-        if root.view.className == "error":
+        num = a.findMethod(self.view.method, self.view.className)
+        if num == -1:
             #remake window and send error message
             root.view.inputFrame.destroy()
             root.view.makeInputFrame()
             root.view.makeDeleteParamFrame()
-            self.view.makeMessage('error entered cant proceed')
-            return
-        #otherwise make param window to add params 
+            self.view.makeMessage('Class does not exist')
+        elif num == -2:
+            root.view.inputFrame.destroy()
+            root.view.makeInputFrame()
+            root.view.makeDeleteParamFrame()
+            self.view.makeMessage('Method does not exist in class')
+        else:
         # and send success message     
-        self.view.inputFrame.destroy()
-        self.view.makeInputFrame()
-        self.view.makeDeleteParamInputFrame()
-        self.view.makeMessage('call deleteParam on: ' + self.view.className + " " + self.view.method )
+            self.view.inputFrame.destroy()
+            self.view.makeInputFrame()
+            self.view.makeDeleteParamInputFrame()
     
     def clickDeleteAllParamButton(self):
-        print('delete param')
-        self.view.makeMessage('call deleteAll on: ' + self.view.className + " " + self.view.method)
-
+        num = p.deleteAllParameter(self.view.method, self.view.className)
+        if num == -1:
+            #remake window and send error message
+            root.view.inputFrame.destroy()
+            root.view.makeInputFrame()
+            root.view.makeDeleteParamFrame()
+            self.view.makeMessage('Class does not exist')
+        elif num == -2:
+            root.view.inputFrame.destroy()
+            root.view.makeInputFrame()
+            root.view.makeDeleteParamFrame()
+            self.view.makeMessage('Method does not exist in class')
+        else:
+            root.view.inputFrame.destroy()
+            root.view.makeInputFrame()
+            root.view.makeDeleteParamFrame()
+            self.view.makeMessage('All parameters deleted')
+    
     def clickSecondDeleteParamButton(self):
-        print('delete param')
-        self.view.makeMessage("call deleteParam on: " + self.view.className + " " + self.view.method + " " + self.view.param )
+        if len(self.view.param) == 0:
+            root.view.inputFrame.destroy()
+            root.view.makeInputFrame()
+            root.view.makeDeleteParamInputFrame()
+            self.view.makeMessage('Parameter does not exist')
+            return
+        l = [self.view.param]
+        num = p.deleteParameter(l, self.view.method, self.view.className)
+        if num == -1:
+            root.view.inputFrame.destroy()
+            root.view.makeInputFrame()
+            root.view.makeDeleteParamInputFrame()
+            self.view.makeMessage("Class does not exist")
+        elif num == -2:
+            root.view.inputFrame.destroy()
+            root.view.makeInputFrame()
+            root.view.makeDeleteParamInputFrame()
+            self.view.makeMessage('Method does not exist in class')
+        elif num == -3:
+            root.view.inputFrame.destroy()
+            root.view.makeInputFrame()
+            root.view.makeDeleteParamInputFrame()
+            self.view.makeMessage('Parameter does not exist in method')
+        else:
+            root.view.inputFrame.destroy()
+            root.view.makeInputFrame()
+            root.view.makeDeleteParamInputFrame()
+            self.view.makeMessage('Parameter deleted')
 
     def clickChangeParamButton(self):
-        print("delete the param then add new param")
-        #error checking 
-        if root.view.className == "error":
+        num = a.findMethod(self.view.method, self.view.className)
+        if num == -1:
             #remake window and send error message
             root.view.inputFrame.destroy()
             root.view.makeInputFrame()
             root.view.makeChangeParamFrame()
-            self.view.makeMessage('error entered cant proceed')
-            return
-        #otherwise make param window to add params 
+            self.view.makeMessage('Class does not exist')
+        elif num == -2:
+            root.view.inputFrame.destroy()
+            root.view.makeInputFrame()
+            root.view.makeChangeParamFrame()
+            self.view.makeMessage('Method does not exist in class')
+        else:
         # and send success message     
-        self.view.inputFrame.destroy()
-        self.view.makeInputFrame()
-        self.view.makeChangeParamInputFrame()
-        self.view.makeMessage('call deleteParam on: ' + self.view.className + " " + self.view.method )
-    
+            self.view.inputFrame.destroy()
+            self.view.makeInputFrame()
+            self.view.makeChangeParamInputFrame()                
 
     def clickChangeAllParamButton(self):
-        print("delete the param then add new param")
-        #error checking 
-        if root.view.className == "error":
+        num = p.deleteAllParameter(self.view.method, self.view.className)
+        if num == -1:
             #remake window and send error message
             root.view.inputFrame.destroy()
             root.view.makeInputFrame()
             root.view.makeChangeParamFrame()
-            self.view.makeMessage('error entered cant proceed')
-            return
-        #otherwise make param window to add params 
-        # and send success message     
-        self.view.inputFrame.destroy()
-        self.view.makeInputFrame()
-        self.view.makeParamInputFrame()
-        self.view.makeMessage('call deleteAllParam on: ' + self.view.className + " " + self.view.method )
-    
-    def clickChangeAnotherParamButton(self):
-        self.view.inputFrame.destroy()
-        self.view.makeInputFrame()
-        self.view.makeChangeParamInputFrame()
-        self.view.makeMessage('call deleteParam on: ' + self.view.className + " " + self.view.method + " " + self.view.param + " call addparam on: "  + self.view.className + " " + self.view.method + ' ' + self.view.paramNew + " " + self.view.paramType)
+            self.view.makeMessage('Class does not exist')
+        elif num == -2:
+            root.view.inputFrame.destroy()
+            root.view.makeInputFrame()
+            root.view.makeChangeParamFrame()
+            self.view.makeMessage('Method does not exist in class')
+        else:   
+            self.view.inputFrame.destroy()
+            self.view.makeInputFrame()
+            self.view.makeParamInputFrame()
+            self.view.makeMessage('Parameters removed, add new parameter(s)') 
 
+    def clickChangeAnotherParamButton(self):
+        if len(self.view.paramNew) == 0:
+            root.view.inputFrame.destroy()
+            root.view.makeInputFrame()
+            root.view.makeChangeParamInputFrame()
+            self.view.makeMessage('New parameter name cannot be empty')
+            return
+        oldParam = [self.view.param]
+        newParam = [(self.view.paramNew, self.view.paramTypeNew)]
+        num = p.changeParameter(oldParam, newParam, self.view.method, self.view.className)
+        if num == -1:
+            #remake window and send error message
+            root.view.inputFrame.destroy()
+            root.view.makeInputFrame()
+            root.view.makeChangeParamInputFrame()
+            self.view.makeMessage('Class does not exist')
+        elif num == -2:
+            #remake window and send error message
+            root.view.inputFrame.destroy()
+            root.view.makeInputFrame()
+            root.view.makeChangeParamInputFrame()
+            self.view.makeMessage('Method does not exist in class')
+        elif num == -3:
+            #remake window and send error message
+            root.view.inputFrame.destroy()
+            root.view.makeInputFrame()
+            root.view.makeChangeParamInputFrame()
+            self.view.makeMessage('Parameter does not exist to change')
+        elif num == -4:
+            #remake window and send error message
+            root.view.inputFrame.destroy()
+            root.view.makeInputFrame()
+            root.view.makeChangeParamInputFrame()
+            self.view.makeMessage('Parameter already exists within method')            
+        else:
+            self.view.inputFrame.destroy()
+            self.view.makeInputFrame()
+            self.view.makeChangeParamInputFrame()  
+            self.view.makeMessage('Parameter changed')            
+    
     def clickSaveButton(self):
         print("call save")
         self.view.save()

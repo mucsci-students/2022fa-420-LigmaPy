@@ -54,14 +54,15 @@ def addClass(name: str):
     """
     if len(name.strip()) == 0:
         print("Class name cannot be empty.")
-        return
+        return -1
     if isNameUnique(name):
         newClass = UMLClass(name)
         classIndex.append(newClass)
         print(f"\nClass \"{newClass.name}\" has been created!")
+        return 1
     else:
         print(f"\nClass \"{name}\" already exists, could not create.")
-
+        return -2
 
 def deleteClass(name: str):
     """ 
@@ -81,9 +82,11 @@ def deleteClass(name: str):
             relationship.deleteRelationship(each.source,each.destination)
         classIndex.pop(index)
         print(f"\nClass \"{name}\" has been deleted.")
+        return 1
     else:
         print(f"\nClass \"{name}\" does not exist")
         print("Deletion failed")
+        return -1
 
 
 def renameClass(oldName: str, newName: str):
@@ -96,7 +99,7 @@ def renameClass(oldName: str, newName: str):
     if findClass(newName):
         print(f"\nA class already exists with the name \"{newName}\"")
         print("Rename failed")
-        return
+        return -1
 
     index = findClass(oldName)
     if index is not None:
@@ -110,10 +113,11 @@ def renameClass(oldName: str, newName: str):
             # Check destination
             elif relation.destination == oldName:
                 relationship.relationIndex[i].destination = newName
+        return 1
     else:
         print(f"\nClass \"{oldName}\" does not exist")
         print("Rename failed")
-
+        return -2
 
 # List of all class objects the user has created
 classIndex: List[UMLClass] = []

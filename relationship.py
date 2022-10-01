@@ -58,13 +58,13 @@ def addRelationship(source: str, destination: str):
         :returns: The message of the status of adding a relationship
     """
     if source == destination:
-        return -1
+        return -2
     # Check if both source and destination classes exist
     if UMLClass.findClass(source) is not None and UMLClass.findClass(destination) is not None:
         for relation in relationIndex:
             # Check if relationship already exists
             if source == relation.source and destination == relation.destination:
-                return -1
+                return -3
         # Append the new relationship to the relationIndex list
         newRelation = UMLRelationship(source, destination)
         relationIndex.append(newRelation)
