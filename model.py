@@ -10,14 +10,15 @@ class Model():
         self.data=[]
 
     def Load_data(self, file):
-        save= saveload.load(filename=file)
-        classes=save[0]
-        relationships=save[1]
+        save= (UMLClass.classIndex,relationships.relationIndex)
+        saveload.load(filename=file)
+        classes=save[0][0]
+        relationship=save[1][0]
         cleanclasses=[]
         cleanrel=[]
         for items in classes:
             cleanclasses.append(items.name)
-        for items in relationships:
+        for items in relationship:
             cleanrel.append(items.__repr__())
             
         returnstring=(cleanclasses.__str__(),cleanrel.__str__())
@@ -81,5 +82,24 @@ class Model():
 
     def List_classes(self):
         return UMLClass.classIndex
+    
+    def Add_attribute(self,classname,attributeName,attributeType):
+        attributes.addAttribute(classname, attributeName, attributeType)
+        return f'Added {attributeName} to {classname}'
+    
+    def Remove_attribute(self,classname,attributeName):
+        pass
+    
+    def Rename_attribute(self,classname,oldName,newName):
+        pass
+    
+    def Get_attribute(self,classname,attributeName):
+        pass
+    
+    def List_attributes(self,classname):
+        pass
+    
+    def Draw(self, filename):
+        pass
     
     

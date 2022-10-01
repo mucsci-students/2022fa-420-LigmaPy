@@ -1,8 +1,11 @@
+
 import tkinter as Tk
+from tkinter import Canvas, Frame, BOTH
 from model import Model
-from View import View
-
-
+from viewz import View
+import json,os
+f = open('UMLsavefiles/testfile.json')
+json.load(f)
 # to-do trim user input 
 class Controller():
     def __init__(self):
@@ -47,29 +50,30 @@ class Controller():
     def load(self,event ):
         self.action_to_load()
         
+    def Draw(self, event):
+        self.action_to_draw()
+        
     def getlistofclasses(self,event):
         self.action_list_classes()
 
     def getlistofrelationships(self,event):
         self.action_list_relationships()
         
+
     def action_list_relationships(self):
         rellist=[]
 
         result = self.model.List_relationships( )
-        if result== None:
-            result= "No Relationships"
-        else:
-            for item in result:
-                rellist.append(item.__repr__())
-            self.view.viewPanel.v_num.set(rellist)
+        for item in result:
+            rellist.append(item.__repr__())
+        self.view.viewPanel.v_num.set(rellist)
                 
  
     def action_list_classes(self):
         classlist=[]
         result= self.model.List_classes()
         for items in result:
-            classlist.append(items.__repr__())
+            classlist.append(items.name)
         self.view.viewPanel.v_num.set(classlist)
 
 
@@ -157,5 +161,10 @@ class Controller():
             result = 'Failure'
         self.view.viewPanel.v_num.set(result)
         
-    
-        
+    def action_to_draw(self):
+        user_input = self.view.viewPanel.v_entry.get()
+        try:
+            result = self.view.viewPanel.Draw(user_input)
+        except ValueError:
+            result = 'Failure'
+        self.view.viewPanel.v_num.set(result)
