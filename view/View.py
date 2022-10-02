@@ -509,19 +509,19 @@ class View(tk.Tk):
             #self.inputFrame.destroy()
             #self.makeInputFrame()
             #self.makeParamInputFrame()
-        addParamButton = tk.Button(self.inputFrame, text='Add another parameter', command= lambda: addParam())
+        addParamButton = tk.Button(self.inputFrame, text='Add parameter', command= lambda: addParam())
         addParamButton.grid(row=4, column=0)
-        def output():
-            # Error check here????
-            self.param = e1.get()
-            self.paramType = e2.get()
-            self.controller.clickAddParamButton()
-            print(self.className + " " + self.method + " " + str(self.methodReturnType) + " " + self.param + " " + self.paramType)
-            self.remake()
-        ok = tk.Button(self.inputFrame, text='Add and finish', command=lambda: output())
-        ok.grid(row=4, column=1)
+        #def output():
+        #    # Error check here????
+        #    self.param = e1.get()
+        #    self.paramType = e2.get()
+        #    self.controller.clickAddParamButton()
+        #    print(self.className + " " + self.method + " " + str(self.methodReturnType) + " " + self.param + " " + self.paramType)
+        #    self.remake()
+        #ok = tk.Button(self.inputFrame, text='Add and finish', command=lambda: output())
+        #ok.grid(row=4, column=1)
         cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
-        cancel.grid(row=4, column=2)
+        cancel.grid(row=4, column=1)
 
     def makeAddMethodFrame(self):
         inputlabel1 = tk.Label(self.inputFrame, text='Enter class name:')
@@ -662,21 +662,21 @@ class View(tk.Tk):
             self.param = e1.get()
             print(self.className + " " + self.method + " " + self.param)
             self.controller.clickSecondDeleteParamButton()
-            self.inputFrame.destroy()
-            self.makeInputFrame()
-            self.makeParamDeleteInputFrame()
-        addParamButton = tk.Button(self.inputFrame, text='Delete another parameter', command= lambda: addParam())
+            #self.inputFrame.destroy()
+            #self.makeInputFrame()
+            #self.makeParamDeleteInputFrame()
+        addParamButton = tk.Button(self.inputFrame, text='Delete parameter(s)', command= lambda: addParam())
         addParamButton.grid(row=4, column=0)
-        def output():
+        #def output():
             # Error check here????
-            self.param = e1.get()
-            self.controller.clickSecondDeleteParamButton()
-            print(self.className + " " + self.method + " " + self.param )
-            self.remake()
-        ok = tk.Button(self.inputFrame, text='Delete and finish', command=lambda: output())
-        ok.grid(row=4, column=1)
+            #self.param = e1.get()
+            #self.controller.clickSecondDeleteParamButton()
+            #print(self.className + " " + self.method + " " + self.param )
+            #self.remake()
+        #ok = tk.Button(self.inputFrame, text='Delete and finish', command=lambda: output())
+        #ok.grid(row=4, column=1)
         cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
-        cancel.grid(row=4, column=2)
+        cancel.grid(row=4, column=1)
 
     def makeDeleteParamFrame(self):        
         inputlabel1 = tk.Label(self.inputFrame, text='Enter class name:')
@@ -701,7 +701,7 @@ class View(tk.Tk):
             self.method = e2.get()
             print("delete all: class " + self.className + " method " + self.method)
             self.controller.clickDeleteAllParamButton()
-            self.remake()
+            #self.remake()
         ok = tk.Button(self.inputFrame, text='Delete all parameters', command=lambda: delAll())
         ok.grid(row=4, column=1)
         cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
@@ -729,20 +729,20 @@ class View(tk.Tk):
             #self.inputFrame.destroy()
             #self.makeInputFrame()
             #self.makeChangeParamInputFrame()
-        addParamButton = tk.Button(self.inputFrame, text='Change another parameter', command= lambda: addParam())
+        addParamButton = tk.Button(self.inputFrame, text='Change parameter(s)', command= lambda: addParam())
         addParamButton.grid(row=6, column=0)
-        def output():
-            # Error check here????
-            self.param = e1.get()
-            self.paramNew = e2.get()
-            self.paramType = e3.get()
-            self.controller.clickChangeAnotherParamButton()
-            print(self.className + " " + self.method + " " + self.param + " " + self.paramNew + " " + self.paramType )
-            self.remake()
-        ok = tk.Button(self.inputFrame, text='Change and finish', command=lambda: output())
-        ok.grid(row=6, column=1)
+        #def output():
+        #    # Error check here????
+        #    self.param = e1.get()
+        #    self.paramNew = e2.get()
+        #    self.paramType = e3.get()
+        #    self.controller.clickChangeAnotherParamButton()
+        #    print(self.className + " " + self.method + " " + self.param + " " + self.paramNew + " " + self.paramType )
+        #    self.remake()
+        #ok = tk.Button(self.inputFrame, text='Change and finish', command=lambda: output())
+        #ok.grid(row=6, column=1)
         cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
-        cancel.grid(row=6, column=2)
+        cancel.grid(row=6, column=1)
     
     def makeChangeParamFrame(self):
         inputlabel1 = tk.Label(self.inputFrame, text='Enter class name:')
@@ -892,15 +892,15 @@ def classToString(c):
     string += "Class: " + c.name + "\n"
     string += "\n    Fields:\n"
     for each in c.fields:
-        string += "        " + each.type + " " + each.name + "\n"
+        string += "        " + str(each.type) + " " + each.name + "\n"
     string += "\n    Methods:\n"
     for each in c.methods:
         parameters = ""
         if len(each.params) > 0:  
             for param in each.params:
-                parameters += param.type + " " + param.name + ", "
+                parameters += str(param.type) + " " + param.name + ", "
         parameters = parameters[:-2] 
-        string += "        " + each.return_type + " " + each.name + "(" + parameters + ")\n"
+        string += "        " + str(each.return_type) + " " + each.name + "(" + parameters + ")\n"
     string += "\n"
     return string
 
