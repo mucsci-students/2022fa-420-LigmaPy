@@ -166,27 +166,60 @@ def load(filename):
         
         #creates new class object for each json class and adds them to return list
         for c in classes:
-            name = c['name']
-            classObj = u.UMLClass(name)
-            fields = c['fields']
-            for fld in fields:
-                classObj.fields.append(f.UMLField(fld['name'],fld['type']))
-            methods = c['methods']
-            for meth in methods:
-                mName = meth["name"]
-                mType = meth["return_type"]
-                methodObj = m.UMLMethod(mName, mType)
-                mParams = meth['params']
-                for p in mParams:
-                    methodObj.params.append(p.UMLParameters(p['name'],p['type']))
-                classObj.methods.append(methodObj)
-            returnClasses.append(classObj)
+            if isinstance(c, list):
+                for item in c:
+                    name = item['name']
+                    classObj = u.UMLClass(name)
+                    fields = item['fields']
+                    for fld in fields:
+                        classObj.fields.append(f.UMLField(fld['name'],fld['type']))
+                    methods = item['methods']
+                    for meth in methods:
+                        mName = meth["name"]
+                        mType = meth["return_type"]
+                        methodObj = m.UMLMethod(mName, mType)
+                        mParams = meth['params']
+                        for p in mParams:
+                            methodObj.params.append(p.UMLParameters(p['name'],p['type']))
+                        classObj.methods.append(methodObj)
+                    returnClasses.append(classObj)
+                break
+            else:
+                name = c['name']
+                classObj = u.UMLClass(name)
+                fields = c['fields']
+                for fld in fields:
+                    classObj.fields.append(f.UMLField(fld['name'],fld['type']))
+                methods = c['methods']
+                for meth in methods:
+                    mName = meth["name"]
+                    mType = meth["return_type"]
+                    methodObj = m.UMLMethod(mName, mType)
+                    mParams = meth['params']
+                    for p in mParams:
+                        methodObj.params.append(p.UMLParameters(p['name'],p['type']))
+                    classObj.methods.append(methodObj)
+                returnClasses.append(classObj)
+                    
+                    
+                    
+        #creates new relationship object for each json relationship and adds them to return list
+
         
 
         #loops through relationship json and decodes each piece creating new objects then adds them to a list
-        for eachRelation in relationships:    
-            name = r.UMLRelationship(eachRelation['source'], eachRelation['destination'], eachRelation['type'])
-            returnRelations.append(name) 
+        for eachRelation in relationships:
+            if isinstance(eachRelation, list):
+                for item in eachRelation:
+                    source = item['source']
+                    destination = item['destination']
+                    relationType = item['type']
+                    newRelation = r.UMLRelationship(source, destination, relationType)
+                    returnRelations.append(newRelation)
+                break
+            else:   
+                name = r.UMLRelationship(eachRelation['source'], eachRelation['destination'], eachRelation['type'])
+                returnRelations.append(name) 
             
         #apapend global lists
         r.relationIndex.append(returnRelations)

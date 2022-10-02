@@ -26,9 +26,17 @@ def isNameUnique(name: str):
     :param name: a string of which name to check if it is unique
     :returns: True if the name is unique
     """
+    #There are issues with the json formatting that cause this to not work this is a monkeypatch for now
+    # we need to fix the json formatting or the load function
     for c in classIndex:
-        if c.name == name:
-            return False
+         if isinstance(c, list):
+                for item in c:
+                    if item.name == name:
+                        return False
+                    break
+                else:
+                    if c.name == name:
+                        return False
     return True
 
 

@@ -1,4 +1,5 @@
 
+from itertools import count
 import tkinter as Tk
 from tkinter import Canvas, Frame, BOTH
 from model import Model
@@ -68,12 +69,19 @@ class Controller():
             rellist.append(item.__repr__())
         self.view.viewPanel.v_num.set(rellist)
                 
- 
+    
     def action_list_classes(self):
         classlist=[]
+        count=0
         result= self.model.List_classes()
+        
         for items in result:
-            classlist.append(items.name)
+            if isinstance(items, list):
+                for item in items:
+                    classlist.append(item.name)
+            else:
+                classlist.append(items.name)
+            count=0+1
         self.view.viewPanel.v_num.set(classlist)
 
 

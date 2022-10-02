@@ -1,7 +1,7 @@
 
 import tkinter as Tk
 from tkinter import  Canvas, Frame, BOTH
-import os, json
+import os, json, random
 import saveload as sl
 import UMLClass as uml
 import relationship as rel
@@ -100,7 +100,7 @@ class ViewPanel():
         #self.btn8.grid(row=4, column=0)
     def Draw(self, filename=''):
         if filename=='':
-            sl.save(uml.UMLClass,rel.Relationship,'draw-checkpoint.json')
+            sl.save(uml.classIndex,rel.relationIndex,'draw-checkpoint.json')
             # try:
             path_to_json = 'UMLsavefiles/'
             json_files = [pos_json for pos_json in os.listdir(path_to_json) if pos_json.endswith('.json')]
@@ -113,14 +113,15 @@ class ViewPanel():
             y0=0
             y1=0
             classlocation=[]
+            listofcolors=['red','blue','green','yellow','orange','purple','pink','brown','black','grey']
             canvas = self.canvas
             for items in data['classes']:
                 print(items['name'])
-                classid=canvas.create_rectangle(x0+10, x1+10, y0+10, y1+10, outline="#f11",
-                fill="#1f1", width=10)
-                x0=x0+20
-                x1=x1+10
-                y0=y0+20
+                classid=canvas.create_rectangle(x0+10, x1+10, y0+10, y1+10, outline=random.choice(listofcolors),
+                fill=random.choice(listofcolors), width=40)
+                x0=x0+75
+                x1=x1+75
+                y0=y0+75
                 y1=y1+10
                 # we need to store the instances to access the location later
                 classlocation.append((canvas.coords(classid),items['name']))
@@ -128,8 +129,9 @@ class ViewPanel():
             for items in data['relationships']:
                 for names in data['classes']:
                     if names['name']==items['source']:
-                        canvas.create_line(classlocation[0][0], classlocation[1][0])
-                        
+                        canvas.create_line(classlocation[0][0], classlocation[1][0], fill=random.choice(listofcolors), width=2, arrow='last', arrowshape=(10,20,10),  smooth=1,  state='normal', tags='{0}'.format(items['source']))
+                        canvas.create_text(classlocation[0][0][0], classlocation[1][0][0], text="Source: {0} Destination: {1}".format(items['source'],items['destination']), fill=random.choice(listofcolors), font=("Purisa", 3))
+
             canvas.place(x=50, y=50)
             # except:
                 # print("No file to load")
@@ -143,24 +145,48 @@ class ViewPanel():
             y0=0
             y1=0
             classlocation=[]
+            listofcolors=['red','blue','green','yellow','orange','purple','pink','brown','black','grey']
             canvas = self.canvas
             for items in data['classes']:
-                print(items['name'])
-                classid=canvas.create_rectangle(x0+10, x1+10, y0+10, y1+10, outline="#f11",
-                fill="#1f1", width=10)
-                x0=x0+20
-                x1=x1+10
-                y0=y0+20
-                y1=y1+10
-                # we need to store the instances to access the location later
-                classlocation.append((canvas.coords(classid),items['name']))
+                if isinstance(items,list):
+                    for item in items:
+                        print(item['name'])
+                        classid=canvas.create_rectangle(x0+10, x1+10, y0+10, y1+10, outline=random.choice(listofcolors),
+                        fill=random.choice(listofcolors), width=40)
+                        x0=x0+75
+                        x1=x1+75
+                        y0=y0+75
+                        y1=y1+75
+                        # we need to store the instances to access the location later
+                        classlocation.append((canvas.coords(classid),item['name']))
+                    break
+                else:   
+                    print(items['name'])
+                    classid=canvas.create_rectangle(x0+10, x1+10, y0+10, y1+10, outline=random.choice(listofcolors),
+                    fill=random.choice(listofcolors), width=40)
+                    x0=x0+75
+                    x1=x1+75
+                    y0=y0+75
+                    y1=y1+75
+                    # we need to store the instances to access the location later
+                    classlocation.append((canvas.coords(classid),items['name']))
             
             for items in data['relationships']:
                 for names in data['classes']:
-                    if names['name']==items['source']:
-                        canvas.create_line(classlocation[0][0], classlocation[1][0])
+                    if isinstance(names,list):
+                        for name in names:
+                            if name['name']==items[0]['source']:
+                                canvas.create_line(classlocation[0][0], classlocation[1][0], fill=random.choice(listofcolors), width=2, arrow='last', arrowshape=(10,20,10),  smooth=1,  state='normal', tags='{0}'.format(items[0]['source']))
+                                canvas.create_text(classlocation[0][0][0], classlocation[1][0][0], text="Source: {0} Destination: {1}".format(items[0]['source'],items[0]['destination']), fill=random.choice(listofcolors), font=("Purisa", 3))
+                        break
+                    else:
+                        if names['name']==items['source']:
+                            canvas.create_line(classlocation[0][0], classlocation[1][0], fill=random.choice(listofcolors), width=2, arrow='last', arrowshape=(10,20,10),  smooth=1,  state='normal', tags='{0}'.format(items['source']))
+                            canvas.create_text(classlocation[0][0][0], classlocation[1][0][0], text="Source: {0} Destination: {1}".format(items['source'],items['destination']), fill=random.choice(listofcolors), font=("Purisa", 3))
                         
-            self.canvas.place(x=110, y=110)
-            self.canvas.update_idletasks()
+                   
+                                                
+                    self.canvas.place(x=110, y=110)
+                    self.canvas.update_idletasks()
             
             
