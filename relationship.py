@@ -48,7 +48,7 @@ def findRelationship(source: str, destination: str):
     #search error
     return -1
 
-def addRelationship(source: str, destination: str):
+def addRelationship(source: str, destination: str, type: str):
     """
         Creates a relationship between to classes.
 
@@ -66,7 +66,7 @@ def addRelationship(source: str, destination: str):
             if source == relation.source and destination == relation.destination:
                 return -3
         # Append the new relationship to the relationIndex list
-        newRelation = UMLRelationship(source, destination)
+        newRelation = UMLRelationship(source, destination, type)
         relationIndex.append(newRelation)
     else:
         return -1
