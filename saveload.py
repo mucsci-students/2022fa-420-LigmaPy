@@ -13,7 +13,7 @@ import copy
 import UMLClass as u
 import relationship as r
 import attributes as a
-#import parameter as p
+import parameter as p
 
 
 ##################################################################
@@ -108,15 +108,8 @@ def save(classes, relations, filename):
         print("Created directory: UMLsavefiles")
         os.mkdir("UMLsavefiles")
     
-    #copy original list so we dont change original
-    relationConvert = copy.deepcopy(relations)
-    #converts each relation class object to just the name
-    for each in relationConvert:
-        each.source = each.source.name
-        each.destination = each.destination.name
-    
     #combines both into a dictionary
-    t = {"classes": classes, "relationships": relationConvert}
+    t = {"classes": classes, "relationships": relations}
     
     #encodes tuple above to json
     jsonString = json.dumps(t, default=vars, indent=4)
@@ -145,15 +138,8 @@ def saveGUI(classes, relations, filename):
     if filename.endswith('.json'):
         filename = filename[:-5]
 
-    #copy original list so we dont change original
-    relationConvert = copy.deepcopy(relations)
-    #converts each relation class object to just the name
-    for each in relationConvert:
-        each.source = each.source.name
-        each.destination = each.destination.name
-    
     #combines both into a dictionary
-    t = {"classes": classes, "relationships": relationConvert}
+    t = {"classes": classes, "relationships": relations}
     
     #encodes tuple above to json
     jsonString = json.dumps(t, default=vars, indent=4)
@@ -226,15 +212,7 @@ def load(filename):
         
         #creates new relation for each json relation and adds them to return list
         for rel in relationships:
-            s = rel['source']
-            d = rel['destination']
-            t = rel['type']
-            for each in returnClasses:
-                if each.name == s:
-                    sorc = each
-                if each.name == d:
-                    dest = each
-            returnRelations.append(r.UMLRelationship(sorc, dest, t))
+            returnRelations.append(r.UMLRelationship(rel['source'], rel['destination'], rel['type']))
 
         u.classIndex = returnClasses
         r.relationIndex = returnRelations       
@@ -296,24 +274,18 @@ def loadGUI(filename):
         
         #creates new relation for each json relation and adds them to return list
         for rel in relationships:
-            s = rel['source']
-            d = rel['destination']
-            t = rel['type']
-            for each in returnClasses:
-                if each.name == s:
-                    sorc = each
-                if each.name == d:
-                    dest = each
-            returnRelations.append(r.UMLRelationship(sorc, dest, t))
+            returnRelations.append(r.UMLRelationship(rel['source'], rel['destination'], rel['type']))
 
         u.classIndex = returnClasses
         r.relationIndex = returnRelations       
         message = "Loaded successfully"
         return message
-        #return (returnClasses, returnRelations)
+            #return (returnClasses, returnRelations)
     
     #if error loading return original lists
+    
     except Exception as e:
         print("Load failed")
         message = "Load failed"
         return message
+    
