@@ -4,7 +4,6 @@
     Description: Basic CLI interface and commands to go along with it.
 """
 
-from attr import attrib
 import pyfiglet
 import cmd
 # Local Imports
@@ -79,12 +78,16 @@ class Interface(cmd.Cmd):
             print(f"Argument error")
 
     def do_changeRelType(self, arg):
+        """Usage: changeRelType
+        
+        """
         pass
 
     # Creates a new method for the specified class
     def do_addMethod(self, arg):
         """Usage: addMethod <class> <name> <return_type> [-p <name>:<type>...]
         
+        Adds the method <name> with <return_type> to <class>
         """
         args = arg.split()
         if len(args) == 3:
@@ -105,6 +108,7 @@ class Interface(cmd.Cmd):
     def do_deleteMethod(self, arg):
         """Usage: deleteMethod <class> <method>
 
+        Removes <method> from <class>
         """
         args = arg.split()
         if len(args) == 2:
@@ -115,6 +119,7 @@ class Interface(cmd.Cmd):
     def do_renameMethod(self, arg):
         """Usage: renameMethod <class> <old_name> <new_name>
         
+        Changes the name of a method from <old_name> to <new_name> in <class>
         """
         args = arg.split()
         if len(args) == 3:
@@ -125,6 +130,7 @@ class Interface(cmd.Cmd):
     def do_addField(self, arg):
         """Usage: addField <class> <name> <type>
         
+        Adds the field <name> with <type> to <class>
         """
         args = arg.split()
 
@@ -141,6 +147,7 @@ class Interface(cmd.Cmd):
     def do_deleteField(self, arg):
         """Usage: deleteField <class> <field>
         
+        Removes the <field> from <class>
         """
         args = arg.split()
         if len(args) == 2:
@@ -155,6 +162,7 @@ class Interface(cmd.Cmd):
     def do_renameField(self, arg):
         """Usage: renameField <class> <old_name> <new_name>
 
+        Updates the name of a field from <old_name> to <new_name>
         """
         args = arg.split()
         if len(args) == 3:
@@ -163,12 +171,40 @@ class Interface(cmd.Cmd):
             print(UMLException("Argument error", f"expected 3, given {len(args)}"))
 
     def do_addParam(self, arg):
-        pass
+        """Usage: addParam <class> <method> <name>:<type>...
+        
+        Adds a list of parameters to <method> in <class>
+        """
+        args = arg.split()
+        if len(args) > 2:
+            paramList = []
+            for param in args[4:]:
+                paramName, paramType = param.split(":")
+                paramList.append((paramName, paramType))
+
+            ret = parameter.addParameter(paramList, args[1], args[0])
+        else:
+            print(UMLException("Argument error", f"not enough args"))
 
     def do_deleteParam(self, arg):
-        pass
+        """Usage: deleteParam <class> <method> [-a] [<name>...]
+        
+        Removes parameter(s) from <method>
+        """
+        args = arg.split()
+        if len(args) == 3:
+            if args[2] == "-a":
+                parameter.deleteAllParameter(args[1], args[0])
+            else:
+                parameter.deleteParameter(args[2:], args[1], args[0])
+        else:
+            print()
 
     def do_changeParam(self, arg):
+        """Usage: changeParam <class> <method> <old_list> <new_list>
+        
+        Changes the list of parameters from <old_list> to <new_list> in <method>
+        """
         pass
     # Stores the current state to a JSON file
     def do_save(self, arg):
