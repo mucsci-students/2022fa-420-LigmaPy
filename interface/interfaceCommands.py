@@ -7,7 +7,6 @@
 # Imports
 import os.path
 import sys
-import json
 from prettytable import PrettyTable
 # Local Imports
 import UMLClass
@@ -25,8 +24,10 @@ def listClasses():
         # print each classes name and attributes
         for c in UMLClass.classIndex:
             print(c.name + ":")
-            for attr in c.attributes:
-                print(f"\t{attr.name}")
+            for field in c.fields:
+                print(f"\t{field.type} {field.name}")
+            for method in c.methods:
+                print(f"\t{method.return_type} {method.name}")
     else:
         print("\nNo classes have been added")
 
@@ -38,16 +39,27 @@ def listClass(name: str):
     # Get index of class with name in classIndex list
     index = UMLClass.findClass(name)
     # Check that the class exists and it has at least one attribute
-    if index is not None and len(UMLClass.classIndex[index].attributes) > 0:
-        print(f"\n {name} Attributes")
+    if index is not None:
+        print(f"\n {name}")
         # Loop to print bottom border with
         # length len(name) + len("Attributes") + 2
-        for i in range((len(name) + 13)):
+        for _ in range((len(name) + 13)):
             print("*", end="")
         print()
+        print(" Fields:")
+        """
+            LIST CLASS FIELDS HERE
+        """
+        for _ in range((len(name) + 13)):
+            print("*", end="")
+        print()
+        print(" Methods:")
+        """
+            LIST CLASS METHODS HERE
+        """
         # Loop through all attributes of the class
-        for attr in UMLClass.classIndex[index].attributes:
-            print(f" {attr.name}")
+        # for attr in UMLClass.classIndex[index].attributes:
+        #     print(f" {attr.name}")
     else:
         print(f"\nClass \"{name}\" has no attributes")
 
@@ -58,14 +70,15 @@ def listRelationships():
     print()
     if len(relationship.relationIndex) > 0:
         # List all relationships in relationIndex
-        table = PrettyTable(['Source', 'Destination'])
+        table = PrettyTable(['Source', 'Destination', 'Type'])
         # Left align the table
         table.align = 'l'
         for relation in relationship.relationIndex:
             # Add relationship to table
-            table.add_row([relation.source, relation.destination])
+            table.add_row([relation.source, relation.destination, relation.type])
         # Display table
-        print(table)
+        # print(table)
+        return table
     else:
         print("No relationships found.")
 

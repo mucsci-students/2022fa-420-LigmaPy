@@ -4,13 +4,13 @@
     Description: Basic CLI interface and commands to go along with it.
 """
 
-
 import pyfiglet
 import cmd
 # Local Imports
 import UMLClass
 import attributes
 import relationship
+import parameter
 from interface.interfaceCommands import *
 from saveload import *
 
@@ -30,7 +30,7 @@ class Interface(cmd.Cmd):
     """
     # Creates a uniquely named class
     def do_addClass(self, arg):
-        """Usage: addClass <name>
+        """Usage: addClass <name> [-p]
         
         Creates and adds a new class with name <name>.
         """
@@ -60,8 +60,8 @@ class Interface(cmd.Cmd):
         Creates a relationship between the <source> and <destination> classes.
         """
         classes = arg.split()
-        if len(classes) == 2:
-            relationship.addRelationship(classes[0], classes[1])
+        if len(classes) == 3:
+            relationship.addRelationship(classes[0], classes[1], classes[2])
         else:
             print(f"Argument error")
     # Deletes an existing relationship between two classes
@@ -75,6 +75,24 @@ class Interface(cmd.Cmd):
             relationship.deleteRelationship(classes[0], classes[1])
         else:
             print(f"Argument error")
+    # Creates a new method for the specified class
+    def do_addMethod(self, arg):
+        args = arg.split()
+        if len(args) == 3:
+            attributes.addMethod(args[1], args[0], args[2])
+        elif len(args) > 4:
+            if args[3] != "-p":
+                return
+            attributes.addMethod(args[1], args[0], args[2])
+            parameter.addParameter(args[4:], args[1], args[0])
+
+    # Removes the method from the specified class
+    def do_deleteMethod(self, arg):
+        pass
+    # Renames the specified method in the specified class
+    def do_renameMethod(self, arg):
+        pass
+
     # Creates an attribute for the specified class
     def do_addAttribute(self, arg):
         """Usage: addAttribute <name> <class>
@@ -142,7 +160,7 @@ class Interface(cmd.Cmd):
         
         Lists all existing relationships between classes.
         """
-        listRelationships()
+        print(listRelationships())
     # Exits the program
     def do_exit(self, arg):
         """Usage: exit
@@ -153,9 +171,3 @@ class Interface(cmd.Cmd):
     # Overrides the emptyline method to avoid repetition of previous command
     def emptyline(self):
         pass
-
-# def display():
-#     Interface().cmdloop()
-
-# if __name__=="__main__":
-#     main()
