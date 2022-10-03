@@ -138,12 +138,13 @@ class Controller:
             self.view.makeMessage("Relationship added")
 
     def clickUpdateTypeButton(self):
-        num = r.updateType( root.view.source, root.view.destination, root.view.relationshipTypeNew)
+        num = r.findRelationship(root.view.source, root.view.destination)
         if num == -1:
             self.view.remake()
             self.view.makeUpdateRelationType()
             self.view.makeMessage("Relationship does not exist")
         else:
+            r.relationIndex[num].editType(self.view.relationshipTypeNew)
             self.view.remake()
             self.view.makeUpdateRelationType()
             self.view.makeMessage("Relationship type updated")       

@@ -907,8 +907,8 @@ def classToString(c):
 def relationToString(r):
     string = ""
     string += "Relationship:\n"
-    string += "    Source: " + r.source.name + "\n"
-    string += "    Destination: " + r.destination.name + "\n"
+    string += "    Source: " + r.source + "\n"
+    string += "    Destination: " + r.destination + "\n"
     string += "    Type: " + r.type + "\n\n"
     return string
 
