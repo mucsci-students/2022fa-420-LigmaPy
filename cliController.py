@@ -4,6 +4,7 @@
     Description: Basic CLI interface and commands to go along with it.
 """
 
+from attr import attrib
 import pyfiglet
 import cmd
 # Local Imports
@@ -11,6 +12,7 @@ import UMLClass
 import attributes
 import relationship
 import parameter
+import UMLException
 from interface.interfaceCommands import *
 from saveload import *
 
@@ -30,7 +32,7 @@ class Interface(cmd.Cmd):
     """
     # Creates a uniquely named class
     def do_addClass(self, arg):
-        """Usage: addClass <name> [-p]
+        """Usage: addClass <name>
         
         Creates and adds a new class with name <name>.
         """
@@ -44,9 +46,9 @@ class Interface(cmd.Cmd):
         UMLClass.deleteClass(arg)
     # Changes the name of a class
     def do_renameClass(self, arg):
-        """Usage: renameClass <name> <newName>
+        """Usage: renameClass <name> <new_name>
 
-        Renames a class from <name> to <newName>.
+        Renames a class from <name> to <new_name>.
         """
         names = arg.split()
         if len(names) == 2:
@@ -55,9 +57,9 @@ class Interface(cmd.Cmd):
             print(f"Argument error")
     # Creates a relationship between two classes
     def do_addRelationship(self, arg):
-        """Usage addRelationship <source> <destination>
+        """Usage addRelationship <source> <destination> <type>
         
-        Creates a relationship between the <source> and <destination> classes.
+        Creates a relationship of <type> between the <source> and <destination> classes.
         """
         classes = arg.split()
         if len(classes) == 3:
@@ -75,57 +77,99 @@ class Interface(cmd.Cmd):
             relationship.deleteRelationship(classes[0], classes[1])
         else:
             print(f"Argument error")
+
+    def do_changeRelType(self, arg):
+        pass
+
     # Creates a new method for the specified class
     def do_addMethod(self, arg):
+        """Usage: addMethod <class> <name> <return_type> [-p <name>:<type>...]
+        
+        """
         args = arg.split()
         if len(args) == 3:
             attributes.addMethod(args[1], args[0], args[2])
         elif len(args) > 4:
             if args[3] != "-p":
                 return
+            # parse the parameter lists into a list of tuples
+            paramList = []
+            for param in args[4:]:
+                paramName, paramType = param.split(":")
+                paramList.append((paramName, paramType))
+
             attributes.addMethod(args[1], args[0], args[2])
-            parameter.addParameter(args[4:], args[1], args[0])
+            parameter.addParameter(paramList, args[1], args[0])
 
     # Removes the method from the specified class
     def do_deleteMethod(self, arg):
-        pass
+        """Usage: deleteMethod <class> <method>
+
+        """
+        args = arg.split()
+        if len(args) == 2:
+            attributes.deleteMethod(args[1], args[0])
+        else:
+            print(f"Wrong")
     # Renames the specified method in the specified class
     def do_renameMethod(self, arg):
-        pass
-
-    # Creates an attribute for the specified class
-    def do_addAttribute(self, arg):
-        """Usage: addAttribute <name> <class>
+        """Usage: renameMethod <class> <old_name> <new_name>
         
-        Creates a new attribute named <name> in <class>.
-        """
-        args = arg.split()
-        if len(args) == 2:
-            attributes.addAttribute(args[0], args[1])
-        else:
-            print(f"Argument error")
-    # Removes attribute from specified class
-    def do_deleteAttribute(self, arg):
-        """Usage: deleteAttribute <name> <class>
-        
-        Removes the <name> attribute from <class>.
-        """
-        args = arg.split()
-        if len(args) == 2:
-            attributes.deleteAttribute(args[0], args[1])
-        else:
-            print(f"Argument error")
-    # Renames an attribute
-    def do_renameAttribute(self, arg):
-        """Usage: renameAttribute <name> <newName> <class>
-        
-        Renames the <name> attribute in <class> to <newName>.
         """
         args = arg.split()
         if len(args) == 3:
-            attributes.renameAttribute(args[0], args[1], args[2])
+            ret = attributes.renameMethod(args[1], args[2], args[0])
         else:
-            print(f"Argument error")
+            print(UMLException("Argument error", "BLAH"))
+
+    def do_addField(self, arg):
+        """Usage: addField <class> <name> <type>
+        
+        """
+        args = arg.split()
+
+        if len(args) == 3:
+            ret = attributes.addField(args[1], args[0], args[2])
+
+            if ret == -1:
+                print(UMLException("Class error", f"{args[0]} does not exist"))
+            elif ret == -2:
+                print(UMLException("Field error", f"{args[1]} already exists"))
+        else:
+            print("Incorrect amount of arguments")
+
+    def do_deleteField(self, arg):
+        """Usage: deleteField <class> <field>
+        
+        """
+        args = arg.split()
+        if len(args) == 2:
+            ret = attributes.deleteField(args[1], args[0])
+            if ret == -1:
+                print(UMLException("Class error", f"{args[0]} does not exist"))
+            elif ret == -2:
+                print(UMLException("Field error", f"{args[1]} does not exist"))
+        else:
+            print("ARGUMENT ERROR")
+
+    def do_renameField(self, arg):
+        """Usage: renameField <class> <old_name> <new_name>
+
+        """
+        args = arg.split()
+        if len(args) == 3:
+            ret = attributes.renameField(args[1], args[2], args[0])
+        else:
+            print(UMLException("Argument error", f"expected 3, given {len(args)}"))
+
+    def do_addParam(self, arg):
+        pass
+
+    def do_deleteParam(self, arg):
+        pass
+
+    def do_changeParam(self, arg):
+        pass
     # Stores the current state to a JSON file
     def do_save(self, arg):
         """Usage: save <filename>

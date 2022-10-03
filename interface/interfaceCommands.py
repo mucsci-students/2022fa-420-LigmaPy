@@ -23,11 +23,13 @@ def listClasses():
         print()
         # print each classes name and attributes
         for c in UMLClass.classIndex:
-            print(c.name + ":")
+            print("Class: " + c.name)
+            print("\tFields:")
             for field in c.fields:
-                print(f"\t{field.type} {field.name}")
+                print(f"\t\t{field}")
+            print("\tMethods:")
             for method in c.methods:
-                print(f"\t{method.return_type} {method.name}")
+                print(f"\t\t{method}")
     else:
         print("\nNo classes have been added")
 
@@ -47,21 +49,29 @@ def listClass(name: str):
             print("*", end="")
         print()
         print(" Fields:")
-        """
-            LIST CLASS FIELDS HERE
-        """
+
         for _ in range((len(name) + 13)):
             print("*", end="")
         print()
+        """
+            LIST CLASS FIELDS HERE
+        """
+        for field in UMLClass.classIndex[index].fields:
+            print(f"\t{field}")
         print(" Methods:")
+        for _ in range((len(name) + 13)):
+            print("*", end="")
+        print()
         """
             LIST CLASS METHODS HERE
         """
+        for method in UMLClass.classIndex[index].methods:
+            print(f"\t{method}")
         # Loop through all attributes of the class
         # for attr in UMLClass.classIndex[index].attributes:
         #     print(f" {attr.name}")
     else:
-        print(f"\nClass \"{name}\" has no attributes")
+        print(f"\nClass \"{name}\" does not exist")
 
 def listRelationships():
     """

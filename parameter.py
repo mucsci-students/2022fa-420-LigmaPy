@@ -18,6 +18,12 @@ class parameter:
         self.name = name
         self.type = type
 
+    def __str__(self):
+        return f"{self.type} {self.name}"
+
+    def __repr__(self):
+        return f"{self.type} {self.name}"
+
 
 
 
@@ -77,7 +83,7 @@ def addParameter(name:list, methodName:str, className:str):
 
             C.classIndex[classIndex].methods[methodIndex].params.append(newParameter)
 
-            print(f"Successfully added parameter \"{params[i]}\" to method \"{methodName}\"!")
+            print(f"Successfully added parameter \"{str(params[i])}\" to method \"{methodName}\"!")
         return 
     
     for i, p in enumerate(paramIndex):

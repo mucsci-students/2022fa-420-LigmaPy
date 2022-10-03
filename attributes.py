@@ -32,6 +32,11 @@ class method(attribute):
         self.return_type = retType
         self.params = []
 
+    def __str__(self):
+        return f"{self.return_type} {self.name}({', '.join(map(str, self.params))})"
+
+    def __repr__(self):
+        return f"{self.return_type} {self.name}({', '.join(map(str, self.params))})"
 class field(attribute):
     def __init__(self, name : str, t : str):
         super().__init__(name)
@@ -39,6 +44,9 @@ class field(attribute):
 
     def changeType(self, newName : str):
         self.name = newName
+
+    def __str__(self):
+        return f"{self.type} {self.name}"
 
 
 ###########################################################
