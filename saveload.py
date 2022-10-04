@@ -7,13 +7,13 @@ Description: Saves and loads a user's session as a json
 import json
 from os.path import exists
 import os.path
-from pathvalidate import is_valid_filename
+# from pathvalidate import is_valid_filename
 import copy
 
 import UMLClass as u
 import relationship as r
 import attributes as a
-#import parameter as p
+import parameter as p
 
 
 ##################################################################
@@ -94,10 +94,10 @@ def save(classes, relations, filename):
     filename = filename
     
     #checks if file name is valid
-    if not is_valid_filename(filename):
+    """if not is_valid_filename(filename):
         returnMessage = "Invalid file name."
         print("Invalid file name")
-        return returnMessage
+        return returnMessage """
     
     if filename.endswith('.json'):
         filename = filename[:-5]
@@ -243,6 +243,7 @@ def load(filename):
     
     #if error loading return original lists
     except Exception as e:
+        print(e)
         print("Load failed")
         return
         #return (u.classIndex, r.relationIndex)

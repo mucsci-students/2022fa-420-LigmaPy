@@ -219,7 +219,7 @@ class Interface(cmd.Cmd):
         
         Loads a previously saved state from <filename>.json.
         """
-        UMLClass.classIndex, relationship.relationIndex = load(arg)
+        load(arg)
     # List all classes and their contents
     def do_listClasses(self, arg):
         """Usage: listClasses
