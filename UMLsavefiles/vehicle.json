@@ -1,0 +1,169 @@
+{
+    "classes": [
+        {
+            "name": "Car",
+            "fields": [
+                {
+                    "name": "vin",
+                    "type": "string"
+                },
+                {
+                    "name": "year",
+                    "type": "int"
+                },
+                {
+                    "name": "make",
+                    "type": "string"
+                },
+                {
+                    "name": "model",
+                    "type": "string"
+                }
+            ],
+            "methods": [
+                {
+                    "name": "drive",
+                    "return_type": "void",
+                    "params": []
+                },
+                {
+                    "name": "turnRight",
+                    "return_type": "void",
+                    "params": []
+                },
+                {
+                    "name": "turnLeft",
+                    "return_type": "void",
+                    "params": []
+                }
+            ]
+        },
+        {
+            "name": "Tire",
+            "fields": [
+                {
+                    "name": "psi",
+                    "type": "float"
+                },
+                {
+                    "name": "brand",
+                    "type": "string"
+                }
+            ],
+            "methods": [
+                {
+                    "name": "setPSI",
+                    "return_type": "void",
+                    "params": [
+                        {
+                            "name": "new_psi",
+                            "type": "float"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Engine",
+            "fields": [
+                {
+                    "name": "capacity",
+                    "type": "float"
+                },
+                {
+                    "name": "numberOfCylinders",
+                    "type": "int"
+                }
+            ],
+            "methods": [
+                {
+                    "name": "start",
+                    "return_type": "void",
+                    "params": []
+                },
+                {
+                    "name": "brake",
+                    "return_type": "void",
+                    "params": []
+                },
+                {
+                    "name": "accelerate",
+                    "return_type": "void",
+                    "params": []
+                }
+            ]
+        },
+        {
+            "name": "Suspension",
+            "fields": [
+                {
+                    "name": "springRate",
+                    "type": "float"
+                }
+            ],
+            "methods": []
+        },
+        {
+            "name": "Wheel",
+            "fields": [
+                {
+                    "name": "diameter",
+                    "type": "float"
+                }
+            ],
+            "methods": []
+        },
+        {
+            "name": "GearBox",
+            "fields": [
+                {
+                    "name": "gearRatio",
+                    "type": "float[]"
+                },
+                {
+                    "name": "currentGear",
+                    "type": "int"
+                }
+            ],
+            "methods": [
+                {
+                    "name": "shiftUp",
+                    "return_type": "int",
+                    "params": []
+                },
+                {
+                    "name": "shiftDown",
+                    "return_type": "int",
+                    "params": []
+                }
+            ]
+        },
+        {
+            "name": "Brake",
+            "fields": [
+                {
+                    "name": "type",
+                    "type": "string"
+                }
+            ],
+            "methods": [
+                {
+                    "name": "apply",
+                    "return_type": "void",
+                    "params": []
+                },
+                {
+                    "name": "setType",
+                    "return_type": "void",
+                    "params": [
+                        {
+                            "name": "new_type",
+                            "type": "string"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "relationships": []
+}

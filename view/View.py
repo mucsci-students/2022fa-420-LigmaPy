@@ -784,6 +784,7 @@ def relationToString(r):
     string += "    Type: " + r.type + "\n\n"
     return string
 
+
 """
 #for testing
 def printClass (c):
@@ -802,3 +803,4 @@ def printClass (c):
         print(f"{each.return_type} {each.name}({parameters})")
     print()
 """
+
