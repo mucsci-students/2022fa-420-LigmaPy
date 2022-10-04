@@ -912,5 +912,5 @@ def relationToString(r):
     string += "    Type: " + r.type + "\n\n"
     return string
 
-view = View(None)
-view.main()
+#view = View(None)
+#view.main()

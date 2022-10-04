@@ -244,7 +244,7 @@ def loadGUI(filename):
         u.classIndex = returnClasses
         r.relationIndex = returnRelations
         message = "Loaded empty file"
-        return message
+        return message   
         #return(returnClasses, returnRelations)    
     
     try:
@@ -282,7 +282,7 @@ def loadGUI(filename):
         message = "Loaded successfully"
         return message
             #return (returnClasses, returnRelations)
-    
+
     #if error loading return original lists
     
     except Exception as e:

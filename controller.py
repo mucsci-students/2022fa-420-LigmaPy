@@ -223,7 +223,7 @@ class Controller:
             root.view.makeInputFrame()
             root.view.makeAddMethodFrame()
             self.view.makeMessage("Method already exists")
-        else:    
+        else:       
             #otherwise make param window to add params 
             # and send success message     
             self.view.inputFrame.destroy()
@@ -243,7 +243,7 @@ class Controller:
             root.view.makeInputFrame()
             root.view.makeAddMethodFrame()
             self.view.makeMessage("Method already exists")
-        else:    
+        else:       
             #otherwise make param window to add params 
             # and send success message     
             self.view.inputFrame.destroy()
@@ -329,7 +329,7 @@ class Controller:
             root.view.makeInputFrame()
             root.view.makeAddParamFrame()
             self.view.makeMessage('Method does not exist in class')
-        else:
+        else:  
         # and send success message     
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
