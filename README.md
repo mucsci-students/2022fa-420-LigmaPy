@@ -31,77 +31,107 @@ Note: Add the --cli flag to run the CLI editor
 ### `addClass` - <i>Creates a class</i>
 
 ```bash
->> addClass <name>
+addClass <name>
 ```
 
 ### `deleteClass` - <i>Removes a class</i>
 ```bash
->> deleteClass <name>
+deleteClass <name>
 ```
 
 ### `renameClass` - <i>Updates name of a class</i>
 ```bash
->> renameClass <currentName> <newName>
+renameClass <currentName> <newName>
 ```
 
-### `addAttribute` - <i>Creates an attribute in a class</i>
+### `addField` - <i>Creates a field in a class</i>
 ```bash
->> addAttribute <name> <class>
+addField <class> <name> <type>
 ```
 
-### `deleteAttribute` - <i>Removes an attribute from a class</i>
+### `deleteField` - <i>Removes a field from a class</i>
 ```bash
->> deleteAttribute <name> <class>
+deleteField <class> <name>
 ```
 
-### `renameAttribute` - <i>Updates the name of a classes attribute</i>
+### `renameField` - <i>Updates the name of a classes field</i>
 ```bash
->> renameAttribute <currentName> <newName> <class>
+renameField <class> <old_name> <new_name>
+```
+
+### `addMethod` - <i>Creates a method in a class</i>
+```bash
+addMethod <class> <name> <return_type> [-p <name>:<type>...]
+```
+
+### `deleteMethod` - <i>Removes a method from a class</i>
+```bash
+deleteMethod <class> <name>
+```
+
+### `renameMethod` - <i>Updates the name of a method in a class</i>
+```bash
+renameMethod <class> <old_name> <new_name>
+```
+
+### `addParam` - <i>Creates a list of parameters for a method in a class</i>
+```bash
+addParam <class> <method> <name>:<type>...
+```
+
+### `deleteParam` - <i>Removes the parameter(s) from a method in a class</i>
+```bash
+deleteParam <class> <method> [-a] [<name>...]
 ```
 
 ### `addRelationship` - <i>Creates a relationship between two classes</i>
 ```bash
->> addRelationship <source> <destination>
+addRelationship <source> <destination>
 ```
 
 ### `deleteRelationship` - <i>Removes a relationship between two classes</i>
 ```bash
->> deleteRelationship <source> <destination>
+deleteRelationship <source> <destination>
+```
+
+### `changeRelType` - <i>Updates the type of a relationship</i>
+```bash
+changeRelType <source> <destination> <new_type>
 ```
 
 ### `save` - <i>Saves the current state of the program</i>
 ```bash
->> save <filename>
+save <filename>
 ```
 
 ### `load` - <i>Loads a previously saved state</i>
 ```bash
->> load <filename>
+load <filename>
 ```
 
 ### `listClasses` - <i>Lists all classes and their contents</i>
 ```bash
->> listClasses
+listClasses
 ```
 
 ### `listClass` - <i>Lists the contents of a specified class</i>
 ```bash
->> listClass <name>
+listClass <name>
 ```
 
 ### `listRelationships` - <i>Lists all existing relationships between classes</i>
 ```bash
->> listRelationships
+listRelationships
 ```
 
 ### `help` - <i>Lists all available commands and their descriptions</i>
 ```bash
->> help [command]
+help [command]
 ```
 
 ### `exit` - <i>Exits the program</i>
 ```bash
->> exit
+exit
 ```
 <br>
 

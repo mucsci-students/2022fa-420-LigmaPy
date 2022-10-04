@@ -96,19 +96,21 @@ def listRelationships():
     help Command handled by cmd Module.
 """
 
-def exit(classIndex, relationIndex):
+def exit():
     """
         Exits the application
     """
+    print(f"\nExiting...")
+    sys.exit()
     # Get input from user if they want to save
-    exitChoice = input("Save progress? (Y/n) ")
-    if exitChoice.lower() == 'y' or exitChoice == '':
-        file = input("type file to save to: ")
-        save(classIndex, relationIndex, file)
-        print(os.path.realpath(file+".json"))
-        sys.exit()
-    elif exitChoice.lower() == 'n':
-        print("Exiting")
-        sys.exit()
-    else:
-        print(UMLException.UMLException("Invalid option"))
+    # exitChoice = input("Save progress? (Y/n) ")
+    # if exitChoice.lower() == 'y' or exitChoice == '':
+    #     file = input("type file to save to: ")
+    #     save(classIndex, relationIndex, file)
+    #     print(os.path.realpath(file+".json"))
+    #     sys.exit()
+    # elif exitChoice.lower() == 'n':
+    #     print("Exiting")
+    #     sys.exit()
+    # else:
+    #     print(UMLException.UMLException("Invalid option"))
