@@ -7,7 +7,7 @@ Description : Main driver code for the UML Editor
 import sys
 # Local imports
 from view import gui
-import cliController
+import controller.cliController as cliController
 
 def run():
     if len(sys.argv) == 2 and sys.argv[1] == '--cli':
