@@ -69,6 +69,7 @@ class View(tk.Tk):
     
     def makeMenu(self):
         menubar = tk.Menu(self)
+        # File menu
         filemenu = tk.Menu(menubar, tearoff=0)
         filemenu.add_command(label="Open", command= lambda : self.controller.clickLoadButton())
         filemenu.add_command(label="Save", command= lambda : self.controller.clickSaveButton())
@@ -76,10 +77,10 @@ class View(tk.Tk):
         filemenu.add_command(label="Exit", command=self.quit)
         menubar.add_cascade(label="File", menu=filemenu)
         # Help menu
-        helpmenu = tk.Menu(menubar, tearoff=0)
-        helpmenu.add_command(label="Commands", command=None)
-        menubar.add_cascade(label="Help", menu=helpmenu)
-        # List stuff menu
+        #helpmenu = tk.Menu(menubar, tearoff=0)
+        #helpmenu.add_command(label="Commands", command=None)
+        #menubar.add_cascade(label="Help", menu=helpmenu)
+        # List menu
         listmenu = tk.Menu(menubar,tearoff=0)
         listmenu.add_command(label="List class", command = lambda : self.listClassFrame())
         listmenu.add_command(label="List all classes", command = lambda : self.controller.clickListAllClassesButton())
@@ -199,10 +200,12 @@ class View(tk.Tk):
         self.canvas.grid(row=0, column=1, sticky="nswe", rowspan=2)
         self.makeScrollBar()
 
+   #creates the output message label below the input
     def makeMessage(self, message):
         self.message = tk.Label(self.inputFrame, text = message)
         self.message.grid(row=8, column=0, columnspan=3)
     
+    #creates the scrollbar
     def makeScrollBar(self):
         self.scrollbar = ttk.Scrollbar(self.outputFrame, orient=VERTICAL, command=self.canvas.yview)
         self.scrollbar.grid(row=0, column=2, sticky="nswe")
@@ -211,21 +214,23 @@ class View(tk.Tk):
         self.outputFrame2 = tk.Frame(self.canvas)
         self.canvas.create_window((0,0), window=self.outputFrame2, anchor="nw")        
    
+   #refreshes canvas and prints the 'UMLclass' in a nice format to the canvas  
     def printClassToCanvas(self, UMLclass):
         self.canvas.destroy()
         self.scrollbar.destroy()
         self.canvas = tk.Canvas(self.outputFrame, bg='white')
         t = classToString(UMLclass)
         self.canvas.create_text(100, 100, text= t, fill="black", font=('Helvetica 10 bold'))
-        #self.canvas.pack(fill=tk.BOTH, expand=1)
         self.canvas.grid(row=0, column=1, sticky="nswe", rowspan=2)    
         self.makeScrollBar()
 
+    #clears canvas on right and input window on left
     def clearScreen(self):
         self.outputFrame.destroy()
         self.makeOutputFrame()
         self.remake()
 
+    # refreshes the canvase and prints the list of class to the canvas 
     def printAllClassesToCanvas(self, list):
         self.canvas.destroy()
         self.scrollbar.destroy()
@@ -234,11 +239,10 @@ class View(tk.Tk):
         for c in list:
             t += classToString(c)
         self.canvas.create_text(100, 500, text= t, fill="black", font=('Helvetica 10 bold'))
-        #self.canvas.pack(fill=tk.BOTH, expand=1)
         self.canvas.grid(row=0, column=1, sticky="nswe", rowspan=2)  
         self.makeScrollBar()
 
-
+    #refreshs the canvas and prints the list of relationships to the canvas
     def printRelationsToCanvase(self, list):
         self.canvas.destroy()
         self.scrollbar.destroy()
@@ -247,10 +251,15 @@ class View(tk.Tk):
         for r in list:
             t += relationToString(r)
         self.canvas.create_text(100, 500, text= t, fill="black", font=('Helvetica 10 bold'))
-        #self.canvas.pack(fill=tk.BOTH, expand=1)
         self.canvas.grid(row=0, column=1, sticky="nswe", rowspan=2)  
         self.makeScrollBar()
-
+    
+    def save(self):
+        self.fileName = filedialog.asksaveasfilename(title="Open File", filetypes=[("JSON File", "*.json")])
+        
+    def load(self):
+        self.fileName = filedialog.askopenfilename(title="Open File", filetypes=[("JSON File", "*.json")])
+        
     """
     Instead of making comments for each and every input frame:
     See makeUpdateRelationType below and apply those comments to every other makeXXXXX(self) function
@@ -287,7 +296,6 @@ class View(tk.Tk):
             self.destination = e2.get()
             self.relationshipTypeNew = clicked.get()
             self.controller.clickUpdateTypeButton()
-            print(self.source + " " + self.destination + " " + self.relationshipTypeNew)
         #creates first button and when clicked calls the output function above to set the class variables.
         ok = tk.Button(self.inputFrame, text='Change type', command=lambda: output())
         ok.grid(row=6, column=0)
@@ -295,29 +303,7 @@ class View(tk.Tk):
         cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
         cancel.grid(row=6, column=1)  
 
-    def save(self):
-        self.fileName = filedialog.asksaveasfilename(title="Open File", filetypes=[("JSON File", "*.json")])
-        
-        """
-        inputlabel1 = tk.Label(self.inputFrame, text='Enter file name to save as:')
-        inputlabel1.grid(row=0, columnspan=2) 
-        e1 = tk.Entry(self.inputFrame, width=50)
-        e1.grid(row=1, columnspan=2)
-        def output():
-            # Error check here????
-            self.fileName = e1.get()
-            self.controller.clickSaveButton()
-            print(self.className)
-        ok = tk.Button(self.inputFrame, text='Save', command=lambda: output())
-        ok.grid(row=4, column=0)
-        cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
-        cancel.grid(row=4, column=1)
-        """
 
-    def load(self):
-        self.fileName = filedialog.askopenfilename(title="Open File", filetypes=[("JSON File", "*.json")])
-        
-    
     #creates the add class frame upon clicking add class
     def makeAddClassFrame(self):
         inputlabel1 = tk.Label(self.inputFrame, text='Enter Class name to add')
@@ -325,27 +311,22 @@ class View(tk.Tk):
         e1 = tk.Entry(self.inputFrame, width=50)
         e1.grid(row=1, columnspan=2)
         def output():
-            # Error check here????
             self.className = e1.get()
             self.controller.clickAddClassButton()
-            print(self.className)
         ok = tk.Button(self.inputFrame, text='Add Class', command=lambda: output())
         ok.grid(row=4, column=0)
         cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
         cancel.grid(row=4, column=1)
        
 
-    #creates the delete class frame after click said button
     def makeDeleteClassFrame(self):
         inputlabel1 = tk.Label(self.inputFrame, text='Enter Class name to delete')
         inputlabel1.grid(row=0, columnspan=2) 
         e1 = tk.Entry(self.inputFrame, width=50)
         e1.grid(row=1, columnspan=2)
         def output():
-            # Error check here????
             self.className = e1.get()
             self.controller.clickDeleteClassButton()
-            print(self.className)
         ok = tk.Button(self.inputFrame, text='Delete Class', command=lambda: output())
         ok.grid(row=4, column=0)
         cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
@@ -361,11 +342,9 @@ class View(tk.Tk):
         e2 = tk.Entry(self.inputFrame, width=50)
         e2.grid(row=3, columnspan=2)
         def output():
-            # Error check here????
             self.className = e1.get()
             self.classNameNew = e2.get()
             self.controller.clickRenameClassButton()
-            print(self.className + " " + self.classNameNew)
         ok = tk.Button(self.inputFrame, text='Rename Class', command=lambda: output())
         ok.grid(row=4, column=0)
         cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
@@ -386,15 +365,11 @@ class View(tk.Tk):
         clicked.set("Aggregation")
         drop = OptionMenu(self.inputFrame, clicked, "Aggregation", "Composition", "Inheritance", "Realization") 
         drop.grid(row=5, columnspan=2)
-        #e3 = tk.Entry(self.inputFrame, width=50)
-        #e3.grid(row=5, columnspan=2)
         def output():
-            # Error check here????
             self.source = e1.get()
             self.destination = e2.get()
             self.relationshipType = clicked.get()
             self.controller.clickAddRelationButton()
-            print(self.source + " " + self.destination + " " + self.relationshipType)
         ok = tk.Button(self.inputFrame, text='Add Relationship', command=lambda: output())
         ok.grid(row=6, column=0)
         cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
@@ -410,11 +385,9 @@ class View(tk.Tk):
         e2 = tk.Entry(self.inputFrame, width=50)
         e2.grid(row=3, columnspan=2)
         def output():
-            # Error check here????
             self.source = e1.get()
             self.destination = e2.get()
             self.controller.clickDeleteRelationButton()
-            print(self.source + " " + self.destination)
         ok = tk.Button(self.inputFrame, text='Delete relationship', command=lambda: output())
         ok.grid(row=4, column=0)
         cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
@@ -434,12 +407,10 @@ class View(tk.Tk):
         e3 = tk.Entry(self.inputFrame, width=50)
         e3.grid(row=5, columnspan=2)
         def output():
-            # Error check here????
             self.className = e1.get()
             self.field = e2.get()
             self.fieldType = e3.get()
             self.controller.clickAddFieldButton()
-            print(self.className + " " + self.field + " " + str(self.fieldType))
         ok = tk.Button(self.inputFrame, text='Add Field', command=lambda: output())
         ok.grid(row=6, column=0)
         cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
@@ -455,11 +426,9 @@ class View(tk.Tk):
         e2 = tk.Entry(self.inputFrame, width=50)
         e2.grid(row=3, columnspan=2)
         def output():
-            # Error check here????
             self.className = e1.get()
             self.field = e2.get()
             self.controller.clickDeleteFieldButton()
-            print(self.className + " " + self.field)
         ok = tk.Button(self.inputFrame, text='Delete field', command=lambda: output())
         ok.grid(row=4, column=0)
         cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
@@ -479,18 +448,15 @@ class View(tk.Tk):
         e3 = tk.Entry(self.inputFrame, width=50)
         e3.grid(row=5, columnspan=2)
         def output():
-            # Error check here????
             self.className = e1.get()
             self.field = e2.get()
             self.feildNew = e3.get()
             self.controller.clickRenameFieldButton()
-            print(self.className + " " + self.field + " " + self.feildNew)
         ok = tk.Button(self.inputFrame, text='Rename Field', command=lambda: output())
         ok.grid(row=6, column=0)
         cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
         cancel.grid(row=6, column=1)
 
-    #creates the parameter frame for param input after clicking add params
     def makeParamInputFrame(self):
         inputlabel1 = tk.Label(self.inputFrame, text='Enter parameter name:')
         inputlabel1.grid(row=0, columnspan=2) 
@@ -503,23 +469,9 @@ class View(tk.Tk):
         def addParam():
             self.param = e1.get()
             self.paramType = e2.get()
-            print(self.className + " " + self.method + " " + str(self.methodReturnType) + " " + self.param + " " + self.paramType)
             self.controller.clickAddParamButton()
-            #moved to controller (leaving just incase)
-            #self.inputFrame.destroy()
-            #self.makeInputFrame()
-            #self.makeParamInputFrame()
         addParamButton = tk.Button(self.inputFrame, text='Add parameter', command= lambda: addParam())
         addParamButton.grid(row=4, column=0)
-        #def output():
-        #    # Error check here????
-        #    self.param = e1.get()
-        #    self.paramType = e2.get()
-        #    self.controller.clickAddParamButton()
-        #    print(self.className + " " + self.method + " " + str(self.methodReturnType) + " " + self.param + " " + self.paramType)
-        #    self.remake()
-        #ok = tk.Button(self.inputFrame, text='Add and finish', command=lambda: output())
-        #ok.grid(row=4, column=1)
         cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
         cancel.grid(row=4, column=1)
 
@@ -541,22 +493,14 @@ class View(tk.Tk):
             self.method = e2.get()
             self.methodReturnType = e3.get()
             self.controller.clickAddMethodAndParamsButton()
-            
-            # moved to controller (keeping just incase)    
-            #self.inputFrame.destroy()
-            #self.makeInputFrame()
-            #self.makeParamInputFrame()
-        
         addParamButton = tk.Button(self.inputFrame, text='Add method and parameter(s)', command= lambda : addParam())
         addParamButton.grid(row=6, column=0)
         
         def output():
-            # Error check here????
             self.className = e1.get()
             self.method = e2.get()
             self.methodReturnType = e3.get()
             self.controller.clickAddMethodWithoutParamsButton()
-            print(self.className + " " + self.method + " " + self.methodReturnType)
         ok = tk.Button(self.inputFrame, text='Add method no parameter(s)', command=lambda: output())
         ok.grid(row=6, column=1)
         cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
@@ -572,10 +516,8 @@ class View(tk.Tk):
         e2 = tk.Entry(self.inputFrame, width=50)
         e2.grid(row=3, columnspan=2)
         def output():
-            # Error check here????
             self.className = e1.get()
             self.method = e2.get()
-            print(self.className + " " + self.method)
             self.controller.clickDeleteMethodButton()
         ok = tk.Button(self.inputFrame, text='Delete method', command=lambda: output())
         ok.grid(row=4, column=0)
@@ -596,12 +538,10 @@ class View(tk.Tk):
         e3 = tk.Entry(self.inputFrame, width=50)
         e3.grid(row=5, columnspan=2)
         def output():
-            # Error check here????
             self.className = e1.get()
             self.method = e2.get()
             self.methodNew = e3.get()
             self.controller.clickUpdateMethodButton()
-            print(self.className + " " + self.method + " " + self.methodNew)
         ok = tk.Button(self.inputFrame, text='Rename method', command=lambda: output())
         ok.grid(row=6, column=0)
         cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
@@ -619,12 +559,7 @@ class View(tk.Tk):
         def addParam():
             self.className = e1.get()
             self.method = e2.get()
-            self.controller.clickAddParamToMethodButton()
-            #moved to controller
-            #self.inputFrame.destroy()
-            #self.makeInputFrame()
-            #self.makeParamInputFrame()
-        
+            self.controller.clickAddParamToMethodButton()        
         ok = tk.Button(self.inputFrame, text='Add parameter(s)', command=lambda: addParam())
         ok.grid(row=4, column=0)
         cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
@@ -637,16 +572,13 @@ class View(tk.Tk):
         e1.grid(row=1, columnspan=2)
         def addParam():
             self.param = e1.get()
-            print(self.className + " " + self.method + " " + self.param )
             self.inputFrame.destroy()
             self.makeInputFrame()
             self.makeParamDeleteInputFrame()
         addParamButton = tk.Button(self.inputFrame, text='Delete another parameter', command= lambda: addParam())
         addParamButton.grid(row=4, column=0)
         def output():
-            # Error check here????
             self.param = e1.get()
-            print(self.className + " " + self.method + " " + self.param )
             self.remake()
         ok = tk.Button(self.inputFrame, text='Delete and finish', command=lambda: output())
         ok.grid(row=4, column=1)
@@ -660,21 +592,9 @@ class View(tk.Tk):
         e1.grid(row=1, columnspan=2)
         def addParam():
             self.param = e1.get()
-            print(self.className + " " + self.method + " " + self.param)
             self.controller.clickSecondDeleteParamButton()
-            #self.inputFrame.destroy()
-            #self.makeInputFrame()
-            #self.makeParamDeleteInputFrame()
         addParamButton = tk.Button(self.inputFrame, text='Delete parameter(s)', command= lambda: addParam())
         addParamButton.grid(row=4, column=0)
-        #def output():
-            # Error check here????
-            #self.param = e1.get()
-            #self.controller.clickSecondDeleteParamButton()
-            #print(self.className + " " + self.method + " " + self.param )
-            #self.remake()
-        #ok = tk.Button(self.inputFrame, text='Delete and finish', command=lambda: output())
-        #ok.grid(row=4, column=1)
         cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
         cancel.grid(row=4, column=1)
 
@@ -691,17 +611,12 @@ class View(tk.Tk):
             self.className = e1.get()
             self.method = e2.get()
             self.controller.clickDeleteParamButton()
-            #self.inputFrame.destroy()
-            #self.makeInputFrame()
-            #self.makeDeleteParamInputFrame()
         delete = tk.Button(self.inputFrame, text='Delete parameter(s)', command = lambda: addParam())
         delete.grid(row=4,column=0)
         def delAll():
             self.className = e1.get()
             self.method = e2.get()
-            print("delete all: class " + self.className + " method " + self.method)
             self.controller.clickDeleteAllParamButton()
-            #self.remake()
         ok = tk.Button(self.inputFrame, text='Delete all parameters', command=lambda: delAll())
         ok.grid(row=4, column=1)
         cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
@@ -723,24 +638,10 @@ class View(tk.Tk):
         def addParam():
             self.param = e1.get()
             self.paramNew = e2.get()
-            self.paramType = e3.get()
-            print(self.className + " " + self.method + " " + self.param + " " + self.paramNew + " " + self.paramType)
+            self.paramTypeNew = e3.get()
             self.controller.clickChangeAnotherParamButton()
-            #self.inputFrame.destroy()
-            #self.makeInputFrame()
-            #self.makeChangeParamInputFrame()
         addParamButton = tk.Button(self.inputFrame, text='Change parameter(s)', command= lambda: addParam())
         addParamButton.grid(row=6, column=0)
-        #def output():
-        #    # Error check here????
-        #    self.param = e1.get()
-        #    self.paramNew = e2.get()
-        #    self.paramType = e3.get()
-        #    self.controller.clickChangeAnotherParamButton()
-        #    print(self.className + " " + self.method + " " + self.param + " " + self.paramNew + " " + self.paramType )
-        #    self.remake()
-        #ok = tk.Button(self.inputFrame, text='Change and finish', command=lambda: output())
-        #ok.grid(row=6, column=1)
         cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
         cancel.grid(row=6, column=1)
     
@@ -757,19 +658,12 @@ class View(tk.Tk):
             self.className = e1.get()
             self.method = e2.get()
             self.controller.clickChangeParamButton()
-            #self.inputFrame.destroy()
-            #self.makeInputFrame()
-            #self.makeChangeParamInputFrame()
         delete = tk.Button(self.inputFrame, text='Change parameter(s)', command = lambda: addParam())
         delete.grid(row=4,column=0)
         def delAll():
             self.className = e1.get()
             self.method = e2.get()
-            print("delete all: class " + self.className + " method " + self.method)
             self.controller.clickChangeAllParamButton()
-            #self.inputFrame.destroy()
-            #self.makeInputFrame()
-            #self.makeParamInputFrame()
         ok = tk.Button(self.inputFrame, text='Change all parameters', command=lambda: delAll())
         ok.grid(row=4, column=1)
         cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
@@ -781,20 +675,14 @@ class View(tk.Tk):
         e1 = tk.Entry(self.inputFrame, width=50)
         e1.grid(row=1, columnspan=2)
         def output():
-            # Error check here????
             self.className = e1.get()
             self.controller.clickListClassButton()
-            print(self.className)
         ok = tk.Button(self.inputFrame, text='List Class', command=lambda: output())
         ok.grid(row=4, column=0)
         cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
         cancel.grid(row=4, column=1)            
 
     def remake(self):
-        self.inputFrame.destroy()
-        self.makeInputFrame()
-
-    def wipe(self):
         self.inputFrame.destroy()
         self.makeInputFrame()
 
@@ -858,35 +746,18 @@ class View(tk.Tk):
         self.wipe()
         self.makeChangeParamFrame()
 
-    def listAllFrame(self):
-        pass
-
     def listClassFrame(self):
         self.wipe()
         self.makeListClassFrame()
 
-    def listRelationFrame(self):
-        pass
-
     def helpFrame(self):
         pass
+    
+    def wipe(self):
+        self.inputFrame.destroy()
+        self.makeInputFrame()
 
-def printClass (c):
-    print(f"Class:  {c.name}\n")
-    print(f"Fields:")
-    for each in c.fields:
-        print(f"{each.type} {each.name}")
-    print()
-    print("Methods:")
-    for each in c.methods:
-        parameters = ""
-        if len(each.params) > 0:  
-            for param in each.params:
-                parameters += param.type + " " + param.name + ", "
-        parameters = parameters[:-2] 
-        print(f"{each.return_type} {each.name}({parameters})")
-    print()
-
+#returns a class 'c' in a string format for output
 def classToString(c):
     string = ''
     string += "Class: " + c.name + "\n"
@@ -904,6 +775,7 @@ def classToString(c):
     string += "\n"
     return string
 
+# returns a relationship 'r' in a string format for output
 def relationToString(r):
     string = ""
     string += "Relationship:\n"
@@ -912,5 +784,21 @@ def relationToString(r):
     string += "    Type: " + r.type + "\n\n"
     return string
 
-#view = View(None)
-#view.main()
+"""
+#for testing
+def printClass (c):
+    print(f"Class:  {c.name}\n")
+    print(f"Fields:")
+    for each in c.fields:
+        print(f"{each.type} {each.name}")
+    print()
+    print("Methods:")
+    for each in c.methods:
+        parameters = ""
+        if len(each.params) > 0:  
+            for param in each.params:
+                parameters += param.type + " " + param.name + ", "
+        parameters = parameters[:-2] 
+        print(f"{each.return_type} {each.name}({parameters})")
+    print()
+"""

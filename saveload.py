@@ -17,67 +17,7 @@ import parameter as p
 
 
 ##################################################################
-"""
-# Test code
 
-class UMLClass:
-    def __init__(self, name: str):
-            self.name = name
-            self.fields = []
-            self.methods = []
-        
-class UMLMethod:
-    def __init__(self, name: str, returnType = None):
-        self.name = name
-        self.return_type = returnType
-        self.params = []
-
-class UMLField:
-    def __init__ (self, name: str , type = None):
-        self.name = name
-        self.type = type
-    
-class UMLParameters:
-    def __init__ (self, name: str , type = None):
-        self.name = name
-        self.type = type
-
-class UMLRelationship:
-    def __init__ (self, source, destination, type):
-        self.source = source
-        self.destination = destination
-        self.type = type
-
-tire = UMLClass("Tire")
-tiref1 = UMLField('diameter', 'float')
-tiref2 = UMLField("psi", "float")
-tiref3 = UMLField("brand", 'string')
-tirem1 = UMLMethod('setPSI', 'void')
-tirem1p1 = UMLParameters("new_psi", "string")
-tirem1.params.append(tirem1p1)
-tire.fields.append(tiref1)
-tire.fields.append(tiref2)
-tire.fields.append(tiref3)
-tire.methods.append(tirem1)
-
-car = UMLClass("Car")
-carf1 = UMLField("make", 'string')
-carf2 = UMLField("model", 'string')
-carf3 = UMLField("year", "int")
-carm1 = UMLMethod("drive", "void")
-car.fields.append(carf1)
-car.fields.append(carf2)
-car.fields.append(carf3)
-car.methods.append(carm1)
-
-u.classIndex.append(tire)
-u.classIndex.append(car)
-
-r1 = UMLRelationship(tire, car, "composition")
-
-r.relationIndex.append(r1)
-
-"""
 
 def save(classes, relations, filename):
     """
@@ -149,6 +89,7 @@ def saveGUI(classes, relations, filename):
         outfile.write(jsonString)
     
     return returnMessage
+
 #save(u.classIndex, r.relationIndex, "testfile")
 ##################################################################
 
@@ -159,7 +100,7 @@ def load(filename):
     currently loads from root folder
 
     :param param1: the file name to load
-    :returns: tuple(list[UMLclass], list[relationships]) 
+    :returns: nothing 
     """
     if filename.endswith('.json'):
         filename = filename[:-5]
@@ -169,20 +110,16 @@ def load(filename):
     if not fileExists:    
         print("File not found")
         return
-        #return (u.classIndex, r.relationIndex)
-
     
     #creates lists to return
     returnClasses = []
     returnRelations = []
     
     #checks if file is empty and returns empty lists
-
     if os.stat("UMLsavefiles/" + filename + ".json").st_size == 0:
         u.classIndex = returnClasses
         r.relationIndex = returnRelations
         return
-        #return(returnClasses, returnRelations)    
     
     try:
         #opens the file and save contents as a json string
@@ -217,13 +154,11 @@ def load(filename):
         u.classIndex = returnClasses
         r.relationIndex = returnRelations       
         return 
-        #return (returnClasses, returnRelations)
     
     #if error loading return original lists
     except Exception as e:
         print("Load failed")
         return
-        #return (u.classIndex, r.relationIndex)
  
 def loadGUI(filename): 
     """
@@ -231,7 +166,7 @@ def loadGUI(filename):
     currently loads from root folder
 
     :param param1: the file name to load
-    :returns: tuple(list[UMLclass], list[relationships]) 
+    :returns: nothing
     """
     #creates lists to return
     returnClasses = []
@@ -243,8 +178,7 @@ def loadGUI(filename):
         u.classIndex = returnClasses
         r.relationIndex = returnRelations
         message = "Loaded empty file"
-        return message
-        #return(returnClasses, returnRelations)    
+        return message   
     
     try:
         #opens the file and save contents as a json string
@@ -280,10 +214,8 @@ def loadGUI(filename):
         r.relationIndex = returnRelations       
         message = "Loaded successfully"
         return message
-            #return (returnClasses, returnRelations)
-    
+
     #if error loading return original lists
-    
     except Exception as e:
         print("Load failed")
         message = "Load failed"
