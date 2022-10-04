@@ -172,6 +172,45 @@ def deleteAllParameter(methodName:str, className:str):
 
     C.classIndex[classIndex].methods[methodIndex].params = []
 
+
+def changeParam(className:str, methodName:str, oldParams:list, newParams:list):
+    cIndex = C.findClass(className)
+    methodIndex = A.findMethod(methodName, className)
+
+    if cIndex is None:
+        # Class does not exist
+        return -1
+
+    if methodIndex == -2:
+        # Method does not exist
+        return -2
+
+    paramList = C.classIndex[cIndex].methods[methodIndex].params
+    paramNames = [par.name for par in paramList]
+    # removedParams = []
+
+
+    print(f"Parameter List: {C.classIndex[cIndex].methods[methodIndex].params}")
+
+
+    # Loop through list of parameters to replace
+    for p in oldParams:
+        # Check if parameter exists (has an index > -1)
+        paramIndex = findParameter(p, methodIndex, cIndex)
+        if paramIndex == -1:
+            print(f"{methodName} does not contain method {p}")
+            paramList.pop(paramIndex)
+        # Pop the parameter from paramList and append it to removedParams list
+        # removedParams.append(paramList.pop(paramIndex))
+
+    
+
+    deleteParameter(oldParams, methodName, className)
+
+    # print(f"Removed Parameter(s): {removedParams}")
+    C.classIndex[cIndex].methods[methodIndex].params = paramList
+    print(f"Parameter List After: {C.classIndex[cIndex].methods[methodIndex].params}")
+
 def changeParameter(oldName:list, newName:list, methodName:str, className:str):
     """
     Changes and replaces parameter(s) to specified method in specified class

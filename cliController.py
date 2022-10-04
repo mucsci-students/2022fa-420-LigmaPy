@@ -201,11 +201,16 @@ class Interface(cmd.Cmd):
             print()
 
     def do_changeParam(self, arg):
-        """Usage: changeParam <class> <method> <old_list> <new_list>
+        """Usage: changeParam <class> <method> -o <old_name>... -n <new_name>:<new_type>
         
         Changes the list of parameters from <old_list> to <new_list> in <method>
         """
-        pass
+        args = arg.split()
+
+        print(f"Waiting to be implemented")
+
+        # parameter.changeParameter(args[3:], args[0], args[1], args[0])
+        # parameter.changeParam(args[0], args[1], args[3:], args[0])
     # Stores the current state to a JSON file
     def do_save(self, arg):
         """Usage: save <filename>
