@@ -72,16 +72,22 @@ class Interface(cmd.Cmd):
         Removes an existing relationship between the <source> and <destination> classes.
         """
         classes = arg.split()
-        if len(classes) == 2:
+        if len(classes) == 3:
             relationship.deleteRelationship(classes[0], classes[1])
         else:
             print(f"Argument error")
 
     def do_changeRelType(self, arg):
-        """Usage: changeRelType
+        """Usage: changeRelType <source> <destination> <new_type>
         
+        Updates the type of the given relationship
         """
-        pass
+        args = arg.split()
+        if len(args) == 3:
+            relIndex = relationship.findRelationship(args[0], args[1])
+            relationship.relationIndex[relIndex].editType(args[2])
+        else:
+            print("wrong number of arguments")
 
     # Creates a new method for the specified class
     def do_addMethod(self, arg):
@@ -211,6 +217,7 @@ class Interface(cmd.Cmd):
 
         # parameter.changeParameter(args[3:], args[0], args[1], args[0])
         # parameter.changeParam(args[0], args[1], args[3:], args[0])
+        
     # Stores the current state to a JSON file
     def do_save(self, arg):
         """Usage: save <filename>
