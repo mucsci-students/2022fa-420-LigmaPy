@@ -184,7 +184,7 @@ class Interface(cmd.Cmd):
         args = arg.split()
         if len(args) > 2:
             paramList = []
-            for param in args[4:]:
+            for param in args[2:]:
                 paramName, paramType = param.split(":")
                 paramList.append((paramName, paramType))
 
