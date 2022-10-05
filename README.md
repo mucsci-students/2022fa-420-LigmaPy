@@ -31,77 +31,77 @@ Note: Add the --cli flag to run the CLI editor
 ### `addClass` - <i>Creates a class</i>
 
 ```bash
->> addClass <name>
+addClass <name>
 ```
 
 ### `deleteClass` - <i>Removes a class</i>
 ```bash
->> deleteClass <name>
+deleteClass <name>
 ```
 
 ### `renameClass` - <i>Updates name of a class</i>
 ```bash
->> renameClass <currentName> <newName>
+renameClass <currentName> <newName>
 ```
 
 ### `addAttribute` - <i>Creates an attribute in a class</i>
 ```bash
->> addAttribute <name> <class>
+addAttribute <name> <class>
 ```
 
 ### `deleteAttribute` - <i>Removes an attribute from a class</i>
 ```bash
->> deleteAttribute <name> <class>
+deleteAttribute <name> <class>
 ```
 
 ### `renameAttribute` - <i>Updates the name of a classes attribute</i>
 ```bash
->> renameAttribute <currentName> <newName> <class>
+renameAttribute <currentName> <newName> <class>
 ```
 
 ### `addRelationship` - <i>Creates a relationship between two classes</i>
 ```bash
->> addRelationship <source> <destination>
+addRelationship <source> <destination>
 ```
 
 ### `deleteRelationship` - <i>Removes a relationship between two classes</i>
 ```bash
->> deleteRelationship <source> <destination>
+deleteRelationship <source> <destination>
 ```
 
 ### `save` - <i>Saves the current state of the program</i>
 ```bash
->> save <filename>
+save <filename>
 ```
 
 ### `load` - <i>Loads a previously saved state</i>
 ```bash
->> load <filename>
+load <filename>
 ```
 
 ### `listClasses` - <i>Lists all classes and their contents</i>
 ```bash
->> listClasses
+listClasses
 ```
 
 ### `listClass` - <i>Lists the contents of a specified class</i>
 ```bash
->> listClass <name>
+listClass <name>
 ```
 
 ### `listRelationships` - <i>Lists all existing relationships between classes</i>
 ```bash
->> listRelationships
+listRelationships
 ```
 
 ### `help` - <i>Lists all available commands and their descriptions</i>
 ```bash
->> help [command]
+help [command]
 ```
 
 ### `exit` - <i>Exits the program</i>
 ```bash
->> exit
+exit
 ```
 <br>
 
