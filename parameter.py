@@ -65,7 +65,6 @@ def addParameter(name:list, methodName:str, className:str):
         print(f"Method \"{methodName}\" does not exist in class \"{className}\".")
         return -2
 
-    
     # Separates list name into list of params and list of types
     params = list(zip(*name))[0]
     types = list(zip(*name))[1]
@@ -90,7 +89,6 @@ def addParameter(name:list, methodName:str, className:str):
         if p > 0:
             print(f"Parameter \"{params[i]}\" already exists in method \"{methodName}\".")
     return -3
-
 
 
 def deleteParameter(name:list, methodName:str, className:str):
