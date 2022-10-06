@@ -44,19 +44,44 @@ deleteClass <name>
 renameClass <currentName> <newName>
 ```
 
-### `addAttribute` - <i>Creates an attribute in a class</i>
+### `addField` - <i>Creates a field in a class</i>
 ```bash
-addAttribute <name> <class>
+addField <class> <name> <type>
 ```
 
-### `deleteAttribute` - <i>Removes an attribute from a class</i>
+### `deleteField` - <i>Removes a field from a class</i>
 ```bash
-deleteAttribute <name> <class>
+deleteField <class> <name>
 ```
 
-### `renameAttribute` - <i>Updates the name of a classes attribute</i>
+### `renameField` - <i>Updates the name of a classes field</i>
 ```bash
-renameAttribute <currentName> <newName> <class>
+renameField <class> <old_name> <new_name>
+```
+
+### `addMethod` - <i>Creates a method in a class</i>
+```bash
+addMethod <class> <name> <return_type> [-p <name>:<type>...]
+```
+
+### `deleteMethod` - <i>Removes a method from a class</i>
+```bash
+deleteMethod <class> <name>
+```
+
+### `renameMethod` - <i>Updates the name of a method in a class</i>
+```bash
+renameMethod <class> <old_name> <new_name>
+```
+
+### `addParam` - <i>Creates a list of parameters for a method in a class</i>
+```bash
+addParam <class> <method> <name>:<type>...
+```
+
+### `deleteParam` - <i>Removes the parameter(s) from a method in a class</i>
+```bash
+deleteParam <class> <method> [-a] [<name>...]
 ```
 
 ### `addRelationship` - <i>Creates a relationship between two classes</i>
@@ -67,6 +92,11 @@ addRelationship <source> <destination>
 ### `deleteRelationship` - <i>Removes a relationship between two classes</i>
 ```bash
 deleteRelationship <source> <destination>
+```
+
+### `changeRelType` - <i>Updates the type of a relationship</i>
+```bash
+changeRelType <source> <destination> <new_type>
 ```
 
 ### `save` - <i>Saves the current state of the program</i>
