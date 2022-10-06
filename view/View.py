@@ -4,10 +4,14 @@ Filename    : View.py
 Description : Constructs and displays the gui
 """
 
-from cgitb import text
+
 import tkinter as tk
 #import UMLNotebook as notebook
 from tkinter import RIGHT, VERTICAL, Y, OptionMenu, StringVar, ttk, filedialog
+import UMLClass as u
+import relationship as r
+import attributes as a
+
 
 
 class View(tk.Tk):
@@ -255,10 +259,10 @@ class View(tk.Tk):
         self.makeScrollBar()
     
     def save(self):
-        self.fileName = filedialog.asksaveasfilename(title="Open File", filetypes=[("JSON File", "*.json")])
-        
+        self.fileName = filedialog.asksaveasfilename(title="Open File", initialdir="UMLsavefiles",  filetypes=[("JSON File", "*.json")])
+ 
     def load(self):
-        self.fileName = filedialog.askopenfilename(title="Open File", filetypes=[("JSON File", "*.json")])
+        self.fileName = filedialog.askopenfilename(title="Open File", initialdir="UMLsavefiles", filetypes=[("JSON File", "*.json")])
         
     """
     Instead of making comments for each and every input frame:
@@ -268,40 +272,40 @@ class View(tk.Tk):
     
     #creates the frame to update relations after clicking said button
     def makeUpdateRelationType(self):
-        #creates text above input entry
-        inputlabel1 = tk.Label(self.inputFrame, text='Enter source name:')
-        inputlabel1.grid(row=0, columnspan=2) 
-        #creates the first input entry
-        e1 = tk.Entry(self.inputFrame, width=50)
-        e1.grid(row=1, columnspan=2)
-        #creates text above 2nd entry 
-        inputlabel2 = tk.Label(self.inputFrame, text='Enter destination name:')
-        inputlabel2.grid(row=2, columnspan=2) 
-        #creates 2nd input entry
-        e2 = tk.Entry(self.inputFrame, width=50)
-        e2.grid(row=3, columnspan=2)
-        #creates text above 3rd entry
-        inputlabel3 = tk.Label(self.inputFrame, text='Enter new relationship type:')
-        inputlabel3.grid(row=4, columnspan=2) 
-        #creates a variable for the drop down selector
-        clicked = StringVar()
-        clicked.set("Aggregation")
-        #creates the drop down selector
-        drop = OptionMenu(self.inputFrame, clicked, "Aggregation", "Composition", "Inheritance", "Realization") 
-        drop.grid(row=5, columnspan=2)
-        #function to output to the controller 
-        def output():
-            #gets e1, e2, and clicked variable from above and sets the appropriate class variable
-            self.source = e1.get()
-            self.destination = e2.get()
-            self.relationshipTypeNew = clicked.get()
-            self.controller.clickUpdateTypeButton()
-        #creates first button and when clicked calls the output function above to set the class variables.
-        ok = tk.Button(self.inputFrame, text='Change type', command=lambda: output())
-        ok.grid(row=6, column=0)
-        #creates 2nd button and when clicked calls remake to clear the screen and remake and empty input frame.
-        cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
-        cancel.grid(row=6, column=1)  
+        if len(r.relationIndex) == 0:
+            inputlabel1 = tk.Label(self.inputFrame, text='Not enough relationships exist', width=30)
+            inputlabel1.grid(row=0)
+            cancel = tk.Button(self.inputFrame, text='Close', command=lambda: self.remake())
+            cancel.grid(row=1)
+        else:
+            relList  = [ each.source + " -> " + each.destination for each in r.relationIndex]
+            inputlabel1 = tk.Label(self.inputFrame, text='Select relationship to update type:', width=40)
+            inputlabel1.grid(row=0, columnspan=2) 
+            clicked1 = StringVar()
+            drop = OptionMenu(self.inputFrame, clicked1, *relList) 
+            drop.grid(row=1, columnspan=2)
+            inputlabel3 = tk.Label(self.inputFrame, text='Select new relationship type:')
+            inputlabel3.grid(row=2, columnspan=2) 
+            #creates a variable for the drop down selector
+            clicked = StringVar()
+            clicked.set("Aggregation")
+            #creates the drop down selector
+            drop = OptionMenu(self.inputFrame, clicked, "Aggregation", "Composition", "Inheritance", "Realization") 
+            drop.grid(row=3, columnspan=2)
+            #function to output to the controller 
+            def output():
+                #gets e1, e2, and clicked variable from above and sets the appropriate class variable
+                parsed = clicked1.get().split(" -> ")
+                self.source = parsed[0]
+                self.destination = parsed[1]
+                self.relationshipTypeNew = clicked.get()
+                self.controller.clickUpdateTypeButton()
+            #creates first button and when clicked calls the output function above to set the class variables.
+            ok = tk.Button(self.inputFrame, text='Change type', command=lambda: output())
+            ok.grid(row=6, column=0)
+            #creates 2nd button and when clicked calls remake to clear the screen and remake and empty input frame.
+            cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
+            cancel.grid(row=6, column=1)  
 
 
     #creates the add class frame upon clicking add class
@@ -320,142 +324,216 @@ class View(tk.Tk):
        
 
     def makeDeleteClassFrame(self):
-        inputlabel1 = tk.Label(self.inputFrame, text='Enter Class name to delete')
-        inputlabel1.grid(row=0, columnspan=2) 
-        e1 = tk.Entry(self.inputFrame, width=50)
-        e1.grid(row=1, columnspan=2)
-        def output():
-            self.className = e1.get()
-            self.controller.clickDeleteClassButton()
-        ok = tk.Button(self.inputFrame, text='Delete Class', command=lambda: output())
-        ok.grid(row=4, column=0)
-        cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
-        cancel.grid(row=4, column=1)
+        classList = [c.name for c in u.classIndex]
+        if len(classList) == 0:
+            inputlabel1 = tk.Label(self.inputFrame, text='No classes exist', width=30)
+            inputlabel1.grid(row=0)
+            cancel = tk.Button(self.inputFrame, text='Close', command=lambda: self.remake())
+            cancel.grid(row=1) 
+        else:
+            clicked = StringVar()
+            drop = OptionMenu(self.inputFrame, clicked, *classList) 
+            drop.grid(row=1, columnspan=2)
+            inputlabel1 = tk.Label(self.inputFrame, text='Select name to delete', width=40)
+            inputlabel1.grid(row=0, columnspan=2) 
+            def output():
+                self.className = clicked.get()
+                self.controller.clickDeleteClassButton()
+            ok = tk.Button(self.inputFrame, text='Delete Class', command=lambda: output())
+            ok.grid(row=4, column=0)
+            cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
+            cancel.grid(row=4, column=1)
 
     def makeRenameClassFrame(self):
-        inputlabel1 = tk.Label(self.inputFrame, text='Enter Class name to rename:')
-        inputlabel1.grid(row=0, columnspan=2) 
-        e1 = tk.Entry(self.inputFrame, width=50)
-        e1.grid(row=1, columnspan=2)
-        inputlabel2 = tk.Label(self.inputFrame, text='Enter new name:')
-        inputlabel2.grid(row=2, columnspan=2) 
-        e2 = tk.Entry(self.inputFrame, width=50)
-        e2.grid(row=3, columnspan=2)
-        def output():
-            self.className = e1.get()
-            self.classNameNew = e2.get()
-            self.controller.clickRenameClassButton()
-        ok = tk.Button(self.inputFrame, text='Rename Class', command=lambda: output())
-        ok.grid(row=4, column=0)
-        cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
-        cancel.grid(row=4, column=1)   
+        classList = [c.name for c in u.classIndex]
+        if len(classList) == 0:
+            inputlabel1 = tk.Label(self.inputFrame, text='No classes exist', width=30)
+            inputlabel1.grid(row=0)
+            cancel = tk.Button(self.inputFrame, text='Close', command=lambda: self.remake())
+            cancel.grid(row=1)
+        else: 
+            clicked = StringVar()
+            drop = OptionMenu(self.inputFrame, clicked, *classList) 
+            drop.grid(row=1, columnspan=2)
+            inputlabel1 = tk.Label(self.inputFrame, text='Select name to rename:')
+            inputlabel1.grid(row=0, columnspan=2) 
+            inputlabel2 = tk.Label(self.inputFrame, text='Enter new name:')
+            inputlabel2.grid(row=2, columnspan=2) 
+            e2 = tk.Entry(self.inputFrame, width=50)
+            e2.grid(row=3, columnspan=2)
+            def output():
+                self.className = clicked.get()
+                self.classNameNew = e2.get()
+                self.controller.clickRenameClassButton()
+            ok = tk.Button(self.inputFrame, text='Rename Class', command=lambda: output())
+            ok.grid(row=4, column=0)
+            cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
+            cancel.grid(row=4, column=1)   
        
     def makeAddRelationFrame(self):
-        inputlabel1 = tk.Label(self.inputFrame, text='Enter source name:')
-        inputlabel1.grid(row=0, columnspan=2) 
-        e1 = tk.Entry(self.inputFrame, width=50)
-        e1.grid(row=1, columnspan=2)
-        inputlabel2 = tk.Label(self.inputFrame, text='Enter destination name:')
-        inputlabel2.grid(row=2, columnspan=2) 
-        e2 = tk.Entry(self.inputFrame, width=50)
-        e2.grid(row=3, columnspan=2)
-        inputlabel3 = tk.Label(self.inputFrame, text='Select relationship type:')
-        inputlabel3.grid(row=4, columnspan=2)
-        clicked = StringVar()
-        clicked.set("Aggregation")
-        drop = OptionMenu(self.inputFrame, clicked, "Aggregation", "Composition", "Inheritance", "Realization") 
-        drop.grid(row=5, columnspan=2)
-        def output():
-            self.source = e1.get()
-            self.destination = e2.get()
-            self.relationshipType = clicked.get()
-            self.controller.clickAddRelationButton()
-        ok = tk.Button(self.inputFrame, text='Add Relationship', command=lambda: output())
-        ok.grid(row=6, column=0)
-        cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
-        cancel.grid(row=6, column=1)
+        if len(u.classIndex) < 2:
+            inputlabel1 = tk.Label(self.inputFrame, text='Not enough classes exist', width=30)
+            inputlabel1.grid(row=0)
+            cancel = tk.Button(self.inputFrame, text='Close', command=lambda: self.remake())
+            cancel.grid(row=1)
+        else:
+            classList = [c.name for c in u.classIndex]
+            sor = StringVar()
+            des = StringVar()
+            drop1 = OptionMenu(self.inputFrame, sor, *classList) 
+            drop1.grid(row=1, columnspan=2)
+            inputlabel1 = tk.Label(self.inputFrame, text='Select source name:', width= 40)
+            inputlabel1.grid(row=0, columnspan=2) 
+            inputlabel2 = tk.Label(self.inputFrame, text='Select destination name:')
+            inputlabel2.grid(row=2, columnspan=2) 
+            drop2 = OptionMenu(self.inputFrame, des, *classList) 
+            drop2.grid(row=3, columnspan=2)
+            inputlabel3 = tk.Label(self.inputFrame, text='Select relationship type:')
+            inputlabel3.grid(row=4, columnspan=2)
+            clicked = StringVar()
+            clicked.set("Aggregation")
+            drop = OptionMenu(self.inputFrame, clicked, "Aggregation", "Composition", "Inheritance", "Realization") 
+            drop.grid(row=5, columnspan=2)
+            def output():
+                self.source = sor.get()
+                self.destination = des.get()
+                self.relationshipType = clicked.get()
+                self.controller.clickAddRelationButton()
+            ok = tk.Button(self.inputFrame, text='Add Relationship', command=lambda: output())
+            ok.grid(row=6, column=0)
+            cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
+            cancel.grid(row=6, column=1)
 
     def makeDeleteRelationFrame(self):
-        inputlabel1 = tk.Label(self.inputFrame, text='Enter source name to delete:')
-        inputlabel1.grid(row=0, columnspan=2) 
-        e1 = tk.Entry(self.inputFrame, width=50)
-        e1.grid(row=1, columnspan=2)
-        inputlabel2 = tk.Label(self.inputFrame, text='Enter destination name to delete:')
-        inputlabel2.grid(row=2, columnspan=2) 
-        e2 = tk.Entry(self.inputFrame, width=50)
-        e2.grid(row=3, columnspan=2)
-        def output():
-            self.source = e1.get()
-            self.destination = e2.get()
-            self.controller.clickDeleteRelationButton()
-        ok = tk.Button(self.inputFrame, text='Delete relationship', command=lambda: output())
-        ok.grid(row=4, column=0)
-        cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
-        cancel.grid(row=4, column=1)
+        if len(r.relationIndex) == 0:
+            inputlabel1 = tk.Label(self.inputFrame, text='Not enough relationships exist', width=30)
+            inputlabel1.grid(row=0)
+            cancel = tk.Button(self.inputFrame, text='Close', command=lambda: self.remake())
+            cancel.grid(row=1)
+        else:
+            relList  = [ each.source + " -> " + each.destination for each in r.relationIndex]
+            inputlabel1 = tk.Label(self.inputFrame, text='Select relationship to delete:', width=40)
+            inputlabel1.grid(row=0, columnspan=2) 
+            clicked = StringVar()
+            drop = OptionMenu(self.inputFrame, clicked, *relList) 
+            drop.grid(row=1, columnspan=2)
+            def output():
+                parsed = clicked.get().split(" -> ")
+                self.source = parsed[0]
+                self.destination = parsed[1]
+                self.controller.clickDeleteRelationButton()
+            ok = tk.Button(self.inputFrame, text='Delete relationship', command=lambda: output())
+            ok.grid(row=4, column=0)
+            cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
+            cancel.grid(row=4, column=1)
     
     def makeAddFieldFrame(self):
-        inputlabel1 = tk.Label(self.inputFrame, text='Enter class name:')
-        inputlabel1.grid(row=0, columnspan=2) 
-        e1 = tk.Entry(self.inputFrame, width=50)
-        e1.grid(row=1, columnspan=2)
-        inputlabel2 = tk.Label(self.inputFrame, text='Enter field name:')
-        inputlabel2.grid(row=2, columnspan=2) 
-        e2 = tk.Entry(self.inputFrame, width=50)
-        e2.grid(row=3, columnspan=2)
-        inputlabel3 = tk.Label(self.inputFrame, text='Enter field type (leave empty if none):')
-        inputlabel3.grid(row=4, columnspan=2) 
-        e3 = tk.Entry(self.inputFrame, width=50)
-        e3.grid(row=5, columnspan=2)
-        def output():
-            self.className = e1.get()
-            self.field = e2.get()
-            self.fieldType = e3.get()
-            self.controller.clickAddFieldButton()
-        ok = tk.Button(self.inputFrame, text='Add Field', command=lambda: output())
-        ok.grid(row=6, column=0)
-        cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
-        cancel.grid(row=6, column=1)
+        classList = [c.name for c in u.classIndex]
+        if len(classList) == 0:
+            inputlabel1 = tk.Label(self.inputFrame, text='No classes exist', width=30)
+            inputlabel1.grid(row=0)
+            cancel = tk.Button(self.inputFrame, text='Close', command=lambda: self.remake())
+            cancel.grid(row=1)
+        else: 
+            clicked = StringVar()
+            drop = OptionMenu(self.inputFrame, clicked, *classList) 
+            drop.grid(row=1, columnspan=2)
+            inputlabel1 = tk.Label(self.inputFrame, text='Select class to add field:')
+            inputlabel1.grid(row=0, columnspan=2) 
+            inputlabel2 = tk.Label(self.inputFrame, text='Enter field name:')
+            inputlabel2.grid(row=2, columnspan=2) 
+            e2 = tk.Entry(self.inputFrame, width=50)
+            e2.grid(row=3, columnspan=2)
+            inputlabel3 = tk.Label(self.inputFrame, text='Enter field type (leave empty if none):')
+            inputlabel3.grid(row=4, columnspan=2) 
+            e3 = tk.Entry(self.inputFrame, width=50)
+            e3.grid(row=5, columnspan=2)
+            def output():
+                self.className = clicked.get()
+                self.field = e2.get()
+                self.fieldType = e3.get()
+                self.controller.clickAddFieldButton()
+            ok = tk.Button(self.inputFrame, text='Add Field', command=lambda: output())
+            ok.grid(row=6, column=0)
+            cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
+            cancel.grid(row=6, column=1)
 
     def makeDeleteFieldFrame(self):
-        inputlabel1 = tk.Label(self.inputFrame, text='Enter class name:')
-        inputlabel1.grid(row=0, columnspan=2) 
-        e1 = tk.Entry(self.inputFrame, width=50)
-        e1.grid(row=1, columnspan=2)
-        inputlabel2 = tk.Label(self.inputFrame, text='Enter field to delete:')
-        inputlabel2.grid(row=2, columnspan=2) 
-        e2 = tk.Entry(self.inputFrame, width=50)
-        e2.grid(row=3, columnspan=2)
-        def output():
-            self.className = e1.get()
-            self.field = e2.get()
-            self.controller.clickDeleteFieldButton()
-        ok = tk.Button(self.inputFrame, text='Delete field', command=lambda: output())
-        ok.grid(row=4, column=0)
-        cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
-        cancel.grid(row=4, column=1)
+        classDict = {c.name : c.fields for c in u.classIndex if len(c.fields) > 0}
+        if len(classDict) == 0:
+            inputlabel1 = tk.Label(self.inputFrame, text='No classes exist with fields', width=30)
+            inputlabel1.grid(row=0)
+            cancel = tk.Button(self.inputFrame, text='Close', command=lambda: self.remake())
+            cancel.grid(row=1)
+        else:
+            def update2ndDrop(*args):
+                feilds = classDict[clicked.get()]
+                deleteF.set(feilds[0])
+                menu = drop2['menu']
+                menu.delete(0, 'end')
+                for f in feilds:
+                    menu.add_command(label=f, command=lambda classN=f: deleteF.set(classN))
+
+            clicked = StringVar()
+            deleteF = StringVar()
+            clicked.trace('w', update2ndDrop)
+            drop = OptionMenu(self.inputFrame, clicked, *classDict.keys()) 
+            drop2 = OptionMenu(self.inputFrame, deleteF,'')
+            inputlabel1 = tk.Label(self.inputFrame, text='Select class to delete field:' , width=40)
+            inputlabel1.grid(row=0, columnspan=2)
+            drop.grid(row=1, columnspan=2)
+            drop2.grid(row=3, columnspan=2)
+            inputlabel2 = tk.Label(self.inputFrame, text='Select field to delete:')
+            inputlabel2.grid(row=2, columnspan=2) 
+            def output():
+                self.className = clicked.get().strip()
+                self.field = deleteF.get().strip()
+                self.controller.clickDeleteFieldButton()
+            ok = tk.Button(self.inputFrame, text='Delete field', command=lambda: output())
+            ok.grid(row=4, column=0)
+            cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
+            cancel.grid(row=4, column=1)
 
     def makeRenameFieldFrame(self):
-        inputlabel1 = tk.Label(self.inputFrame, text='Enter class name:')
-        inputlabel1.grid(row=0, columnspan=2) 
-        e1 = tk.Entry(self.inputFrame, width=50)
-        e1.grid(row=1, columnspan=2)
-        inputlabel2 = tk.Label(self.inputFrame, text='Enter field name to rename:')
-        inputlabel2.grid(row=2, columnspan=2) 
-        e2 = tk.Entry(self.inputFrame, width=50)
-        e2.grid(row=3, columnspan=2)
-        inputlabel3 = tk.Label(self.inputFrame, text='Enter new field name:')
-        inputlabel3.grid(row=4, columnspan=2) 
-        e3 = tk.Entry(self.inputFrame, width=50)
-        e3.grid(row=5, columnspan=2)
-        def output():
-            self.className = e1.get()
-            self.field = e2.get()
-            self.feildNew = e3.get()
-            self.controller.clickRenameFieldButton()
-        ok = tk.Button(self.inputFrame, text='Rename Field', command=lambda: output())
-        ok.grid(row=6, column=0)
-        cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
-        cancel.grid(row=6, column=1)
+        classDict = {c.name : c.fields for c in u.classIndex if len(c.fields) > 0}
+        if len(classDict) == 0:
+            inputlabel1 = tk.Label(self.inputFrame, text='No classes exist with fields', width=30)
+            inputlabel1.grid(row=0)
+            cancel = tk.Button(self.inputFrame, text='Close', command=lambda: self.remake())
+            cancel.grid(row=1)
+        else:
+            def update2ndDrop(*args):
+                feilds = classDict[clicked.get()]
+                deleteF.set(feilds[0])
+                menu = drop2['menu']
+                menu.delete(0, 'end')
+                for f in feilds:
+                    menu.add_command(label=f, command=lambda classN=f: deleteF.set(classN))
+
+            clicked = StringVar()
+            deleteF = StringVar()
+            clicked.trace('w', update2ndDrop)
+            drop = OptionMenu(self.inputFrame, clicked, *classDict.keys()) 
+            drop2 = OptionMenu(self.inputFrame, deleteF,'')
+            inputlabel1 = tk.Label(self.inputFrame, text='Select class to rename field:' , width=40)
+            inputlabel1.grid(row=0, columnspan=2)
+            drop.grid(row=1, columnspan=2)
+            drop2.grid(row=3, columnspan=2)
+            inputlabel2 = tk.Label(self.inputFrame, text='Select field to rename:')
+            inputlabel2.grid(row=2, columnspan=2) 
+            inputlabel3 = tk.Label(self.inputFrame, text='Enter new field name:')
+            inputlabel3.grid(row=4, columnspan=2) 
+            e3 = tk.Entry(self.inputFrame, width=50)
+            e3.grid(row=5, columnspan=2)
+            def output():
+                self.className = clicked.get().strip()
+                self.field = deleteF.get().strip()
+                self.feildNew = e3.get()
+                self.controller.clickRenameFieldButton()
+            ok = tk.Button(self.inputFrame, text='Rename Field', command=lambda: output())
+            ok.grid(row=6, column=0)
+            cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
+            cancel.grid(row=6, column=1)
 
     def makeParamInputFrame(self):
         inputlabel1 = tk.Label(self.inputFrame, text='Enter parameter name:')
@@ -476,96 +554,159 @@ class View(tk.Tk):
         cancel.grid(row=4, column=1)
 
     def makeAddMethodFrame(self):
-        inputlabel1 = tk.Label(self.inputFrame, text='Enter class name:')
-        inputlabel1.grid(row=0, columnspan=2) 
-        e1 = tk.Entry(self.inputFrame, width=50)
-        e1.grid(row=1, columnspan=2)
-        inputlabel2 = tk.Label(self.inputFrame, text='Enter method name:')
-        inputlabel2.grid(row=2, columnspan=2) 
-        e2 = tk.Entry(self.inputFrame, width=50)
-        e2.grid(row=3, columnspan=2)
-        inputlabel3 = tk.Label(self.inputFrame, text='Enter return type:')
-        inputlabel3.grid(row=4, columnspan=2) 
-        e3 = tk.Entry(self.inputFrame, width=50)
-        e3.grid(row=5, columnspan=2)
-        def addParam():
-            self.className = e1.get()
-            self.method = e2.get()
-            self.methodReturnType = e3.get()
-            self.controller.clickAddMethodAndParamsButton()
-        addParamButton = tk.Button(self.inputFrame, text='Add method and parameter(s)', command= lambda : addParam())
-        addParamButton.grid(row=6, column=0)
-        
-        def output():
-            self.className = e1.get()
-            self.method = e2.get()
-            self.methodReturnType = e3.get()
-            self.controller.clickAddMethodWithoutParamsButton()
-        ok = tk.Button(self.inputFrame, text='Add method no parameter(s)', command=lambda: output())
-        ok.grid(row=6, column=1)
-        cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
-        cancel.grid(row=6, column=2)
+        classList = [c.name for c in u.classIndex]
+        if len(classList) == 0:
+            inputlabel1 = tk.Label(self.inputFrame, text='No classes exist', width=30)
+            inputlabel1.grid(row=0)
+            cancel = tk.Button(self.inputFrame, text='Close', command=lambda: self.remake())
+            cancel.grid(row=1)
+        else: 
+            clicked = StringVar()
+            drop = OptionMenu(self.inputFrame, clicked, *classList) 
+            drop.grid(row=1, columnspan=2)
+            inputlabel1 = tk.Label(self.inputFrame, text='Select class to add method:')
+            inputlabel1.grid(row=0, columnspan=2)         
+            inputlabel2 = tk.Label(self.inputFrame, text='Enter method name:')
+            inputlabel2.grid(row=2, columnspan=2) 
+            e2 = tk.Entry(self.inputFrame, width=50)
+            e2.grid(row=3, columnspan=2)
+            inputlabel3 = tk.Label(self.inputFrame, text='Enter return type:')
+            inputlabel3.grid(row=4, columnspan=2) 
+            e3 = tk.Entry(self.inputFrame, width=50)
+            e3.grid(row=5, columnspan=2)
+            def addParam():
+                self.className = clicked.get()
+                self.method = e2.get()
+                self.methodReturnType = e3.get()
+                self.controller.clickAddMethodAndParamsButton()
+            addParamButton = tk.Button(self.inputFrame, text='Add method and parameter(s)', command= lambda : addParam())
+            addParamButton.grid(row=6, column=0)
+            
+            def output():
+                self.className = clicked.get()
+                self.method = e2.get()
+                self.methodReturnType = e3.get()
+                self.controller.clickAddMethodWithoutParamsButton()
+            ok = tk.Button(self.inputFrame, text='Add method no parameter(s)', command=lambda: output())
+            ok.grid(row=6, column=1)
+            cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
+            cancel.grid(row=6, column=2)
 
     def makeDeleteMethodFrame(self):
-        inputlabel1 = tk.Label(self.inputFrame, text='Enter class name:')
-        inputlabel1.grid(row=0, columnspan=2) 
-        e1 = tk.Entry(self.inputFrame, width=50)
-        e1.grid(row=1, columnspan=2)
-        inputlabel2 = tk.Label(self.inputFrame, text='Enter method to delete:')
-        inputlabel2.grid(row=2, columnspan=2) 
-        e2 = tk.Entry(self.inputFrame, width=50)
-        e2.grid(row=3, columnspan=2)
-        def output():
-            self.className = e1.get()
-            self.method = e2.get()
-            self.controller.clickDeleteMethodButton()
-        ok = tk.Button(self.inputFrame, text='Delete method', command=lambda: output())
-        ok.grid(row=4, column=0)
-        cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
-        cancel.grid(row=4, column=1)
+        classDict = {c.name : c.methods for c in u.classIndex if len(c.methods) > 0}
+        if len(classDict) == 0:
+            inputlabel1 = tk.Label(self.inputFrame, text='No classes exist with methods', width=30)
+            inputlabel1.grid(row=0)
+            cancel = tk.Button(self.inputFrame, text='Close', command=lambda: self.remake())
+            cancel.grid(row=1)
+        else:
+            def update2ndDrop(*args):
+                feilds = [each.name for each in classDict[clicked.get()]]
+                deleteF.set(feilds[0])
+                menu = drop2['menu']
+                menu.delete(0, 'end')
+                for f in feilds:
+                    menu.add_command(label=f, command=lambda classN=f: deleteF.set(classN))
+
+            clicked = StringVar()
+            deleteF = StringVar()
+            clicked.trace('w', update2ndDrop)
+            drop = OptionMenu(self.inputFrame, clicked, *classDict.keys()) 
+            drop2 = OptionMenu(self.inputFrame, deleteF,'')
+            inputlabel1 = tk.Label(self.inputFrame, text='Select class to delete method:' , width=40)
+            inputlabel1.grid(row=0, columnspan=2)
+            drop.grid(row=1, columnspan=2)
+            drop2.grid(row=3, columnspan=2)
+            inputlabel2 = tk.Label(self.inputFrame, text='Select method to delete:')
+            inputlabel2.grid(row=2, columnspan=2) 
+            def output():
+                self.className = clicked.get().strip()
+                self.method = deleteF.get().strip()
+                self.controller.clickDeleteMethodButton()
+            ok = tk.Button(self.inputFrame, text='Delete method', command=lambda: output())
+            ok.grid(row=4, column=0)
+            cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
+            cancel.grid(row=4, column=1)
 
     def makeRenameMethodFrame(self):
-        inputlabel1 = tk.Label(self.inputFrame, text='Enter class name:')
-        inputlabel1.grid(row=0, columnspan=2) 
-        e1 = tk.Entry(self.inputFrame, width=50)
-        e1.grid(row=1, columnspan=2)
-        inputlabel2 = tk.Label(self.inputFrame, text='Enter method to rename:')
-        inputlabel2.grid(row=2, columnspan=2) 
-        e2 = tk.Entry(self.inputFrame, width=50)
-        e2.grid(row=3, columnspan=2)
-        inputlabel3 = tk.Label(self.inputFrame, text='Enter new method name:')
-        inputlabel3.grid(row=4, columnspan=2) 
-        e3 = tk.Entry(self.inputFrame, width=50)
-        e3.grid(row=5, columnspan=2)
-        def output():
-            self.className = e1.get()
-            self.method = e2.get()
-            self.methodNew = e3.get()
-            self.controller.clickUpdateMethodButton()
-        ok = tk.Button(self.inputFrame, text='Rename method', command=lambda: output())
-        ok.grid(row=6, column=0)
-        cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
-        cancel.grid(row=6, column=1)
+        classDict = {c.name : c.methods for c in u.classIndex if len(c.methods) > 0}
+        if len(classDict) == 0:
+            inputlabel1 = tk.Label(self.inputFrame, text='No classes exist with methods', width=30)
+            inputlabel1.grid(row=0)
+            cancel = tk.Button(self.inputFrame, text='Close', command=lambda: self.remake())
+            cancel.grid(row=1)
+        else:
+            def update2ndDrop(*args):
+                feilds = [each.name for each in classDict[clicked.get()]]
+                deleteF.set(feilds[0])
+                menu = drop2['menu']
+                menu.delete(0, 'end')
+                for f in feilds:
+                    menu.add_command(label=f, command=lambda classN=f: deleteF.set(classN))
+
+            clicked = StringVar()
+            deleteF = StringVar()
+            clicked.trace('w', update2ndDrop)
+            drop = OptionMenu(self.inputFrame, clicked, *classDict.keys()) 
+            drop2 = OptionMenu(self.inputFrame, deleteF,'')
+            inputlabel1 = tk.Label(self.inputFrame, text='Select class to rename method:' , width=40)
+            inputlabel1.grid(row=0, columnspan=2)
+            drop.grid(row=1, columnspan=2)
+            drop2.grid(row=3, columnspan=2)
+            inputlabel2 = tk.Label(self.inputFrame, text='Select method to rename:')
+            inputlabel2.grid(row=2, columnspan=2) 
+            inputlabel3 = tk.Label(self.inputFrame, text='Enter new method name:')
+            inputlabel3.grid(row=4, columnspan=2) 
+            e3 = tk.Entry(self.inputFrame, width=50)
+            e3.grid(row=5, columnspan=2)
+            def output():
+                self.className = clicked.get().strip()
+                self.method = deleteF.get().strip()
+                self.methodNew = e3.get()
+                self.controller.clickUpdateMethodButton()
+            ok = tk.Button(self.inputFrame, text='Rename method', command=lambda: output())
+            ok.grid(row=6, column=0)
+            cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
+            cancel.grid(row=6, column=1)
 
     def makeAddParamFrame(self):        
-        inputlabel1 = tk.Label(self.inputFrame, text='Enter class name:')
-        inputlabel1.grid(row=0, columnspan=2) 
-        e1 = tk.Entry(self.inputFrame, width=50)
-        e1.grid(row=1, columnspan=2)
-        inputlabel2 = tk.Label(self.inputFrame, text='Enter method name to add parameter(s):')
-        inputlabel2.grid(row=2, columnspan=2) 
-        e2 = tk.Entry(self.inputFrame, width=50)
-        e2.grid(row=3, columnspan=2)
-        def addParam():
-            self.className = e1.get()
-            self.method = e2.get()
-            self.controller.clickAddParamToMethodButton()        
-        ok = tk.Button(self.inputFrame, text='Add parameter(s)', command=lambda: addParam())
-        ok.grid(row=4, column=0)
-        cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
-        cancel.grid(row=4, column=1)
+        classDict = {c.name : c.methods for c in u.classIndex if len(c.methods) > 0}
+        if len(classDict) == 0:
+            inputlabel1 = tk.Label(self.inputFrame, text='No classes exist with methods', width=30)
+            inputlabel1.grid(row=0)
+            cancel = tk.Button(self.inputFrame, text='Close', command=lambda: self.remake())
+            cancel.grid(row=1)
+        else:
+            def update2ndDrop(*args):
+                feilds = [each.name for each in classDict[clicked.get()]]
+                deleteF.set(feilds[0])
+                menu = drop2['menu']
+                menu.delete(0, 'end')
+                for f in feilds:
+                    menu.add_command(label=f, command=lambda classN=f: deleteF.set(classN))
+
+            clicked = StringVar()
+            deleteF = StringVar()
+            clicked.trace('w', update2ndDrop)
+            drop = OptionMenu(self.inputFrame, clicked, *classDict.keys()) 
+            drop2 = OptionMenu(self.inputFrame, deleteF,'')
+            inputlabel1 = tk.Label(self.inputFrame, text='Select class to add parameter:' , width=40)
+            inputlabel1.grid(row=0, columnspan=2)
+            drop.grid(row=1, columnspan=2)
+            drop2.grid(row=3, columnspan=2)
+            inputlabel2 = tk.Label(self.inputFrame, text='Select method to add parameter:')
+            inputlabel2.grid(row=2, columnspan=2) 
+            def addParam():
+                self.className = clicked.get().strip()
+                self.method = deleteF.get().strip()
+                self.controller.clickAddParamToMethodButton()        
+            ok = tk.Button(self.inputFrame, text='Add parameter(s)', command=lambda: addParam())
+            ok.grid(row=4, column=0)
+            cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
+            cancel.grid(row=4, column=1)
 
     def makeParamDeleteInputFrame(self):
+        
         inputlabel1 = tk.Label(self.inputFrame, text='Enter parameter name to delete:')
         inputlabel1.grid(row=0, columnspan=2) 
         e1 = tk.Entry(self.inputFrame, width=50)
@@ -586,101 +727,164 @@ class View(tk.Tk):
         cancel.grid(row=4, column=2)
 
     def makeDeleteParamInputFrame(self):
-        inputlabel1 = tk.Label(self.inputFrame, text='Enter parameter name:')
-        inputlabel1.grid(row=0, columnspan=2) 
-        e1 = tk.Entry(self.inputFrame, width=50)
-        e1.grid(row=1, columnspan=2)
-        def addParam():
-            self.param = e1.get()
-            self.controller.clickSecondDeleteParamButton()
-        addParamButton = tk.Button(self.inputFrame, text='Delete parameter(s)', command= lambda: addParam())
-        addParamButton.grid(row=4, column=0)
-        cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
-        cancel.grid(row=4, column=1)
+        paramList = u.classIndex[u.findClass(self.className)].methods[a.findMethod(self.method, self.className)].params
+        if len(paramList) == 0:
+            inputlabel1 = tk.Label(self.inputFrame, text='No parameters left in method', width=30)
+            inputlabel1.grid(row=0)
+            cancel = tk.Button(self.inputFrame, text='Close', command=lambda: self.remake())
+            cancel.grid(row=1) 
+        else:
+            justParams = [each.name for each in paramList] 
+            clicked = StringVar()
+            drop = OptionMenu(self.inputFrame, clicked, *justParams) 
+            drop.grid(row=1, columnspan=2)
+            inputlabel1 = tk.Label(self.inputFrame, text='Select parameter to delete', width=40)
+            inputlabel1.grid(row=0, columnspan=2) 
+            def addParam():
+                self.param = clicked.get()
+                self.controller.clickSecondDeleteParamButton()
+            addParamButton = tk.Button(self.inputFrame, text='Delete parameter(s)', command= lambda: addParam())
+            addParamButton.grid(row=4, column=0)
+            cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
+            cancel.grid(row=4, column=1)
 
     def makeDeleteParamFrame(self):        
-        inputlabel1 = tk.Label(self.inputFrame, text='Enter class name:')
-        inputlabel1.grid(row=0, columnspan=2) 
-        e1 = tk.Entry(self.inputFrame, width=50)
-        e1.grid(row=1, columnspan=2)
-        inputlabel2 = tk.Label(self.inputFrame, text='Enter method name to delete parameter(s):')
-        inputlabel2.grid(row=2, columnspan=2) 
-        e2 = tk.Entry(self.inputFrame, width=50)
-        e2.grid(row=3, columnspan=2)
-        def addParam():
-            self.className = e1.get()
-            self.method = e2.get()
-            self.controller.clickDeleteParamButton()
-        delete = tk.Button(self.inputFrame, text='Delete parameter(s)', command = lambda: addParam())
-        delete.grid(row=4,column=0)
-        def delAll():
-            self.className = e1.get()
-            self.method = e2.get()
-            self.controller.clickDeleteAllParamButton()
-        ok = tk.Button(self.inputFrame, text='Delete all parameters', command=lambda: delAll())
-        ok.grid(row=4, column=1)
-        cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
-        cancel.grid(row=4, column=2)
+        #classDict = {c.name : c.methods for c in u.classIndex if len(c.methods) > 0}
+        classDict = {c.name : c.methods for c in u.classIndex for each in c.methods if len(each.params) > 0  }
+        if len(classDict) == 0:
+            inputlabel1 = tk.Label(self.inputFrame, text='No classes exist that have methods with parameters', width=60)
+            inputlabel1.grid(row=0)
+            cancel = tk.Button(self.inputFrame, text='Close', command=lambda: self.remake())
+            cancel.grid(row=1)
+        else:
+            def update2ndDrop(*args):
+                feilds = [each.name for each in classDict[clicked.get()] if len(each.params) > 0]
+                deleteF.set(feilds[0])
+                menu = drop2['menu']
+                menu.delete(0, 'end')
+                for f in feilds:
+                    menu.add_command(label=f, command=lambda classN=f: deleteF.set(classN))
+
+            clicked = StringVar()
+            deleteF = StringVar()
+            clicked.trace('w', update2ndDrop)
+            drop = OptionMenu(self.inputFrame, clicked, *classDict.keys()) 
+            drop2 = OptionMenu(self.inputFrame, deleteF,'')
+            inputlabel1 = tk.Label(self.inputFrame, text='Select class to delete parameter:' , width=40)
+            inputlabel1.grid(row=0, columnspan=2)
+            drop.grid(row=1, columnspan=2)
+            drop2.grid(row=3, columnspan=2)
+            inputlabel2 = tk.Label(self.inputFrame, text='Select method to delete parameter:')
+            inputlabel2.grid(row=2, columnspan=2) 
+            def addParam():
+                self.className = clicked.get().strip()
+                self.method = deleteF.get().strip()
+                self.controller.clickDeleteParamButton()
+            delete = tk.Button(self.inputFrame, text='Delete parameter(s)', command = lambda: addParam())
+            delete.grid(row=4,column=0)
+            def delAll():
+                self.className = clicked.get().strip()
+                self.method = deleteF.get().strip()
+                self.controller.clickDeleteAllParamButton()
+            ok = tk.Button(self.inputFrame, text='Delete all parameters', command=lambda: delAll())
+            ok.grid(row=4, column=1)
+            cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
+            cancel.grid(row=4, column=2)
     
     def makeChangeParamInputFrame(self):
-        inputlabel1 = tk.Label(self.inputFrame, text='Enter parameter name to change:')
-        inputlabel1.grid(row=0, columnspan=2) 
-        e1 = tk.Entry(self.inputFrame, width=50)
-        e1.grid(row=1, columnspan=2)
-        inputlabel2 = tk.Label(self.inputFrame, text='Enter new parameter name:')
-        inputlabel2.grid(row=2, columnspan=2) 
-        e2 = tk.Entry(self.inputFrame, width=50)
-        e2.grid(row=3, columnspan=2)
-        inputlabel3 = tk.Label(self.inputFrame, text='Enter new parameter type:')
-        inputlabel3.grid(row=4, columnspan=2) 
-        e3 = tk.Entry(self.inputFrame, width=50)
-        e3.grid(row=5, columnspan=2)
-        def addParam():
-            self.param = e1.get()
-            self.paramNew = e2.get()
-            self.paramTypeNew = e3.get()
-            self.controller.clickChangeAnotherParamButton()
-        addParamButton = tk.Button(self.inputFrame, text='Change parameter(s)', command= lambda: addParam())
-        addParamButton.grid(row=6, column=0)
-        cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
-        cancel.grid(row=6, column=1)
+        paramList = u.classIndex[u.findClass(self.className)].methods[a.findMethod(self.method, self.className)].params
+        if len(paramList) == 0:
+            inputlabel1 = tk.Label(self.inputFrame, text='No parameters left in method', width=30)
+            inputlabel1.grid(row=0)
+            cancel = tk.Button(self.inputFrame, text='Close', command=lambda: self.remake())
+            cancel.grid(row=1) 
+        else:
+            justParams = [each.name for each in paramList] 
+            clicked = StringVar()
+            drop = OptionMenu(self.inputFrame, clicked, *justParams) 
+            drop.grid(row=1, columnspan=2)
+            inputlabel1 = tk.Label(self.inputFrame, text='Select parameter to change', width=40)
+            inputlabel1.grid(row=0, columnspan=2) 
+            inputlabel2 = tk.Label(self.inputFrame, text='Enter new parameter name:')
+            inputlabel2.grid(row=2, columnspan=2) 
+            e2 = tk.Entry(self.inputFrame, width=50)
+            e2.grid(row=3, columnspan=2)
+            inputlabel3 = tk.Label(self.inputFrame, text='Enter new parameter type:')
+            inputlabel3.grid(row=4, columnspan=2) 
+            e3 = tk.Entry(self.inputFrame, width=50)
+            e3.grid(row=5, columnspan=2)
+            def addParam():
+                self.param = clicked.get().strip()
+                self.paramNew = e2.get()
+                self.paramTypeNew = e3.get()
+                self.controller.clickChangeAnotherParamButton()
+            addParamButton = tk.Button(self.inputFrame, text='Change parameter(s)', command= lambda: addParam())
+            addParamButton.grid(row=6, column=0)
+            cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
+            cancel.grid(row=6, column=1)
     
     def makeChangeParamFrame(self):
-        inputlabel1 = tk.Label(self.inputFrame, text='Enter class name:')
-        inputlabel1.grid(row=0, columnspan=2) 
-        e1 = tk.Entry(self.inputFrame, width=50)
-        e1.grid(row=1, columnspan=2)
-        inputlabel2 = tk.Label(self.inputFrame, text='Enter method name to change parameter(s):')
-        inputlabel2.grid(row=2, columnspan=2) 
-        e2 = tk.Entry(self.inputFrame, width=50)
-        e2.grid(row=3, columnspan=2)
-        def addParam():
-            self.className = e1.get()
-            self.method = e2.get()
-            self.controller.clickChangeParamButton()
-        delete = tk.Button(self.inputFrame, text='Change parameter(s)', command = lambda: addParam())
-        delete.grid(row=4,column=0)
-        def delAll():
-            self.className = e1.get()
-            self.method = e2.get()
-            self.controller.clickChangeAllParamButton()
-        ok = tk.Button(self.inputFrame, text='Change all parameters', command=lambda: delAll())
-        ok.grid(row=4, column=1)
-        cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
-        cancel.grid(row=4, column=2)
+        classDict = {c.name : c.methods for c in u.classIndex for each in c.methods if len(each.params) > 0  }
+        if len(classDict) == 0:
+            inputlabel1 = tk.Label(self.inputFrame, text='No classes exist that have methods with parameters', width=60)
+            inputlabel1.grid(row=0)
+            cancel = tk.Button(self.inputFrame, text='Close', command=lambda: self.remake())
+            cancel.grid(row=1)
+        else:
+            def update2ndDrop(*args):
+                feilds = [each.name for each in classDict[clicked.get()] if len(each.params) > 0]
+                deleteF.set(feilds[0])
+                menu = drop2['menu']
+                menu.delete(0, 'end')
+                for f in feilds:
+                    menu.add_command(label=f, command=lambda classN=f: deleteF.set(classN))
+
+            clicked = StringVar()
+            deleteF = StringVar()
+            clicked.trace('w', update2ndDrop)
+            drop = OptionMenu(self.inputFrame, clicked, *classDict.keys()) 
+            drop2 = OptionMenu(self.inputFrame, deleteF,'')
+            inputlabel1 = tk.Label(self.inputFrame, text='Select class to change parameter:' , width=40)
+            inputlabel1.grid(row=0, columnspan=2)
+            drop.grid(row=1, columnspan=2)
+            drop2.grid(row=3, columnspan=2)
+            inputlabel2 = tk.Label(self.inputFrame, text='Select method to change parameter:')
+            inputlabel2.grid(row=2, columnspan=2) 
+            def addParam():
+                self.className = clicked.get().strip()
+                self.method = deleteF.get().strip()
+                self.controller.clickChangeParamButton()
+            delete = tk.Button(self.inputFrame, text='Change parameter(s)', command = lambda: addParam())
+            delete.grid(row=4,column=0)
+            def delAll():
+                self.className = clicked.get().strip()
+                self.method = deleteF.get().strip()
+                self.controller.clickChangeAllParamButton()
+            ok = tk.Button(self.inputFrame, text='Change all parameters', command=lambda: delAll())
+            ok.grid(row=4, column=1)
+            cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
+            cancel.grid(row=4, column=2)
 
     def makeListClassFrame(self):
-        inputlabel1 = tk.Label(self.inputFrame, text='Enter Class name to list:')
-        inputlabel1.grid(row=0, columnspan=2) 
-        e1 = tk.Entry(self.inputFrame, width=50)
-        e1.grid(row=1, columnspan=2)
-        def output():
-            self.className = e1.get()
-            self.controller.clickListClassButton()
-        ok = tk.Button(self.inputFrame, text='List Class', command=lambda: output())
-        ok.grid(row=4, column=0)
-        cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
-        cancel.grid(row=4, column=1)            
+        classList = [c.name for c in u.classIndex]
+        if len(classList) == 0:
+            inputlabel1 = tk.Label(self.inputFrame, text='No classes exist', width=30)
+            inputlabel1.grid(row=0)
+            cancel = tk.Button(self.inputFrame, text='Close', command=lambda: self.remake())
+            cancel.grid(row=1) 
+        else:
+            clicked = StringVar()
+            drop = OptionMenu(self.inputFrame, clicked, *classList) 
+            drop.grid(row=1, columnspan=2)
+            inputlabel1 = tk.Label(self.inputFrame, text='Select class name to list', width=40)
+            inputlabel1.grid(row=0, columnspan=2) 
+            def output():
+                self.className = clicked.get()
+                self.controller.clickListClassButton()
+            ok = tk.Button(self.inputFrame, text='List Class', command=lambda: output())
+            ok.grid(row=4, column=0)
+            cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
+            cancel.grid(row=4, column=1)            
 
     def remake(self):
         self.inputFrame.destroy()
