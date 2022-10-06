@@ -11,7 +11,7 @@ import UMLClass
 import attributes
 import relationship
 import parameter
-import UMLException
+from UMLException import UMLException, UMLSuccess
 from interface.interfaceCommands import *
 from saveload import *
 
@@ -29,6 +29,8 @@ class Interface(cmd.Cmd):
     """
         Commmand listeners
     """
+
+    """ CLASS COMMANDS """
     # Creates a uniquely named class
     def do_addClass(self, arg):
         """Usage: addClass <name>
@@ -54,6 +56,8 @@ class Interface(cmd.Cmd):
             UMLClass.renameClass(names[0], names[1])
         else:
             print(f"Argument error")
+
+    """ RELATIONSHIP COMMANDS """
     # Creates a relationship between two classes
     def do_addRelationship(self, arg):
         """Usage addRelationship <source> <destination> <type>
@@ -89,17 +93,20 @@ class Interface(cmd.Cmd):
         else:
             print("wrong number of arguments")
 
+    """ METHOD COMMANDS """
     # Creates a new method for the specified class
     def do_addMethod(self, arg):
         """Usage: addMethod <class> <name> <return_type> [-p <name>:<type>...]
         
         Adds the method <name> with <return_type> to <class>
         """
+
         args = arg.split()
         if len(args) == 3:
             attributes.addMethod(args[1], args[0], args[2])
         elif len(args) > 4:
             if args[3] != "-p":
+                print(UMLException("Invalid argument", f"{args[3]}"))
                 return
             # parse the parameter lists into a list of tuples
             paramList = []
@@ -118,7 +125,13 @@ class Interface(cmd.Cmd):
         """
         args = arg.split()
         if len(args) == 2:
-            attributes.deleteMethod(args[1], args[0])
+            ret = attributes.deleteMethod(args[1], args[0])
+            if ret == 1:
+                print(UMLSuccess(f"Removed {args[1]} from {args[0]}"))
+            elif ret == -1:
+                print(UMLException("Class error", f"{args[0]} does not exist"))
+            elif ret == -2:
+                print(UMLException("Method error", f"{args[1]} does not exist in {args[0]}"))
         else:
             print(f"Wrong")
     # Renames the specified method in the specified class
@@ -130,9 +143,18 @@ class Interface(cmd.Cmd):
         args = arg.split()
         if len(args) == 3:
             ret = attributes.renameMethod(args[1], args[2], args[0])
+            if ret == 1:
+                print(UMLSuccess(f"Renamed {args[0]} to {args[1]}"))
+            elif ret == -1:
+                print(UMLException("Class error", f"{args[2]} does not exist"))
+            elif ret == -2:
+                print(UMLException("Method error", f"{args[0]} does not exist in {args[2]}"))
+            elif ret == -3:
+                print(UMLException("Method error", f"{args[1]} already exists in {args[2]}"))
         else:
             print(UMLException("Argument error", "BLAH"))
 
+    """ FIELD COMMANDS """
     def do_addField(self, arg):
         """Usage: addField <class> <name> <type>
         
@@ -161,7 +183,7 @@ class Interface(cmd.Cmd):
             if ret == -1:
                 print(UMLException("Class error", f"{args[0]} does not exist"))
             elif ret == -2:
-                print(UMLException("Field error", f"{args[1]} does not exist"))
+                print(UMLException("Field error", f"{args[1]} does not exist in {args[0]}"))
         else:
             print("ARGUMENT ERROR")
 
@@ -173,9 +195,19 @@ class Interface(cmd.Cmd):
         args = arg.split()
         if len(args) == 3:
             ret = attributes.renameField(args[1], args[2], args[0])
+            if ret == 1:
+                print(UMLSuccess(f"Renamed {args[0]} to {args[1]}"))
+            elif ret == -1:
+                print(UMLException("Class error", f"{args[2]} does not exist"))
+            elif ret == -2:
+                print(UMLException("Field error", f"{args[0]} does not exist in {args[2]}"))
+            elif ret == -3:
+                print(UMLException("Field error", f"{args[1]} already exists in {args[2]}"))
         else:
-            print(UMLException("Argument error", f"expected 3, given {len(args)}"))
+            print(UMLException("Argument error", f"expected 3 args, but was given {len(args)}"))
 
+
+    """ PARAMETER COMMANDS """
     def do_addParam(self, arg):
         """Usage: addParam <class> <method> <name>:<type>...
         
@@ -188,7 +220,7 @@ class Interface(cmd.Cmd):
                 paramName, paramType = param.split(":")
                 paramList.append((paramName, paramType))
 
-            ret = parameter.addParameter(paramList, args[1], args[0])
+            parameter.addParameter(paramList, args[1], args[0])
         else:
             print(UMLException("Argument error", f"not enough args"))
 
@@ -217,7 +249,8 @@ class Interface(cmd.Cmd):
 
         # parameter.changeParameter(args[3:], args[0], args[1], args[0])
         # parameter.changeParam(args[0], args[1], args[3:], args[0])
-        
+    
+    """ SAVE/LOAD COMMANDS """
     # Stores the current state to a JSON file
     def do_save(self, arg):
         """Usage: save <filename>
@@ -232,6 +265,8 @@ class Interface(cmd.Cmd):
         Loads a previously saved state from <filename>.json.
         """
         load(arg)
+    
+    """ LIST COMMANDS """
     # List all classes and their contents
     def do_listClasses(self, arg):
         """Usage: listClasses
@@ -253,13 +288,15 @@ class Interface(cmd.Cmd):
         Lists all existing relationships between classes.
         """
         print(listRelationships())
+    
+    """ EXIT COMMAND """
     # Exits the program
     def do_exit(self, arg):
         """Usage: exit
         
         Exits the program.
         """
-        exit(UMLClass.classIndex, relationship.relationIndex)
+        exit()
     # Overrides the emptyline method to avoid repetition of previous command
     def emptyline(self):
         pass
