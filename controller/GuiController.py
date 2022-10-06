@@ -1,3 +1,9 @@
+"""
+Author(s)   : Aaron Heinbaugh
+Filename    : GuiController.py
+Description : Controller that links the view and the model
+"""
+
 from view.View import View as v
 import relationship as r
 import UMLClass as u
@@ -405,6 +411,8 @@ class Controller:
     
     def clickSaveButton(self):
         self.view.save()
+        if self.view.fileName == "":
+            return
         message = s.saveGUI(u.classIndex, r.relationIndex, self.view.fileName)
         if message == "":
             self.view.makeMessage('Saved successfully')
@@ -433,6 +441,7 @@ class Controller:
     def clickListAllClassesButton(self):
         self.view.remake()
         if len(u.classIndex) == 0:
+            self.view.clearScreen()
             self.view.makeMessage('No classes to list')
         else:
             self.view.printAllClassesToCanvas(u.classIndex)
@@ -441,12 +450,12 @@ class Controller:
     def clickListRelationsButton(self):
         self.view.remake()
         if len(r.relationIndex) == 0:
+            self.view.clearScreen()
             self.view.makeMessage("No relationships to list")
         else:
             self.view.printRelationsToCanvase(r.relationIndex)
             self.view.remake()
 
-# self = Controller()
-# self.main()
+
 
 
