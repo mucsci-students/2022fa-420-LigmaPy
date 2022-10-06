@@ -90,7 +90,7 @@ def deleteRelationship(source: str, destination: str):
 
         index = findRelationship(source, destination)
         if index > -1:
-            print(UMLSuccess(f"Removed {relationIndex.pop(index)}"))
+            print(UMLSuccess(f"Removed relationship {relationIndex.pop(index)}"))
             return 1
         else:
             # Relationship does not exist

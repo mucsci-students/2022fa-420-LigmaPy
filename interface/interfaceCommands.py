@@ -5,14 +5,11 @@
 """
 
 # Imports
-import os.path
 import sys
 from prettytable import PrettyTable
 # Local Imports
 import UMLClass
 import relationship
-from saveload import save
-import UMLException
 
 def listClasses():
     """
@@ -36,6 +33,7 @@ def listClasses():
 def listClass(name: str):
     """
         Lists a specified classes contents
+
         :param name: Name of the class to display contents of
     """
     # Get index of class with name in classIndex list
@@ -53,23 +51,16 @@ def listClass(name: str):
         for _ in range((len(name) + 13)):
             print("*", end="")
         print()
-        """
-            LIST CLASS FIELDS HERE
-        """
+        # List classes fields
         for field in UMLClass.classIndex[index].fields:
             print(f"\t{field}")
         print(" Methods:")
         for _ in range((len(name) + 13)):
             print("*", end="")
         print()
-        """
-            LIST CLASS METHODS HERE
-        """
+        # List classes methods
         for method in UMLClass.classIndex[index].methods:
             print(f"\t{method}")
-        # Loop through all attributes of the class
-        # for attr in UMLClass.classIndex[index].attributes:
-        #     print(f" {attr.name}")
     else:
         print(f"\nClass \"{name}\" does not exist")
 
@@ -86,11 +77,9 @@ def listRelationships():
         for relation in relationship.relationIndex:
             # Add relationship to table
             table.add_row([relation.source, relation.destination, relation.type])
-        # Display table
-        # print(table)
         return table
     else:
-        print("No relationships found.")
+        return "No relationships found."
 
 """
     help Command handled by cmd Module.
@@ -102,15 +91,3 @@ def exit():
     """
     print(f"\nExiting...")
     sys.exit()
-    # Get input from user if they want to save
-    # exitChoice = input("Save progress? (Y/n) ")
-    # if exitChoice.lower() == 'y' or exitChoice == '':
-    #     file = input("type file to save to: ")
-    #     save(classIndex, relationIndex, file)
-    #     print(os.path.realpath(file+".json"))
-    #     sys.exit()
-    # elif exitChoice.lower() == 'n':
-    #     print("Exiting")
-    #     sys.exit()
-    # else:
-    #     print(UMLException.UMLException("Invalid option"))

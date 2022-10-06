@@ -6,6 +6,7 @@ Description: Adds, renames, and deletes a class object
 
 from typing import List
 import relationship
+from UMLException import UMLException, UMLSuccess
 
 
 class UMLClass:
@@ -14,8 +15,13 @@ class UMLClass:
         self.fields = []
         self.methods = []
 
+        print(f"\nAdded class {self}")
+
+    def __repr__(self):
+        return f"{self.name} blahhh"
+
     def rename(self, newName):
-        print(f"\nClass \"{self.name}\" was renamed to \"{newName}\"")
+        print(UMLSuccess(f"Renamed {self.name} to {newName}"))
         self.name = newName
 
 
@@ -53,15 +59,15 @@ def addClass(name: str):
     :param name: the name of the new class
     """
     if len(name.strip()) == 0:
-        print("Class name cannot be empty.")
+        print(UMLException("Class name cannot be empty"))
         return -1
+
     if isNameUnique(name):
         newClass = UMLClass(name)
         classIndex.append(newClass)
-        print(f"\nClass \"{newClass.name}\" has been created!")
         return 1
     else:
-        print(f"\nClass \"{name}\" already exists, could not create.")
+        print(UMLException("Class Name Error", f"{name} already exists"))
         return -2
 
 def deleteClass(name: str):
@@ -77,15 +83,13 @@ def deleteClass(name: str):
         for relation in relationship.relationIndex:
             if relation.source == name or relation.destination == name:
                 listToDel.append(relation)
-                #relationship.deleteRelationship(relation.source, relation.destination)
         for each in listToDel:
             relationship.deleteRelationship(each.source,each.destination)
         classIndex.pop(index)
-        print(f"\nClass \"{name}\" has been deleted.")
+        print(UMLSuccess(f"Deleted class {name}"))
         return 1
     else:
-        print(f"\nClass \"{name}\" does not exist")
-        print("Deletion failed")
+        print(UMLException("Class Delete Error", f"{name} does not exist"))
         return -1
 
 
@@ -97,8 +101,7 @@ def renameClass(oldName: str, newName: str):
     :param newName: the new name for the target class
     """
     if findClass(newName) != None:
-        print(f"\nA class already exists with the name \"{newName}\"")
-        print("Rename failed")
+        print(UMLException("Class Rename Error", f"{newName} class already exists"))
         return -1
 
     index = findClass(oldName)
@@ -115,8 +118,7 @@ def renameClass(oldName: str, newName: str):
                 relationship.relationIndex[i].destination = newName
         return 1
     else:
-        print(f"\nClass \"{oldName}\" does not exist")
-        print("Rename failed")
+        print(UMLException("Class Rename Error", f"{oldName} does not exist"))
         return -2
 
 # List of all class objects the user has created
