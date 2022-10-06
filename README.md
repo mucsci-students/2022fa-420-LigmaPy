@@ -136,7 +136,7 @@ exit
 <br>
 
 ## Team
-[![Ammanuel Amare](https://avatars.githubusercontent.com/u/63563468?v=4)](https://github.com/manwellaa) | [![Aaron Heinbaugh](https://avatars.githubusercontent.com/u/98050840?v=4)](https://github.com/aaheinba) | [![Christian Shepperson](https://avatars.githubusercontent.com/u/8421245?v=4)](https://github.com/Sh3p) | [![Julia Geesaman](https://avatars.githubusercontent.com/u/111717589?v=4)](https://github.com/jgeesaman) | [![Samantha Noggle](https://avatars.githubusercontent.com/u/44234583?v=4)](https://github.com/astruxie) | [![Trevor Bender](https://avatars.githubusercontent.com/u/31744774?v=4)](https://github.com/Spyder-Monkey)
+[![Aaron Heinbaugh](https://avatars.githubusercontent.com/u/98050840?v=4)](https://github.com/aaheinba) | [![Christian Shepperson](https://avatars.githubusercontent.com/u/8421245?v=4)](https://github.com/Sh3p) | [![Julia Geesaman](https://avatars.githubusercontent.com/u/111717589?v=4)](https://github.com/jgeesaman) | [![Samantha Noggle](https://avatars.githubusercontent.com/u/44234583?v=4)](https://github.com/astruxie) | [![Trevor Bender](https://avatars.githubusercontent.com/u/31744774?v=4)](https://github.com/Spyder-Monkey)
 ---|---|---|---|---|---
 [Ammanuel Amare](https://github.com/manwellaa) | [Aaron Heinbaugh](https://github.com/aaheinba) | [Christian Shepperson](https://github.com/Sh3p) | [Julia Geesaman](https://github.com/jgeesaman) | [Samantha Noggle](https://github.com/astruxie) | [Trevor Bender](https://github.com/Spyder-Monkey)
 
