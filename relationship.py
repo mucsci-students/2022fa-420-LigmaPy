@@ -1,7 +1,7 @@
 """
-Author : Ammanuel Amare, Christian Shepperson
+Author : Christian Shepperson
 Filename : relationship.py
-Description : Adds and deletes relationships
+Description : Adds, deletes and updates the type of relationships
 """
 from typing import List
 # Local Imports
@@ -22,7 +22,6 @@ class UMLRelationship:
 
     #changes the type of the relationship
     def editType(self, newType:str):
-
         self.type = newType
         return 1
 
