@@ -96,7 +96,7 @@ def renameClass(oldName: str, newName: str):
     :param oldName: the target class's name
     :param newName: the new name for the target class
     """
-    if findClass(newName):
+    if findClass(newName) != None:
         print(f"\nA class already exists with the name \"{newName}\"")
         print("Rename failed")
         return -1
