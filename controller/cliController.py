@@ -76,7 +76,7 @@ class Interface(cmd.Cmd):
         Removes an existing relationship between the <source> and <destination> classes.
         """
         classes = arg.split()
-        if len(classes) == 3:
+        if len(classes) == 2:
             relationship.deleteRelationship(classes[0], classes[1])
         else:
             print(f"Argument error")
