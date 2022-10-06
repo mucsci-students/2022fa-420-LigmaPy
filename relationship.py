@@ -67,6 +67,7 @@ def addRelationship(source: str, destination: str, type: str):
         # Append the new relationship to the relationIndex list
         newRelation = UMLRelationship(source, destination, type)
         relationIndex.append(newRelation)
+        return 1
     else:
         return -1
 
@@ -80,17 +81,19 @@ def deleteRelationship(source: str, destination: str):
         :returns: The status of the relationship deletion
     """
     # Check if source and destination class exist
-    if UMLClass.findClass(source) is not None and UMLClass.findClass(destination) is not None:
+    if UMLClass.findClass(source) != None and UMLClass.findClass(destination) != None:
 
         index = findRelationship(source, destination)
         deletedRelation = relationIndex[index]
         if index > -1:
             relationIndex.pop(index)
-
-        return 1
+            return 1
+        else:
+            # Relationship does not exist
+            return -1
     else:
         #source and destination do not exist
-        return -1
+        return -2
         
 ###################################################################################################
 

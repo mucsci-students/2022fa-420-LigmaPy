@@ -83,7 +83,7 @@ def addParameter(name:list, methodName:str, className:str):
             C.classIndex[classIndex].methods[methodIndex].params.append(newParameter)
 
             print(f"Successfully added parameter \"{str(params[i])}\" to method \"{methodName}\"!")
-        return 
+        return 1
     
     for i, p in enumerate(paramIndex):
         if p > 0:
@@ -128,6 +128,7 @@ def deleteParameter(name:list, methodName:str, className:str):
             paramList.remove(par)
             print(f"Successfully removed parameter \"{par.name}\" from method \"{methodName}\"!")
     C.classIndex[cIndex].methods[methodIndex].params = paramList
+    return 1
 
 
 """    
@@ -169,45 +170,7 @@ def deleteAllParameter(methodName:str, className:str):
         return -2
 
     C.classIndex[classIndex].methods[methodIndex].params = []
-
-
-def changeParam(className:str, methodName:str, oldParams:list, newParams:list):
-    cIndex = C.findClass(className)
-    methodIndex = A.findMethod(methodName, className)
-
-    if cIndex is None:
-        # Class does not exist
-        return -1
-
-    if methodIndex == -2:
-        # Method does not exist
-        return -2
-
-    paramList = C.classIndex[cIndex].methods[methodIndex].params
-    paramNames = [par.name for par in paramList]
-    # removedParams = []
-
-
-    print(f"Parameter List: {C.classIndex[cIndex].methods[methodIndex].params}")
-
-
-    # Loop through list of parameters to replace
-    for p in oldParams:
-        # Check if parameter exists (has an index > -1)
-        paramIndex = findParameter(p, methodIndex, cIndex)
-        if paramIndex == -1:
-            print(f"{methodName} does not contain method {p}")
-            paramList.pop(paramIndex)
-        # Pop the parameter from paramList and append it to removedParams list
-        # removedParams.append(paramList.pop(paramIndex))
-
-    
-
-    deleteParameter(oldParams, methodName, className)
-
-    # print(f"Removed Parameter(s): {removedParams}")
-    C.classIndex[cIndex].methods[methodIndex].params = paramList
-    print(f"Parameter List After: {C.classIndex[cIndex].methods[methodIndex].params}")
+    return 1
 
 def changeParameter(oldName:list, newName:list, methodName:str, className:str):
     """
@@ -247,6 +210,7 @@ def changeParameter(oldName:list, newName:list, methodName:str, className:str):
     
     deleteParameter(oldName, methodName, className)
     addParameter(newName, methodName, className)
+    return 1
    
    # for par in paramList:
     #    if par.name in name:
