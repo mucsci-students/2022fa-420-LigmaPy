@@ -14,6 +14,7 @@ import UMLClass as u
 import relationship as r
 import attributes as a
 import parameter as p
+from UMLException import UMLException, UMLSuccess
 
 
 ##################################################################
@@ -152,7 +153,8 @@ def load(filename):
             returnRelations.append(r.UMLRelationship(rel['source'], rel['destination'], rel['type']))
 
         u.classIndex = returnClasses
-        r.relationIndex = returnRelations       
+        r.relationIndex = returnRelations
+        print(UMLSuccess(f"Loaded {filename}"))     
         return 
     
     #if error loading return original lists

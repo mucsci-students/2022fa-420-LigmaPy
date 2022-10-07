@@ -5,6 +5,7 @@ Description: Adds, deletes, and renames an attribute (method or field)
 """
 
 import UMLClass as C
+from UMLException import UMLException, UMLSuccess
 
 
 class attribute():
@@ -35,8 +36,6 @@ class method(attribute):
     def __str__(self):
         return f"{self.return_type} {self.name}({', '.join(map(str, self.params))})"
 
-    def __repr__(self):
-        return f"{self.return_type} {self.name}({', '.join(map(str, self.params))})"
 class field(attribute):
     def __init__(self, name : str, t : str):
         super().__init__(name)
@@ -120,15 +119,18 @@ def addMethod(name : str, className : str, ret_type : str):
 
     # Runs if attribute with given name already exists in given class
     if existingMethod >= 0:
+        print(UMLException("Method error", f"{name} already exists in {className}"))
         return -2
     # Runs if attribute does not exist in given class
     elif existingMethod == -2:
         newMethod = method(name, ret_type)
         index = C.findClass(className)
         C.classIndex[index].methods.append(newMethod)
+        print(UMLSuccess(f"Added {newMethod} to {className}"))
         return 1
     # Runs if given class does not exist
     else:
+        print(UMLException("Class error", f"{className} does not exist"))
         return -1
 
 def addField(name, className, t):
