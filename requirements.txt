@@ -1,3 +1,4 @@
+cmd2
 prettytable
 pyfiglet
 pathvalidate

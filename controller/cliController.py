@@ -5,7 +5,7 @@
 """
 
 import pyfiglet
-import cmd
+import cmd2
 # Local Imports
 import UMLClass
 import attributes
@@ -22,22 +22,39 @@ Type `help` for an overview `help <command>` for more details.
 Type `exit` to quit.
 """
 
-class Interface(cmd.Cmd):
+class Interface(cmd2.Cmd):
     intro = _intro_text.format(pyfiglet.figlet_format("UML Editor"))
     prompt = ">> "
+
+    def __init__(self):
+        super().__init__()
+        # Remove built-in commands from cmd2.Cmd
+        del cmd2.Cmd.do_edit
+        del cmd2.Cmd.do_shell
+        del cmd2.Cmd.do_set
+        del cmd2.Cmd.do_shortcuts
+        del cmd2.Cmd.do_run_script
+        del cmd2.Cmd.do_run_pyscript
+        del cmd2.Cmd.do_alias
+        del cmd2.Cmd.do_macro
+        del cmd2.Cmd.do_quit
 
     """
         Commmand listeners
     """
 
     """ CLASS COMMANDS """
+    @cmd2.with_category("Class")
     # Creates a uniquely named class
     def do_addClass(self, arg):
+        
         """Usage: addClass <name>
         
         Creates and adds a new class with name <name>.
         """
         UMLClass.addClass(arg)
+    
+    @cmd2.with_category("Class")
     # Removes a class
     def do_deleteClass(self, arg):
         """Usage: deleteClass <name>
@@ -45,6 +62,8 @@ class Interface(cmd.Cmd):
         Deletes a class by it's <name>.
         """
         UMLClass.deleteClass(arg)
+    
+    @cmd2.with_category("Class")
     # Changes the name of a class
     def do_renameClass(self, arg):
         """Usage: renameClass <name> <new_name>
@@ -58,6 +77,7 @@ class Interface(cmd.Cmd):
             print(f"Argument error")
 
     """ RELATIONSHIP COMMANDS """
+    @cmd2.with_category("Relationship")
     # Creates a relationship between two classes
     def do_addRelationship(self, arg):
         """Usage addRelationship <source> <destination> <type>
@@ -69,6 +89,8 @@ class Interface(cmd.Cmd):
             relationship.addRelationship(classes[0], classes[1], classes[2])
         else:
             print(f"Argument error")
+
+    @cmd2.with_category("Relationship")
     # Deletes an existing relationship between two classes
     def do_deleteRelationship(self, arg):
         """Usage: deleteRelationship <source> <destination>
@@ -81,6 +103,7 @@ class Interface(cmd.Cmd):
         else:
             print(f"Argument error")
 
+    @cmd2.with_category("Relationship")
     def do_changeRelType(self, arg):
         """Usage: changeRelType <source> <destination> <new_type>
         
@@ -94,13 +117,22 @@ class Interface(cmd.Cmd):
             print("wrong number of arguments")
 
     """ METHOD COMMANDS """
+
+    # Argument Parser for addMethod
+    addMethodParser = cmd2.Cmd2ArgumentParser()
+    addMethodParser.add_argument('class', help="Name of target class")
+    addMethodParser.add_argument('name', help="Name of method to be added")
+    addMethodParser.add_argument('ret_type', help="Return type of the new method")
+    addMethodParser.add_argument('-p', nargs='+', help="List of parameters to add in the format <name>:<type>")
+
+    @cmd2.with_category("Method")
+    @cmd2.with_argparser(addMethodParser)
     # Creates a new method for the specified class
     def do_addMethod(self, arg):
         """Usage: addMethod <class> <name> <return_type> [-p <name>:<type>...]
         
         Adds the method <name> with <return_type> to <class>
         """
-
         args = arg.split()
         if len(args) == 3:
             attributes.addMethod(args[1], args[0], args[2])
@@ -117,6 +149,12 @@ class Interface(cmd.Cmd):
             attributes.addMethod(args[1], args[0], args[2])
             parameter.addParameter(paramList, args[1], args[0])
 
+    deleteMethodParser = cmd2.Cmd2ArgumentParser()
+    deleteMethodParser.add_argument('class', help="Class containing the method to be removed")
+    deleteMethodParser.add_argument('method', help="Name of the method to be removed")
+
+    @cmd2.with_argparser(deleteMethodParser)
+    @cmd2.with_category("Method")
     # Removes the method from the specified class
     def do_deleteMethod(self, arg):
         """Usage: deleteMethod <class> <method>
@@ -134,6 +172,14 @@ class Interface(cmd.Cmd):
                 print(UMLException("Method error", f"{args[1]} does not exist in {args[0]}"))
         else:
             print(f"Wrong")
+
+    renameMethodParser = cmd2.Cmd2ArgumentParser()
+    renameMethodParser.add_argument('class', help="Class containing the method to rename")
+    renameMethodParser.add_argument('name', help="Current name of the method to be renamed")
+    renameMethodParser.add_argument('new_name', help="New name for method")
+    
+    @cmd2.with_argparser(renameMethodParser)
+    @cmd2.with_category("Method")
     # Renames the specified method in the specified class
     def do_renameMethod(self, arg):
         """Usage: renameMethod <class> <old_name> <new_name>
@@ -155,6 +201,7 @@ class Interface(cmd.Cmd):
             print(UMLException("Argument error", "BLAH"))
 
     """ FIELD COMMANDS """
+    @cmd2.with_category("Field")
     def do_addField(self, arg):
         """Usage: addField <class> <name> <type>
         
@@ -172,6 +219,7 @@ class Interface(cmd.Cmd):
         else:
             print("Incorrect amount of arguments")
 
+    @cmd2.with_category("Field")
     def do_deleteField(self, arg):
         """Usage: deleteField <class> <field>
         
@@ -187,6 +235,7 @@ class Interface(cmd.Cmd):
         else:
             print("ARGUMENT ERROR")
 
+    @cmd2.with_category("Field")
     def do_renameField(self, arg):
         """Usage: renameField <class> <old_name> <new_name>
 
@@ -208,6 +257,7 @@ class Interface(cmd.Cmd):
 
 
     """ PARAMETER COMMANDS """
+    @cmd2.with_category("Parameter")
     def do_addParam(self, arg):
         """Usage: addParam <class> <method> <name>:<type>...
         
@@ -224,6 +274,7 @@ class Interface(cmd.Cmd):
         else:
             print(UMLException("Argument error", f"not enough args"))
 
+    @cmd2.with_category("Parameter")
     def do_deleteParam(self, arg):
         """Usage: deleteParam <class> <method> [-a] [<name>...]
         
@@ -238,6 +289,7 @@ class Interface(cmd.Cmd):
         else:
             print()
 
+    @cmd2.with_category("Parameter")
     def do_changeParam(self, arg):
         """Usage: changeParam <class> <method> -o <old_name>... -n <new_name>:<new_type>
         
@@ -251,6 +303,7 @@ class Interface(cmd.Cmd):
         # parameter.changeParam(args[0], args[1], args[3:], args[0])
     
     """ SAVE/LOAD COMMANDS """
+    @cmd2.with_category("Save/Load")
     # Stores the current state to a JSON file
     def do_save(self, arg):
         """Usage: save <filename>
@@ -258,6 +311,8 @@ class Interface(cmd.Cmd):
         Saves the current program state to <filename>.json.
         """
         save(UMLClass.classIndex, relationship.relationIndex, arg)
+    
+    @cmd2.with_category("Save/Load")
     # Load a previous state from a JSON file
     def do_load(self, arg):
         """Usage: load <filename>
@@ -267,6 +322,7 @@ class Interface(cmd.Cmd):
         load(arg)
     
     """ LIST COMMANDS """
+    @cmd2.with_category("Lists")
     # List all classes and their contents
     def do_listClasses(self, arg):
         """Usage: listClasses
@@ -274,13 +330,23 @@ class Interface(cmd.Cmd):
         Lists all existing classes and their contents.
         """
         listClasses()
+    
+    @cmd2.with_category("Lists")
     # Lists the contents of a specified class
     def do_listClass(self, arg):
         """Usage: listClass <name>
         
         Lists the contents of class <name>.
         """
+        # ANSI COLORS
+        # ['black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'light_gray', 'dark_gray', 'light_red',
+        #  'light_green', 'light_yellow', 'light_blue', 'light_magenta', 'light_cyan', 'white', 'reset']
+
+        output_str = cmd2.ansi.style(f"arguments: {arg}", fg=cmd2.Fg.RED)
+        print(output_str)
         listClass(arg)
+
+    @cmd2.with_category("Lists")
     # Lists all existing relationships
     def do_listRelationships(self, arg):
         """Usage: listRelationships
@@ -290,6 +356,7 @@ class Interface(cmd.Cmd):
         print(listRelationships())
     
     """ EXIT COMMAND """
+    @cmd2.with_category("Exit")
     # Exits the program
     def do_exit(self, arg):
         """Usage: exit
