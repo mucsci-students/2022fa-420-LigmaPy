@@ -5,7 +5,7 @@ Description : Adds, deletes and updates the type of relationships
 """
 from typing import List
 # Local Imports
-import UMLClass
+import model.UMLClass as UMLClass
 from UMLException import UMLException, UMLSuccess
 
 ###################################################################################################

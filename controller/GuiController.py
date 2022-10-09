@@ -5,12 +5,12 @@ Description : Controller that links the view and the model
 """
 
 from view.View import View as v
-import relationship as r
-import UMLClass as u
-import saveload as s
-import relationship as r
-import attributes as a
-import parameter as p
+import model.relationship as r
+import model.UMLClass as u
+import model.saveload as s
+import model.relationship as r
+import model.attributes as a
+import model.parameter as p
 
 
 class Controller:

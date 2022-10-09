@@ -4,10 +4,10 @@ Filename    : parameter_test.py
 Description : Tests for the parameter class
 """
 
-import UMLClass
-import attributes
+import model.UMLClass as UMLClass
+import model.attributes as attributes
 # Class to test
-import parameter
+import model.parameter as parameter
 
 UMLClass.addClass("Tire")
 attributes.addMethod("setPSI", "Tire", "void")

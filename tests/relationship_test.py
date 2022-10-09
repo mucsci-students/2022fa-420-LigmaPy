@@ -4,9 +4,9 @@ Filename    : relationship_test.py
 Description : Tests for the relationship class
 """
 
-import UMLClass
+import model.UMLClass as UMLClass
 # Class to test
-import relationship
+import model.relationship as relationship
 
 """     Add Relationship Tests     """
 def test_add_relationship():

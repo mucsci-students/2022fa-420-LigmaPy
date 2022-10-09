@@ -4,9 +4,9 @@ Filename    : attributes_test.py
 Description : Tests for the attributes class
 """
 
-import UMLClass
+import model.UMLClass as UMLClass
 # Class to test
-import attributes
+import model.attributes as attributes
 
 UMLClass.addClass("Tire")
 
