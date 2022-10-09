@@ -50,7 +50,7 @@ class View(tk.Tk):
         #self.makeButtons()
         self.makeMenu()
         
-
+    #resets all the class variables
     def clear(self):
         self.className = None
         self.classNameNew = None
@@ -71,6 +71,7 @@ class View(tk.Tk):
     def main(self):
         self.mainloop()
     
+    #creates the file and list menus
     def makeMenu(self):
         menubar = tk.Menu(self)
         # File menu
@@ -93,6 +94,7 @@ class View(tk.Tk):
         menubar.add_cascade(label="List", menu=listmenu)
         self.config(menu=menubar)
 
+    #creates all the button in the top left
     def makeButtonFrame(self):
         self.buttonFrame = tk.Frame(self)
         
@@ -265,23 +267,30 @@ class View(tk.Tk):
         self.fileName = filedialog.askopenfilename(title="Open File", initialdir="UMLsavefiles", filetypes=[("JSON File", "*.json")])
         
     """
-    Instead of making comments for each and every input frame:
-    See makeUpdateRelationType below and apply those comments to every other makeXXXXX(self) function
+    Instead of making comments for each and every input frame (bottom left box in GUI):
+    See makeUpdateRelationType and makeDeleteFieldFrame below and apply their comments to every other makeXXXXX(self) function
     The name of the function describes what frame will be made when called
     """
     
     #creates the frame to update relations after clicking said button
     def makeUpdateRelationType(self):
+        #checks if any relationships exist and alerts user if no
         if len(r.relationIndex) == 0:
+            #creates alert message
             inputlabel1 = tk.Label(self.inputFrame, text='Not enough relationships exist', width=30)
             inputlabel1.grid(row=0)
+            #button to close alert message above
             cancel = tk.Button(self.inputFrame, text='Close', command=lambda: self.remake())
             cancel.grid(row=1)
         else:
+            #adds each relationship to a list in the form of : "sourceName -> destName"
             relList  = [ each.source + " -> " + each.destination for each in r.relationIndex]
+            #creates label to give user insturctions
             inputlabel1 = tk.Label(self.inputFrame, text='Select relationship to update type:', width=40)
             inputlabel1.grid(row=0, columnspan=2) 
+            #variable for drop down menu output
             clicked1 = StringVar()
+            #creates drop down menu using list above as items and variable above as output
             drop = OptionMenu(self.inputFrame, clicked1, *relList) 
             drop.grid(row=1, columnspan=2)
             inputlabel3 = tk.Label(self.inputFrame, text='Select new relationship type:')
@@ -294,11 +303,13 @@ class View(tk.Tk):
             drop.grid(row=3, columnspan=2)
             #function to output to the controller 
             def output():
-                #gets e1, e2, and clicked variable from above and sets the appropriate class variable
+                #splits the input into 2 source/dest
                 parsed = clicked1.get().split(" -> ")
+                #sets each output variable
                 self.source = parsed[0]
                 self.destination = parsed[1]
                 self.relationshipTypeNew = clicked.get()
+                #calls controller function to do stuff with output variables above
                 self.controller.clickUpdateTypeButton()
             #creates first button and when clicked calls the output function above to set the class variables.
             ok = tk.Button(self.inputFrame, text='Change type', command=lambda: output())
@@ -306,6 +317,56 @@ class View(tk.Tk):
             #creates 2nd button and when clicked calls remake to clear the screen and remake and empty input frame.
             cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
             cancel.grid(row=6, column=1)  
+
+    #creates the bottom left frame for deleting fields when the 'delete field' button is clicked
+    def makeDeleteFieldFrame(self):
+        #fills a dictionary {className: fields[], className: fields, ... } given the class has fields
+        classDict = {c.name : c.fields for c in u.classIndex if len(c.fields) > 0}
+        #checks if any classes have fields from the dict above and alerts user if not
+        if len(classDict) == 0:
+            inputlabel1 = tk.Label(self.inputFrame, text='No classes exist with fields', width=30)
+            inputlabel1.grid(row=0)
+            cancel = tk.Button(self.inputFrame, text='Close', command=lambda: self.remake())
+            cancel.grid(row=1)
+        else:
+            #updates the 2nd drop down box based on the selection of the 1st drop down box
+            def update2ndDrop(*args):
+                #gets the fields for whatever class was first selected
+                feilds = classDict[clicked.get()]
+                deleteF.set(feilds[0])
+                #gets 2nd dropmenu and delete it
+                menu = drop2['menu']
+                menu.delete(0, 'end')
+                #fills 2nd dropmenu with each field from above
+                for f in feilds:
+                    menu.add_command(label=f, command=lambda classN=f: deleteF.set(classN))
+            #fills variables based on drop down menu selection
+            clicked = StringVar()
+            deleteF = StringVar()
+            #writes 2nd dropdown menu using method above
+            clicked.trace('w', update2ndDrop)
+            #creates both dropmenus
+            drop = OptionMenu(self.inputFrame, clicked, *classDict.keys()) 
+            drop2 = OptionMenu(self.inputFrame, deleteF,'')
+            #creates label with instructions for user
+            inputlabel1 = tk.Label(self.inputFrame, text='Select class to delete field:' , width=40)
+            inputlabel1.grid(row=0, columnspan=2)
+            #places dropdown menu in specified area in frame box
+            drop.grid(row=1, columnspan=2)
+            drop2.grid(row=3, columnspan=2)
+            #creates another label for user instructions
+            inputlabel2 = tk.Label(self.inputFrame, text='Select field to delete:')
+            inputlabel2.grid(row=2, columnspan=2) 
+            #output function to set variables and call to controller function to do stuff
+            def output():
+                self.className = clicked.get().strip()
+                self.field = deleteF.get().strip()
+                self.controller.clickDeleteFieldButton()
+            #creates the two buttons, one for sending input, the other to cancel and clear input frame box    
+            ok = tk.Button(self.inputFrame, text='Delete field', command=lambda: output())
+            ok.grid(row=4, column=0)
+            cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
+            cancel.grid(row=4, column=1)
 
 
     #creates the add class frame upon clicking add class
@@ -458,41 +519,6 @@ class View(tk.Tk):
             cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
             cancel.grid(row=6, column=1)
 
-    def makeDeleteFieldFrame(self):
-        classDict = {c.name : c.fields for c in u.classIndex if len(c.fields) > 0}
-        if len(classDict) == 0:
-            inputlabel1 = tk.Label(self.inputFrame, text='No classes exist with fields', width=30)
-            inputlabel1.grid(row=0)
-            cancel = tk.Button(self.inputFrame, text='Close', command=lambda: self.remake())
-            cancel.grid(row=1)
-        else:
-            def update2ndDrop(*args):
-                feilds = classDict[clicked.get()]
-                deleteF.set(feilds[0])
-                menu = drop2['menu']
-                menu.delete(0, 'end')
-                for f in feilds:
-                    menu.add_command(label=f, command=lambda classN=f: deleteF.set(classN))
-
-            clicked = StringVar()
-            deleteF = StringVar()
-            clicked.trace('w', update2ndDrop)
-            drop = OptionMenu(self.inputFrame, clicked, *classDict.keys()) 
-            drop2 = OptionMenu(self.inputFrame, deleteF,'')
-            inputlabel1 = tk.Label(self.inputFrame, text='Select class to delete field:' , width=40)
-            inputlabel1.grid(row=0, columnspan=2)
-            drop.grid(row=1, columnspan=2)
-            drop2.grid(row=3, columnspan=2)
-            inputlabel2 = tk.Label(self.inputFrame, text='Select field to delete:')
-            inputlabel2.grid(row=2, columnspan=2) 
-            def output():
-                self.className = clicked.get().strip()
-                self.field = deleteF.get().strip()
-                self.controller.clickDeleteFieldButton()
-            ok = tk.Button(self.inputFrame, text='Delete field', command=lambda: output())
-            ok.grid(row=4, column=0)
-            cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
-            cancel.grid(row=4, column=1)
 
     def makeRenameFieldFrame(self):
         classDict = {c.name : c.fields for c in u.classIndex if len(c.fields) > 0}
@@ -749,7 +775,6 @@ class View(tk.Tk):
             cancel.grid(row=4, column=1)
 
     def makeDeleteParamFrame(self):        
-        #classDict = {c.name : c.methods for c in u.classIndex if len(c.methods) > 0}
         classDict = {c.name : c.methods for c in u.classIndex for each in c.methods if len(each.params) > 0  }
         if len(classDict) == 0:
             inputlabel1 = tk.Label(self.inputFrame, text='No classes exist that have methods with parameters', width=60)
@@ -886,10 +911,12 @@ class View(tk.Tk):
             cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
             cancel.grid(row=4, column=1)            
 
+    #remakes the input frame in the bottom left corner
     def remake(self):
         self.inputFrame.destroy()
         self.makeInputFrame()
 
+    #the following clear the bottom left frame and make a new inputframe decribed by self.make<this frame>()  
     def addClassFrame(self):
         self.wipe()
         self.makeAddClassFrame()
@@ -957,6 +984,7 @@ class View(tk.Tk):
     def helpFrame(self):
         pass
     
+    #clears bottom left input frames and remakes base frame
     def wipe(self):
         self.inputFrame.destroy()
         self.makeInputFrame()

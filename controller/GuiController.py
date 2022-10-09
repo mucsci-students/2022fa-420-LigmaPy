@@ -20,6 +20,62 @@ class Controller:
     def main(self):
         self.view.main()
 
+    """
+    Each function below is called when a user clicks one of inputframe buttons
+    in the lower left of the GUI or the file menu (save, load, list...).
+    Each then calls the approprate function in the model and interprets the return value
+    to inform the user in the lower left of the GUI 
+    The function's name decribes which button was click in GUI
+    Instead of commenting each function, apply the idea of comments from 
+    clickChangeAnotherParamButton directly below to the others
+    """
+    
+    #calls changeParameter in the model and return an error/success message
+    #and remakes the inputframe so users can change another param if needed
+    def clickChangeAnotherParamButton(self):
+        #check if empty string was given and tells user not to do that
+        if len(self.view.paramNew) == 0:
+            #destroys base input frame and everything in it
+            self.view.inputFrame.destroy()
+            #creates new base input frame
+            self.view.makeInputFrame()
+            #creates new changeparam frame in new base frame created above
+            self.view.makeChangeParamInputFrame()
+            #output message to user below new changeparam frame
+            self.view.makeMessage('New parameter name cannot be empty')
+            return
+        #sets up parameters to call changeParameter
+        oldParam = [self.view.param]
+        newParam = [(self.view.paramNew, self.view.paramTypeNew)]
+        #creates num to hold result of changeParam call
+        num = p.changeParameter(oldParam, newParam, self.view.method, self.view.className)
+        #each conditional below recreates the changeParam frame and alerts user based on the result of changeParam call
+        if num == -1:
+            self.view.inputFrame.destroy()
+            self.view.makeInputFrame()
+            self.view.makeChangeParamInputFrame()
+            self.view.makeMessage('Class does not exist')
+        elif num == -2:
+            self.view.inputFrame.destroy()
+            self.view.makeInputFrame()
+            self.view.makeChangeParamInputFrame()
+            self.view.makeMessage('Method does not exist in class')
+        elif num == -3:
+            self.view.inputFrame.destroy()
+            self.view.makeInputFrame()
+            self.view.makeChangeParamInputFrame()
+            self.view.makeMessage('Parameter does not exist to change')
+        elif num == -4:
+            self.view.inputFrame.destroy()
+            self.view.makeInputFrame()
+            self.view.makeChangeParamInputFrame()
+            self.view.makeMessage('Parameter already exists within method')            
+        else:
+            self.view.inputFrame.destroy()
+            self.view.makeInputFrame()
+            self.view.makeChangeParamInputFrame()  
+            self.view.makeMessage('Parameter changed')
+
     def clickAddClassButton(self):
         num = u.addClass(self.view.className)
         if num == -1:
@@ -373,41 +429,7 @@ class Controller:
             self.view.makeParamInputFrame()
             self.view.makeMessage('Parameters removed, add new parameter(s)') 
 
-    def clickChangeAnotherParamButton(self):
-        if len(self.view.paramNew) == 0:
-            self.view.inputFrame.destroy()
-            self.view.makeInputFrame()
-            self.view.makeChangeParamInputFrame()
-            self.view.makeMessage('New parameter name cannot be empty')
-            return
-        oldParam = [self.view.param]
-        newParam = [(self.view.paramNew, self.view.paramTypeNew)]
-        num = p.changeParameter(oldParam, newParam, self.view.method, self.view.className)
-        if num == -1:
-            self.view.inputFrame.destroy()
-            self.view.makeInputFrame()
-            self.view.makeChangeParamInputFrame()
-            self.view.makeMessage('Class does not exist')
-        elif num == -2:
-            self.view.inputFrame.destroy()
-            self.view.makeInputFrame()
-            self.view.makeChangeParamInputFrame()
-            self.view.makeMessage('Method does not exist in class')
-        elif num == -3:
-            self.view.inputFrame.destroy()
-            self.view.makeInputFrame()
-            self.view.makeChangeParamInputFrame()
-            self.view.makeMessage('Parameter does not exist to change')
-        elif num == -4:
-            self.view.inputFrame.destroy()
-            self.view.makeInputFrame()
-            self.view.makeChangeParamInputFrame()
-            self.view.makeMessage('Parameter already exists within method')            
-        else:
-            self.view.inputFrame.destroy()
-            self.view.makeInputFrame()
-            self.view.makeChangeParamInputFrame()  
-            self.view.makeMessage('Parameter changed')            
+            
     
     def clickSaveButton(self):
         self.view.save()
