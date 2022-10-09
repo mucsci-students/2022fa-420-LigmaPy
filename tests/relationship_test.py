@@ -4,9 +4,9 @@ Filename    : relationship_test.py
 Description : Tests for the relationship class
 """
 
-import UMLClass
+import model.UMLClass as UMLClass
 # Class to test
-import relationship
+import model.relationship as relationship
 
 """     Add Relationship Tests     """
 def test_add_relationship():
@@ -25,7 +25,7 @@ def test_add_duplicate_relationship():
 
 def test_add_nonexisting_class():
     # Test adding a class that doesnt exist
-    assert relationship.addRelationship("NotCar", "Tire", "Aggregation") ==S -1
+    assert relationship.addRelationship("NotCar", "Tire", "Aggregation") == -1
 
 """     Edit Relationship Type Tests     """
 def test_edit_relationship_type():

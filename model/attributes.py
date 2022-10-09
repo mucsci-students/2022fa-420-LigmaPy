@@ -4,7 +4,7 @@ Filename: attributes.py
 Description: Adds, deletes, and renames an attribute (method or field)
 """
 
-import UMLClass as C
+import model.UMLClass as C
 from UMLException import UMLException, UMLSuccess
 
 

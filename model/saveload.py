@@ -10,10 +10,10 @@ import os.path
 from pathvalidate import is_valid_filename
 import copy
 
-import UMLClass as u
-import relationship as r
-import attributes as a
-import parameter as p
+import model.UMLClass as u
+import model.relationship as r
+import model.attributes as a
+import model.parameter as p
 from UMLException import UMLException, UMLSuccess
 
 

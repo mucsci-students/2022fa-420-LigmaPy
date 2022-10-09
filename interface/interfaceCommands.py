@@ -8,8 +8,8 @@
 import sys
 from prettytable import PrettyTable
 # Local Imports
-import UMLClass
-import relationship
+import model.UMLClass as UMLClass
+import model.relationship as relationship
 
 def listClasses():
     """

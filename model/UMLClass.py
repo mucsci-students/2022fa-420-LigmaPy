@@ -5,7 +5,7 @@ Description: Adds, renames, and deletes a class object
 """
 
 from typing import List
-import relationship
+import model.relationship as relationship
 from UMLException import UMLException, UMLSuccess
 
 

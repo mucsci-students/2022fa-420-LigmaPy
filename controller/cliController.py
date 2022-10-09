@@ -7,13 +7,13 @@
 import pyfiglet
 import cmd
 # Local Imports
-import UMLClass
-import attributes
-import relationship
-import parameter
+import model.UMLClass as UMLClass
+import model.attributes as attributes
+import model.relationship as relationship
+import model.parameter as parameter
 from UMLException import UMLException, UMLSuccess
 from interface.interfaceCommands import *
-from saveload import *
+from model.saveload import *
 
 
 _intro_text = """\
@@ -37,14 +37,14 @@ class Interface(cmd.Cmd):
         
         Creates and adds a new class with name <name>.
         """
-        UMLClass.addClass(arg)
+        model.UMLClass.addClass(arg)
     # Removes a class
     def do_deleteClass(self, arg):
         """Usage: deleteClass <name>
         
         Deletes a class by it's <name>.
         """
-        UMLClass.deleteClass(arg)
+        model.UMLClass.deleteClass(arg)
     # Changes the name of a class
     def do_renameClass(self, arg):
         """Usage: renameClass <name> <new_name>
@@ -53,7 +53,7 @@ class Interface(cmd.Cmd):
         """
         names = arg.split()
         if len(names) == 2:
-            UMLClass.renameClass(names[0], names[1])
+            model.UMLClass.renameClass(names[0], names[1])
         else:
             print(f"Argument error")
 
@@ -66,7 +66,7 @@ class Interface(cmd.Cmd):
         """
         classes = arg.split()
         if len(classes) == 3:
-            relationship.addRelationship(classes[0], classes[1], classes[2])
+            model.relationship.addRelationship(classes[0], classes[1], classes[2])
         else:
             print(f"Argument error")
     # Deletes an existing relationship between two classes
@@ -77,7 +77,7 @@ class Interface(cmd.Cmd):
         """
         classes = arg.split()
         if len(classes) == 2:
-            relationship.deleteRelationship(classes[0], classes[1])
+            model.relationship.deleteRelationship(classes[0], classes[1])
         else:
             print(f"Argument error")
 
@@ -88,8 +88,8 @@ class Interface(cmd.Cmd):
         """
         args = arg.split()
         if len(args) == 3:
-            relIndex = relationship.findRelationship(args[0], args[1])
-            relationship.relationIndex[relIndex].editType(args[2])
+            relIndex = model.relationship.findRelationship(args[0], args[1])
+            model.relationship.relationIndex[relIndex].editType(args[2])
         else:
             print("wrong number of arguments")
 
@@ -257,7 +257,7 @@ class Interface(cmd.Cmd):
         
         Saves the current program state to <filename>.json.
         """
-        save(UMLClass.classIndex, relationship.relationIndex, arg)
+        save(model.UMLClass.classIndex, model.relationship.relationIndex, arg)
     # Load a previous state from a JSON file
     def do_load(self, arg):
         """Usage: load <filename>

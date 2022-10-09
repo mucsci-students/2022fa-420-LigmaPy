@@ -8,9 +8,9 @@ Description : Constructs and displays the gui
 import tkinter as tk
 #import UMLNotebook as notebook
 from tkinter import RIGHT, VERTICAL, Y, OptionMenu, StringVar, ttk, filedialog
-import UMLClass as u
-import relationship as r
-import attributes as a
+import model.UMLClass as u
+import model.relationship as r
+import model.attributes as a
 
 
 

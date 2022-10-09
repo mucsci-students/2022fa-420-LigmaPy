@@ -4,7 +4,7 @@ Filename    : class_test.py
 Description : Tests for the UMLClass class
 """
 # Class to test
-import UMLClass
+import model.UMLClass as UMLClass
 
 """     Add Class Tests     """
 def test_add_class():

@@ -4,8 +4,8 @@ Filename: parameter.py
 Description: Adds, deletes, and renames parameters
 """
 
-import UMLClass as C
-import attributes as A
+import model.UMLClass as C
+import model.attributes as A
 from UMLException import UMLException, UMLSuccess
 
 class parameter:
