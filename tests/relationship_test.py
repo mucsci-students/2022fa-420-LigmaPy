@@ -25,7 +25,7 @@ def test_add_duplicate_relationship():
 
 def test_add_nonexisting_class():
     # Test adding a class that doesnt exist
-    assert relationship.addRelationship("NotCar", "Tire", "Aggregation") ==S -1
+    assert relationship.addRelationship("NotCar", "Tire", "Aggregation") == -1
 
 """     Edit Relationship Type Tests     """
 def test_edit_relationship_type():
