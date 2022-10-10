@@ -119,86 +119,75 @@ class Interface(cmd2.Cmd):
     """ METHOD COMMANDS """
 
     # Argument Parser for addMethod
-    addMethodParser = cmd2.Cmd2ArgumentParser()
-    addMethodParser.add_argument('class', help="Name of target class")
-    addMethodParser.add_argument('name', help="Name of method to be added")
+    addMethodParser = cmd2.Cmd2ArgumentParser(description="Adds a method to the specified class")
+    addMethodParser.add_argument('class_name', help="Name of target class")
+    addMethodParser.add_argument('method_name', help="Name of method to be added")
     addMethodParser.add_argument('ret_type', help="Return type of the new method")
     addMethodParser.add_argument('-p', nargs='+', help="List of parameters to add in the format <name>:<type>")
-
     @cmd2.with_category("Method")
     @cmd2.with_argparser(addMethodParser)
     # Creates a new method for the specified class
     def do_addMethod(self, arg):
-        """Usage: addMethod <class> <name> <return_type> [-p <name>:<type>...]
-        
-        Adds the method <name> with <return_type> to <class>
-        """
-        args = arg.split()
-        if len(args) == 3:
-            attributes.addMethod(args[1], args[0], args[2])
-        elif len(args) > 4:
-            if args[3] != "-p":
-                print(UMLException("Invalid argument", f"{args[3]}"))
-                return
-            # parse the parameter lists into a list of tuples
+        # Added the method with return type to the class
+        attributes.addMethod(arg.method_name, arg.class_name, arg.ret_type)
+        # Check if optional arg 'p' was entered
+        if arg.p != None:
+            # Create a list of tuples containing (paramName, paramType)
             paramList = []
-            for param in args[4:]:
+            for param in arg.p:
                 paramName, paramType = param.split(":")
                 paramList.append((paramName, paramType))
+            # Add parameter list to the newly created method            
+            parameter.addParameter(paramList, arg.method_name, arg.class_name)
 
-            attributes.addMethod(args[1], args[0], args[2])
-            parameter.addParameter(paramList, args[1], args[0])
-
-    deleteMethodParser = cmd2.Cmd2ArgumentParser()
-    deleteMethodParser.add_argument('class', help="Class containing the method to be removed")
-    deleteMethodParser.add_argument('method', help="Name of the method to be removed")
-
+    deleteMethodParser = cmd2.Cmd2ArgumentParser(description="Removes an existing method from an existing class")
+    deleteMethodParser.add_argument('class_name', help="Class containing the method to be removed")
+    deleteMethodParser.add_argument('method_name', help="Name of the method to be removed")
     @cmd2.with_argparser(deleteMethodParser)
     @cmd2.with_category("Method")
     # Removes the method from the specified class
     def do_deleteMethod(self, arg):
-        """Usage: deleteMethod <class> <method>
+        # Remove method from class
+        attributes.deleteMethod(arg.method_name, arg.class_name)
 
-        Removes <method> from <class>
-        """
-        args = arg.split()
-        if len(args) == 2:
-            ret = attributes.deleteMethod(args[1], args[0])
-            if ret == 1:
-                print(UMLSuccess(f"Removed {args[1]} from {args[0]}"))
-            elif ret == -1:
-                print(UMLException("Class error", f"{args[0]} does not exist"))
-            elif ret == -2:
-                print(UMLException("Method error", f"{args[1]} does not exist in {args[0]}"))
-        else:
-            print(f"Wrong")
+
+
+        # args = arg.split()
+        # if len(args) == 2:
+        #     ret = attributes.deleteMethod(args[1], args[0])
+        #     if ret == 1:
+        #         print(UMLSuccess(f"Removed {args[1]} from {args[0]}"))
+        #     elif ret == -1:
+        #         print(UMLException("Class error", f"{args[0]} does not exist"))
+        #     elif ret == -2:
+        #         print(UMLException("Method error", f"{args[1]} does not exist in {args[0]}"))
+        # else:
+        #     print(f"Wrong")
 
     renameMethodParser = cmd2.Cmd2ArgumentParser()
-    renameMethodParser.add_argument('class', help="Class containing the method to rename")
-    renameMethodParser.add_argument('name', help="Current name of the method to be renamed")
+    renameMethodParser.add_argument('class_name', help="Class containing the method to rename")
+    renameMethodParser.add_argument('old_name', help="Current name of the method to be renamed")
     renameMethodParser.add_argument('new_name', help="New name for method")
-    
     @cmd2.with_argparser(renameMethodParser)
     @cmd2.with_category("Method")
     # Renames the specified method in the specified class
     def do_renameMethod(self, arg):
-        """Usage: renameMethod <class> <old_name> <new_name>
-        
-        Changes the name of a method from <old_name> to <new_name> in <class>
-        """
-        args = arg.split()
-        if len(args) == 3:
-            ret = attributes.renameMethod(args[1], args[2], args[0])
-            if ret == 1:
-                print(UMLSuccess(f"Renamed {args[0]} to {args[1]}"))
-            elif ret == -1:
-                print(UMLException("Class error", f"{args[2]} does not exist"))
-            elif ret == -2:
-                print(UMLException("Method error", f"{args[0]} does not exist in {args[2]}"))
-            elif ret == -3:
-                print(UMLException("Method error", f"{args[1]} already exists in {args[2]}"))
-        else:
-            print(UMLException("Argument error", "BLAH"))
+        # Update the name of the method in a class
+        attributes.renameMethod(arg.old_name, arg.new_name, arg.class_name)
+
+        # args = arg.split()
+        # if len(args) == 3:
+        #     ret = attributes.renameMethod(args[1], args[2], args[0])
+        #     if ret == 1:
+        #         print(UMLSuccess(f"Renamed {args[0]} to {args[1]}"))
+        #     elif ret == -1:
+        #         print(UMLException("Class error", f"{args[2]} does not exist"))
+        #     elif ret == -2:
+        #         print(UMLException("Method error", f"{args[0]} does not exist in {args[2]}"))
+        #     elif ret == -3:
+        #         print(UMLException("Method error", f"{args[1]} already exists in {args[2]}"))
+        # else:
+        #     print(UMLException("Argument error", "BLAH"))
 
     """ FIELD COMMANDS """
     @cmd2.with_category("Field")
@@ -324,7 +313,7 @@ class Interface(cmd2.Cmd):
     """ LIST COMMANDS """
     @cmd2.with_category("Lists")
     # List all classes and their contents
-    def do_listClasses(self, arg):
+    def do_listClasses(self, _):
         """Usage: listClasses
         
         Lists all existing classes and their contents.
@@ -348,7 +337,7 @@ class Interface(cmd2.Cmd):
 
     @cmd2.with_category("Lists")
     # Lists all existing relationships
-    def do_listRelationships(self, arg):
+    def do_listRelationships(self, _):
         """Usage: listRelationships
         
         Lists all existing relationships between classes.
@@ -358,7 +347,7 @@ class Interface(cmd2.Cmd):
     """ EXIT COMMAND """
     @cmd2.with_category("Exit")
     # Exits the program
-    def do_exit(self, arg):
+    def do_exit(self, _):
         """Usage: exit
         
         Exits the program.
