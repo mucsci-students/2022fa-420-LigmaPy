@@ -190,59 +190,83 @@ class Interface(cmd2.Cmd):
         #     print(UMLException("Argument error", "BLAH"))
 
     """ FIELD COMMANDS """
+
+    addFieldParser = cmd2.Cmd2ArgumentParser(description="Adds a new field to an existing class")
+    addFieldParser.add_argument('class_name', help="Name of class to add field to")
+    addFieldParser.add_argument('field_name', help="Name of field to add")
+    addFieldParser.add_argument('type', help="Type of the new field")
+    @cmd2.with_argparser(addFieldParser)
     @cmd2.with_category("Field")
     def do_addField(self, arg):
         """Usage: addField <class> <name> <type>
         
         Adds the field <name> with <type> to <class>
         """
-        args = arg.split()
 
-        if len(args) == 3:
-            ret = attributes.addField(args[1], args[0], args[2])
+        attributes.addField(arg.field_name, arg.class_name, arg.type)
 
-            if ret == -1:
-                print(UMLException("Class error", f"{args[0]} does not exist"))
-            elif ret == -2:
-                print(UMLException("Field error", f"{args[1]} already exists"))
-        else:
-            print("Incorrect amount of arguments")
+        # args = arg.split()
 
+        # if len(args) == 3:
+        #     ret = attributes.addField(args[1], args[0], args[2])
+
+        #     if ret == -1:
+        #         print(UMLException("Class error", f"{args[0]} does not exist"))
+        #     elif ret == -2:
+        #         print(UMLException("Field error", f"{args[1]} already exists"))
+        # else:
+        #     print("Incorrect amount of arguments")
+
+    deleteFieldParser = cmd2.Cmd2ArgumentParser(description="Removes an existing field from an existing class")
+    deleteFieldParser.add_argument('class_name', help="Name of the pre-existing class")
+    deleteFieldParser.add_argument('field_name', help="Name of the pre-existing field")
+    @cmd2.with_argparser(deleteFieldParser)
     @cmd2.with_category("Field")
     def do_deleteField(self, arg):
         """Usage: deleteField <class> <field>
         
         Removes the <field> from <class>
         """
-        args = arg.split()
-        if len(args) == 2:
-            ret = attributes.deleteField(args[1], args[0])
-            if ret == -1:
-                print(UMLException("Class error", f"{args[0]} does not exist"))
-            elif ret == -2:
-                print(UMLException("Field error", f"{args[1]} does not exist in {args[0]}"))
-        else:
-            print("ARGUMENT ERROR")
 
+        attributes.deleteField(arg.field_name, arg.class_name)
+
+        # args = arg.split()
+        # if len(args) == 2:
+        #     ret = attributes.deleteField(args[1], args[0])
+        #     if ret == -1:
+        #         print(UMLException("Class error", f"{args[0]} does not exist"))
+        #     elif ret == -2:
+        #         print(UMLException("Field error", f"{args[1]} does not exist in {args[0]}"))
+        # else:
+        #     print("ARGUMENT ERROR")
+
+    renameFieldParser = cmd2.Cmd2ArgumentParser(description="Updates the name of an existing field")
+    renameFieldParser.add_argument('class_name', help="Name of a pre-existing class")
+    renameFieldParser.add_argument('name', help="Current name of an existing field")
+    renameFieldParser.add_argument('new_name', help="Name to change the field to")
+    @cmd2.with_argparser(renameFieldParser)
     @cmd2.with_category("Field")
     def do_renameField(self, arg):
         """Usage: renameField <class> <old_name> <new_name>
 
         Updates the name of a field from <old_name> to <new_name>
         """
-        args = arg.split()
-        if len(args) == 3:
-            ret = attributes.renameField(args[1], args[2], args[0])
-            if ret == 1:
-                print(UMLSuccess(f"Renamed {args[0]} to {args[1]}"))
-            elif ret == -1:
-                print(UMLException("Class error", f"{args[2]} does not exist"))
-            elif ret == -2:
-                print(UMLException("Field error", f"{args[0]} does not exist in {args[2]}"))
-            elif ret == -3:
-                print(UMLException("Field error", f"{args[1]} already exists in {args[2]}"))
-        else:
-            print(UMLException("Argument error", f"expected 3 args, but was given {len(args)}"))
+
+        attributes.renameField(arg.name, arg.new_name, arg.class_name)
+
+        # args = arg.split()
+        # if len(args) == 3:
+        #     ret = attributes.renameField(args[1], args[2], args[0])
+        #     if ret == 1:
+        #         print(UMLSuccess(f"Renamed {args[0]} to {args[1]}"))
+        #     elif ret == -1:
+        #         print(UMLException("Class error", f"{args[2]} does not exist"))
+        #     elif ret == -2:
+        #         print(UMLException("Field error", f"{args[0]} does not exist in {args[2]}"))
+        #     elif ret == -3:
+        #         print(UMLException("Field error", f"{args[1]} already exists in {args[2]}"))
+        # else:
+        #     print(UMLException("Argument error", f"expected 3 args, but was given {len(args)}"))
 
 
     """ PARAMETER COMMANDS """
@@ -301,6 +325,7 @@ class Interface(cmd2.Cmd):
         """
         save(UMLClass.classIndex, relationship.relationIndex, arg)
     
+
     @cmd2.with_category("Save/Load")
     # Load a previous state from a JSON file
     def do_load(self, arg):
