@@ -316,6 +316,10 @@ class Interface(cmd2.Cmd):
         # parameter.changeParam(args[0], args[1], args[3:], args[0])
     
     """ SAVE/LOAD COMMANDS """
+
+    saveParser = cmd2.Cmd2ArgumentParser(description="Saves the current state")
+    saveParser.add_argument('filename', help="Name to save JSON file to")
+    @cmd2.with_argparser(saveParser)
     @cmd2.with_category("Save/Load")
     # Stores the current state to a JSON file
     def do_save(self, arg):
@@ -325,7 +329,9 @@ class Interface(cmd2.Cmd):
         """
         save(UMLClass.classIndex, relationship.relationIndex, arg)
     
-
+    loadParser = cmd2.Cmd2ArgumentParser(description="Loads a previously stored state")
+    loadParser.add_argument('filename', help="Name of the JSON file to be loaded")
+    @cmd2.with_argparser(loadParser)
     @cmd2.with_category("Save/Load")
     # Load a previous state from a JSON file
     def do_load(self, arg):
@@ -345,6 +351,9 @@ class Interface(cmd2.Cmd):
         """
         listClasses()
     
+    listClassParser = cmd2.Cmd2ArgumentParser(description="Lists the fields and methods of a class")
+    listClassParser.add_argument('class_name', help="Name of the class to list")
+    @cmd2.with_argparser(listClassParser)
     @cmd2.with_category("Lists")
     # Lists the contents of a specified class
     def do_listClass(self, arg):
