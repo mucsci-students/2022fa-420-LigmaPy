@@ -44,32 +44,35 @@ class Interface(cmd2.Cmd):
     """
 
     """ CLASS COMMANDS """
-    addClassParser = cmd2.Cmd2ArgumentParser()
+
+    """
+        Add Class
+    """
+    addClassParser = cmd2.Cmd2ArgumentParser(description="Adds a new class")
     addClassParser.add_argument('class_name', help="Name for the new class")
     @cmd2.with_argparser(addClassParser)
     @cmd2.with_category("Class")
     # Creates a uniquely named class
     def do_addClass(self, arg):
         
-        """Usage: addClass <name>
-        
-        Creates and adds a new class with name <name>.
-        """
         print("\033[97m Color testing \033[00m")
         UMLClass.addClass(arg.class_name)
     
+    """
+        Delete Class
+    """
     deleteClassParser = cmd2.Cmd2ArgumentParser(description="Removes a class and all of its contents")
     deleteClassParser.add_argument('class_name', help="Name of the class to be deleted")
     @cmd2.with_argparser(deleteClassParser)
     @cmd2.with_category("Class")
     # Removes a class
     def do_deleteClass(self, arg):
-        """Usage: deleteClass <name>
-        
-        Deletes a class by it's <name>.
-        """
+
         UMLClass.deleteClass(arg)
     
+    """ 
+        Rename Class
+    """
     renameClassParser = cmd2.Cmd2ArgumentParser(description="Changes the name of an existing class")
     renameClassParser.add_argument('class_name', help="Name of the class to update")
     renameClassParser.add_argument('new_name', help="Name to change the class to")
@@ -77,10 +80,7 @@ class Interface(cmd2.Cmd):
     @cmd2.with_category("Class")
     # Changes the name of a class
     def do_renameClass(self, arg):
-        """Usage: renameClass <name> <new_name>
 
-        Renames a class from <name> to <new_name>.
-        """
         names = arg.split()
         if len(names) == 2:
             UMLClass.renameClass(names[0], names[1])
@@ -88,38 +88,55 @@ class Interface(cmd2.Cmd):
             print(f"Argument error")
 
     """ RELATIONSHIP COMMANDS """
+
+    # List of Relationship types
+    relationTypes = ['aggregation', 'composition', 'inheritance', 'realization']
+
+    """
+        Add Relationship
+    """
+    addRelationParser = cmd2.Cmd2ArgumentParser(description="Adds a relationship between two existing classes")
+    addRelationParser.add_argument('src', help="Name of the source class")
+    addRelationParser.add_argument('dest', help="Name of the destination class")
+    addRelationParser.add_argument('type', help="Type of relationship between the source and destination classes", choices=relationTypes)
+    @cmd2.with_argparser(addRelationParser)
     @cmd2.with_category("Relationship")
     # Creates a relationship between two classes
     def do_addRelationship(self, arg):
-        """Usage addRelationship <source> <destination> <type>
-        
-        Creates a relationship of <type> between the <source> and <destination> classes.
-        """
+
         classes = arg.split()
         if len(classes) == 3:
             relationship.addRelationship(classes[0], classes[1], classes[2])
         else:
             print(f"Argument error")
 
+    """
+        Delete Relationship
+    """
+    deleteRelationParser = cmd2.Cmd2ArgumentParser(description="Removes an existing relationship between two classes")
+    deleteRelationParser.add_argument('src', help="Name of the source class")
+    deleteRelationParser.add_argument('dest', help="Name of the destination class")
     @cmd2.with_category("Relationship")
     # Deletes an existing relationship between two classes
     def do_deleteRelationship(self, arg):
-        """Usage: deleteRelationship <source> <destination>
-        
-        Removes an existing relationship between the <source> and <destination> classes.
-        """
+
         classes = arg.split()
         if len(classes) == 2:
             relationship.deleteRelationship(classes[0], classes[1])
         else:
             print(f"Argument error")
 
+    """
+        Change Relationship Type
+    """
+    changeRelTypeParser = cmd2.Cmd2ArgumentParser(description="Change the type of an existing relationship")
+    changeRelTypeParser.add_argument('src', help="Name of the source class")
+    changeRelTypeParser.add_argument('dest', help="Name of the destination class")
+    changeRelTypeParser.add_argument('new_type', help="New type for the relationship", choices=relationTypes)
+    @cmd2.with_argparser(changeRelTypeParser)
     @cmd2.with_category("Relationship")
     def do_changeRelType(self, arg):
-        """Usage: changeRelType <source> <destination> <new_type>
-        
-        Updates the type of the given relationship
-        """
+
         args = arg.split()
         if len(args) == 3:
             relIndex = relationship.findRelationship(args[0], args[1])
@@ -129,6 +146,9 @@ class Interface(cmd2.Cmd):
 
     """ METHOD COMMANDS """
 
+    """
+        Add Method
+    """
     # Argument Parser for addMethod
     addMethodParser = cmd2.Cmd2ArgumentParser(description="Adds a method to the specified class")
     addMethodParser.add_argument('class_name', help="Name of target class")
@@ -151,6 +171,9 @@ class Interface(cmd2.Cmd):
             # Add parameter list to the newly created method            
             parameter.addParameter(paramList, arg.method_name, arg.class_name)
 
+    """
+        Delete Method
+    """
     deleteMethodParser = cmd2.Cmd2ArgumentParser(description="Removes an existing method from an existing class")
     deleteMethodParser.add_argument('class_name', help="Class containing the method to be removed")
     deleteMethodParser.add_argument('method_name', help="Name of the method to be removed")
@@ -175,6 +198,9 @@ class Interface(cmd2.Cmd):
         # else:
         #     print(f"Wrong")
 
+    """
+        Rename Method
+    """
     renameMethodParser = cmd2.Cmd2ArgumentParser()
     renameMethodParser.add_argument('class_name', help="Class containing the method to rename")
     renameMethodParser.add_argument('old_name', help="Current name of the method to be renamed")
@@ -202,6 +228,9 @@ class Interface(cmd2.Cmd):
 
     """ FIELD COMMANDS """
 
+    """
+        Add Field
+    """
     addFieldParser = cmd2.Cmd2ArgumentParser(description="Adds a new field to an existing class")
     addFieldParser.add_argument('class_name', help="Name of class to add field to")
     addFieldParser.add_argument('field_name', help="Name of field to add")
@@ -209,10 +238,6 @@ class Interface(cmd2.Cmd):
     @cmd2.with_argparser(addFieldParser)
     @cmd2.with_category("Field")
     def do_addField(self, arg):
-        """Usage: addField <class> <name> <type>
-        
-        Adds the field <name> with <type> to <class>
-        """
 
         attributes.addField(arg.field_name, arg.class_name, arg.type)
 
@@ -228,16 +253,15 @@ class Interface(cmd2.Cmd):
         # else:
         #     print("Incorrect amount of arguments")
 
+    """
+        Delete Field
+    """
     deleteFieldParser = cmd2.Cmd2ArgumentParser(description="Removes an existing field from an existing class")
     deleteFieldParser.add_argument('class_name', help="Name of the pre-existing class")
     deleteFieldParser.add_argument('field_name', help="Name of the pre-existing field")
     @cmd2.with_argparser(deleteFieldParser)
     @cmd2.with_category("Field")
     def do_deleteField(self, arg):
-        """Usage: deleteField <class> <field>
-        
-        Removes the <field> from <class>
-        """
 
         attributes.deleteField(arg.field_name, arg.class_name)
 
@@ -251,6 +275,9 @@ class Interface(cmd2.Cmd):
         # else:
         #     print("ARGUMENT ERROR")
 
+    """
+        Rename Field
+    """
     renameFieldParser = cmd2.Cmd2ArgumentParser(description="Updates the name of an existing field")
     renameFieldParser.add_argument('class_name', help="Name of a pre-existing class")
     renameFieldParser.add_argument('name', help="Current name of an existing field")
@@ -258,10 +285,6 @@ class Interface(cmd2.Cmd):
     @cmd2.with_argparser(renameFieldParser)
     @cmd2.with_category("Field")
     def do_renameField(self, arg):
-        """Usage: renameField <class> <old_name> <new_name>
-
-        Updates the name of a field from <old_name> to <new_name>
-        """
 
         attributes.renameField(arg.name, arg.new_name, arg.class_name)
 
@@ -281,6 +304,10 @@ class Interface(cmd2.Cmd):
 
 
     """ PARAMETER COMMANDS """
+
+    """
+        Add Parameter(s)
+    """
     @cmd2.with_category("Parameter")
     def do_addParam(self, arg):
         """Usage: addParam <class> <method> <name>:<type>...
@@ -298,6 +325,9 @@ class Interface(cmd2.Cmd):
         else:
             print(UMLException("Argument error", f"not enough args"))
 
+    """
+        Delete Parameter(s)
+    """
     @cmd2.with_category("Parameter")
     def do_deleteParam(self, arg):
         """Usage: deleteParam <class> <method> [-a] [<name>...]
@@ -313,6 +343,9 @@ class Interface(cmd2.Cmd):
         else:
             print()
 
+    """
+        Change Parameter(s)
+    """
     @cmd2.with_category("Parameter")
     def do_changeParam(self, arg):
         """Usage: changeParam <class> <method> -o <old_name>... -n <new_name>:<new_type>
