@@ -8,14 +8,13 @@ from typing import List
 import relationship
 from UMLException import UMLException, UMLSuccess
 
-
 class UMLClass:
     def __init__(self, name: str):
         self.name = name
         self.fields = []
         self.methods = []
 
-        print(f"\n\033[92mAdded class {self}\033[00m")
+        print(UMLSuccess(f"Added class {self}"))
 
     def __repr__(self):
         return f"{self.name}"
@@ -116,6 +115,7 @@ def renameClass(oldName: str, newName: str):
             # Check destination
             elif relation.destination == oldName:
                 relationship.relationIndex[i].destination = newName
+        print(UMLSuccess(f"Updated class name to {newName}"))
         return 1
     else:
         print(UMLException("Class Rename Error", f"{oldName} does not exist"))

@@ -1,3 +1,5 @@
+from printColors import colors
+
 class UMLException(Exception):
     def __init__(self, *args):
         if args and len(args) == 1:
@@ -12,9 +14,9 @@ class UMLException(Exception):
 
     def __str__(self):
         if self.type and self.message:
-            return f'\n*** {self.type}: {self.message}'
+            return f'\n{colors.fg.red}*** {self.type}: {self.message}'
         elif self.message:
-            return f'\n*** Error: {self.message}'
+            return f'\n{colors.fg.red}*** Error: {self.message}'
         else:
             return f'\n*** Error: Type \'help\' for help'
 
@@ -28,6 +30,6 @@ class UMLSuccess():
 
     def __str__(self):
         if self.message:
-            return f'\n*** Success: {self.message}'
+            return f'\n{colors.fg.green}*** Success: {self.message}'
         else:
-            return f'\n*** Success'
+            return f'\n{colors.fg.green}*** Success'

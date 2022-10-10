@@ -1,6 +1,6 @@
 """
     Author(s): Trevor Bender, Christian Shepperson
-    Filename: cliInterface.py
+    Filename: cliController.py
     Description: Basic CLI interface and commands to go along with it.
 """
 
@@ -55,21 +55,6 @@ class Interface(cmd2.Cmd):
     @cmd2.with_category("Class")
     # Creates a uniquely named class
     def do_addClass(self, arg):
-
-        """
-            Colored Ouput ANSI
-            \033[__m
-
-            91m - Red
-            92m - Green
-            93m - Yellow
-            94m - Light Purple
-            95m - Purple
-            96m - Cyan
-            97m - Light Gray
-            98m - Black
-        """
-        print(colors.fg.red, "Error")
         UMLClass.addClass(arg.class_name)
     
     """

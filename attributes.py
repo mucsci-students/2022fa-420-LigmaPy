@@ -119,18 +119,18 @@ def addMethod(name : str, className : str, ret_type : str):
 
     # Runs if attribute with given name already exists in given class
     if existingMethod >= 0:
-        print(UMLException("Method error", f"{name} already exists in {className}"))
+        # print(UMLException("Method Name Error", f"{name} already exists in {className}"))
         return -2
     # Runs if attribute does not exist in given class
     elif existingMethod == -2:
         newMethod = method(name, ret_type)
         index = C.findClass(className)
         C.classIndex[index].methods.append(newMethod)
-        print(UMLSuccess(f"Added {newMethod} to {className}"))
+        # print(UMLSuccess(f"Added {newMethod} to {className}"))
         return 1
     # Runs if given class does not exist
     else:
-        print(UMLException("Class error", f"{className} does not exist"))
+        # print(UMLException("Class error", f"{className} does not exist"))
         return -1
 
 def addField(name, className, t):
@@ -149,15 +149,18 @@ def addField(name, className, t):
 
     # Runs if attribute with given name already exists in given class
     if existingField >= 0:
+        # print(UMLException("Field Name Error", f"{name} already exists in {className}"))
         return -2
     # Runs if attribute does not exist in given class
     elif existingField == -2:
         newField = field(name, t)
         index = C.findClass(className)
         C.classIndex[index].fields.append(newField)
+        # print(UMLSuccess(f"Added {name} to {className}"))
         return 1
     # Runs if given class does not exist
     else:
+        # UMLException("Class Name Error", f"Class {className} does not exist")
         return -1
 
 
