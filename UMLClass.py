@@ -15,7 +15,7 @@ class UMLClass:
         self.fields = []
         self.methods = []
 
-        print(f"\nAdded class {self}")
+        print(f"\n\033[92mAdded class {self}\033[00m")
 
     def __repr__(self):
         return f"{self.name}"

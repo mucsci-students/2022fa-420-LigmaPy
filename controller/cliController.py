@@ -14,6 +14,7 @@ import parameter
 from UMLException import UMLException, UMLSuccess
 from interface.interfaceCommands import *
 from saveload import *
+from printColors import colors
 
 
 _intro_text = """\
@@ -54,8 +55,21 @@ class Interface(cmd2.Cmd):
     @cmd2.with_category("Class")
     # Creates a uniquely named class
     def do_addClass(self, arg):
-        
-        print("\033[97m Color testing \033[00m")
+
+        """
+            Colored Ouput ANSI
+            \033[__m
+
+            91m - Red
+            92m - Green
+            93m - Yellow
+            94m - Light Purple
+            95m - Purple
+            96m - Cyan
+            97m - Light Gray
+            98m - Black
+        """
+        print(colors.fg.red, "Error")
         UMLClass.addClass(arg.class_name)
     
     """
