@@ -44,6 +44,9 @@ class Interface(cmd2.Cmd):
     """
 
     """ CLASS COMMANDS """
+    addClassParser = cmd2.Cmd2ArgumentParser()
+    addClassParser.add_argument('class_name', help="Name for the new class")
+    @cmd2.with_argparser(addClassParser)
     @cmd2.with_category("Class")
     # Creates a uniquely named class
     def do_addClass(self, arg):
@@ -52,8 +55,12 @@ class Interface(cmd2.Cmd):
         
         Creates and adds a new class with name <name>.
         """
-        UMLClass.addClass(arg)
+        print("\033[97m Color testing \033[00m")
+        UMLClass.addClass(arg.class_name)
     
+    deleteClassParser = cmd2.Cmd2ArgumentParser(description="Removes a class and all of its contents")
+    deleteClassParser.add_argument('class_name', help="Name of the class to be deleted")
+    @cmd2.with_argparser(deleteClassParser)
     @cmd2.with_category("Class")
     # Removes a class
     def do_deleteClass(self, arg):
@@ -63,6 +70,10 @@ class Interface(cmd2.Cmd):
         """
         UMLClass.deleteClass(arg)
     
+    renameClassParser = cmd2.Cmd2ArgumentParser(description="Changes the name of an existing class")
+    renameClassParser.add_argument('class_name', help="Name of the class to update")
+    renameClassParser.add_argument('new_name', help="Name to change the class to")
+    @cmd2.with_argparser(renameClassParser)
     @cmd2.with_category("Class")
     # Changes the name of a class
     def do_renameClass(self, arg):
