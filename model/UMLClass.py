@@ -18,7 +18,7 @@ class UMLClass:
         print(f"\nAdded class {self}")
 
     def __repr__(self):
-        return f"{self.name} blahhh"
+        return f"{self.name}"
 
     def rename(self, newName):
         print(UMLSuccess(f"Renamed {self.name} to {newName}"))
