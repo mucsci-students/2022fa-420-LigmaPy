@@ -37,14 +37,14 @@ class Interface(cmd.Cmd):
         
         Creates and adds a new class with name <name>.
         """
-        model.UMLClass.addClass(arg)
+        UMLClass.addClass(arg)
     # Removes a class
     def do_deleteClass(self, arg):
         """Usage: deleteClass <name>
         
         Deletes a class by it's <name>.
         """
-        model.UMLClass.deleteClass(arg)
+        UMLClass.deleteClass(arg)
     # Changes the name of a class
     def do_renameClass(self, arg):
         """Usage: renameClass <name> <new_name>
@@ -53,7 +53,7 @@ class Interface(cmd.Cmd):
         """
         names = arg.split()
         if len(names) == 2:
-            model.UMLClass.renameClass(names[0], names[1])
+            UMLClass.renameClass(names[0], names[1])
         else:
             print(f"Argument error")
 
@@ -66,7 +66,7 @@ class Interface(cmd.Cmd):
         """
         classes = arg.split()
         if len(classes) == 3:
-            model.relationship.addRelationship(classes[0], classes[1], classes[2])
+            relationship.addRelationship(classes[0], classes[1], classes[2])
         else:
             print(f"Argument error")
     # Deletes an existing relationship between two classes
@@ -77,7 +77,7 @@ class Interface(cmd.Cmd):
         """
         classes = arg.split()
         if len(classes) == 2:
-            model.relationship.deleteRelationship(classes[0], classes[1])
+            relationship.deleteRelationship(classes[0], classes[1])
         else:
             print(f"Argument error")
 
@@ -88,8 +88,8 @@ class Interface(cmd.Cmd):
         """
         args = arg.split()
         if len(args) == 3:
-            relIndex = model.relationship.findRelationship(args[0], args[1])
-            model.relationship.relationIndex[relIndex].editType(args[2])
+            relIndex = relationship.findRelationship(args[0], args[1])
+            relationship.relationIndex[relIndex].editType(args[2])
         else:
             print("wrong number of arguments")
 
