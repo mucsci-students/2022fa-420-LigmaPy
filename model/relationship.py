@@ -1,23 +1,31 @@
 """
-Author : Ammanuel Amare
+Author : Christian Shepperson
 Filename : relationship.py
-Description : Adds and deletes relationships
+Description : Adds, deletes and updates the type of relationships
 """
 from typing import List
 # Local Imports
-import UMLClass
+import model.UMLClass as UMLClass
+from UMLException import UMLException, UMLSuccess
 
 ###################################################################################################
 
 class UMLRelationship:
-    def __init__(self, source: str, destination: str):
+    def __init__(self, source: str, destination: str, type:str):
         self.source = source
         self.destination = destination
+        self.type = type
 
-        print(f"\nRelationship added: {repr(self)}")
+        print(f"\nRelationship added: {self}")
 
     def __repr__(self):
-        return f"[{self.source}] - [{self.destination}]"
+        return f"[{self.source}] - [{self.destination}] <{self.type}>"
+
+    #changes the type of the relationship
+    def editType(self, newType:str):
+        self.type = newType
+        print(UMLSuccess(f"Changed type to {newType}"))
+        return 1
 
 ###################################################################################################
 
@@ -38,9 +46,10 @@ def findRelationship(source: str, destination: str):
         if source == relation.source and destination == relation.destination:
             return relationLoc
         relationLoc+=1
+    #search error
     return -1
 
-def addRelationship(source: str, destination: str):
+def addRelationship(source: str, destination: str, type: str):
     """
         Creates a relationship between to classes.
 
@@ -50,20 +59,22 @@ def addRelationship(source: str, destination: str):
         :returns: The message of the status of adding a relationship
     """
     if source == destination:
-        print("Source class cannot be the same a destination class.")
-        return
+        print(UMLException("Relationship Error", f"Source class cannot be the same as destination class"))
+        return -2
     # Check if both source and destination classes exist
     if UMLClass.findClass(source) is not None and UMLClass.findClass(destination) is not None:
         for relation in relationIndex:
             # Check if relationship already exists
             if source == relation.source and destination == relation.destination:
-                print(f"Error: Relationship already exists.")
-                return
+                print(UMLException("Add Relationship Error", f"{relation} already exists"))
+                return -3
         # Append the new relationship to the relationIndex list
-        newRelation = UMLRelationship(source, destination)
+        newRelation = UMLRelationship(source, destination, type)
         relationIndex.append(newRelation)
+        return 1
     else:
-        print(f"The {source} or {destination} class does not exist.")
+        print(UMLException("Class Error", f"Source or Destination class does not exist"))
+        return -1
 
 def deleteRelationship(source: str, destination: str):
     """
@@ -75,17 +86,21 @@ def deleteRelationship(source: str, destination: str):
         :returns: The status of the relationship deletion
     """
     # Check if source and destination class exist
-    if UMLClass.findClass(source) is not None and UMLClass.findClass(destination) is not None:
+    if UMLClass.findClass(source) != None and UMLClass.findClass(destination) != None:
 
         index = findRelationship(source, destination)
-        deletedRelation = relationIndex[index]
         if index > -1:
-            relationIndex.pop(index)
-
-        print(f"\nDeleted Relationship: {repr(deletedRelation)}")
+            print(UMLSuccess(f"Removed relationship {relationIndex.pop(index)}"))
+            return 1
+        else:
+            # Relationship does not exist
+            print(UMLException("Relationship Error", f"Relationship does not exist"))
+            return -1
     else:
-        print(f"Relationship does not exist: [{source}] - [{destination}]")
-
+        #source and destination do not exist
+        print(UMLException("Class Error", f"Source or Destination class does not exist"))
+        return -2
+        
 ###################################################################################################
 
 relationIndex : List[UMLRelationship]= []
