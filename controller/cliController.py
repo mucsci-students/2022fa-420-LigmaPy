@@ -37,14 +37,14 @@ class Interface(cmd.Cmd):
         
         Creates and adds a new class with name <name>.
         """
-        model.UMLClass.addClass(arg)
+        UMLClass.addClass(arg)
     # Removes a class
     def do_deleteClass(self, arg):
         """Usage: deleteClass <name>
         
         Deletes a class by it's <name>.
         """
-        model.UMLClass.deleteClass(arg)
+        UMLClass.deleteClass(arg)
     # Changes the name of a class
     def do_renameClass(self, arg):
         """Usage: renameClass <name> <new_name>
@@ -53,7 +53,7 @@ class Interface(cmd.Cmd):
         """
         names = arg.split()
         if len(names) == 2:
-            model.UMLClass.renameClass(names[0], names[1])
+            UMLClass.renameClass(names[0], names[1])
         else:
             print(f"Argument error")
 
@@ -66,9 +66,9 @@ class Interface(cmd.Cmd):
         """
         classes = arg.split()
         if len(classes) == 3:
-            model.relationship.addRelationship(classes[0], classes[1], classes[2])
+            relationship.addRelationship(classes[0], classes[1], classes[2])
         else:
-            print(f"Argument error")
+            print(f"Wrong number of arguments")
     # Deletes an existing relationship between two classes
     def do_deleteRelationship(self, arg):
         """Usage: deleteRelationship <source> <destination>
@@ -77,9 +77,9 @@ class Interface(cmd.Cmd):
         """
         classes = arg.split()
         if len(classes) == 2:
-            model.relationship.deleteRelationship(classes[0], classes[1])
+            relationship.deleteRelationship(classes[0], classes[1])
         else:
-            print(f"Argument error")
+            print(f"Wrong number of arguments")
 
     def do_changeRelType(self, arg):
         """Usage: changeRelType <source> <destination> <new_type>
@@ -88,8 +88,8 @@ class Interface(cmd.Cmd):
         """
         args = arg.split()
         if len(args) == 3:
-            relIndex = model.relationship.findRelationship(args[0], args[1])
-            model.relationship.relationIndex[relIndex].editType(args[2])
+            relIndex = relationship.findRelationship(args[0], args[1])
+            relationship.relationIndex[relIndex].editType(args[2])
         else:
             print("wrong number of arguments")
 
@@ -133,7 +133,7 @@ class Interface(cmd.Cmd):
             elif ret == -2:
                 print(UMLException("Method error", f"{args[1]} does not exist in {args[0]}"))
         else:
-            print(f"Wrong")
+            print(f"Wrong number of arguments")
     # Renames the specified method in the specified class
     def do_renameMethod(self, arg):
         """Usage: renameMethod <class> <old_name> <new_name>
@@ -152,7 +152,7 @@ class Interface(cmd.Cmd):
             elif ret == -3:
                 print(UMLException("Method error", f"{args[1]} already exists in {args[2]}"))
         else:
-            print(UMLException("Argument error", "BLAH"))
+            print(UMLException("Argument error", f"Expected 3, {len(args)} given"))
 
     """ FIELD COMMANDS """
     def do_addField(self, arg):
@@ -170,7 +170,7 @@ class Interface(cmd.Cmd):
             elif ret == -2:
                 print(UMLException("Field error", f"{args[1]} already exists"))
         else:
-            print("Incorrect amount of arguments")
+            print("Wrong number of arguments")
 
     def do_deleteField(self, arg):
         """Usage: deleteField <class> <field>
@@ -185,7 +185,7 @@ class Interface(cmd.Cmd):
             elif ret == -2:
                 print(UMLException("Field error", f"{args[1]} does not exist in {args[0]}"))
         else:
-            print("ARGUMENT ERROR")
+            print("Wrong number of arguments")
 
     def do_renameField(self, arg):
         """Usage: renameField <class> <old_name> <new_name>
@@ -222,7 +222,7 @@ class Interface(cmd.Cmd):
 
             parameter.addParameter(paramList, args[1], args[0])
         else:
-            print(UMLException("Argument error", f"not enough args"))
+            print(UMLException("Argument error", f"Expected at least 3"))
 
     def do_deleteParam(self, arg):
         """Usage: deleteParam <class> <method> [-a] [<name>...]
@@ -236,7 +236,7 @@ class Interface(cmd.Cmd):
             else:
                 parameter.deleteParameter(args[2:], args[1], args[0])
         else:
-            print()
+            print("Wrong number of arguments")
 
     def do_changeParam(self, arg):
         """Usage: changeParam <class> <method> -o <old_name>... -n <new_name>:<new_type>
@@ -248,7 +248,6 @@ class Interface(cmd.Cmd):
         print(f"Waiting to be implemented")
 
         # parameter.changeParameter(args[3:], args[0], args[1], args[0])
-        # parameter.changeParam(args[0], args[1], args[3:], args[0])
     
     """ SAVE/LOAD COMMANDS """
     # Stores the current state to a JSON file
@@ -257,7 +256,7 @@ class Interface(cmd.Cmd):
         
         Saves the current program state to <filename>.json.
         """
-        save(model.UMLClass.classIndex, model.relationship.relationIndex, arg)
+        save(UMLClass.classIndex, relationship.relationIndex, arg)
     # Load a previous state from a JSON file
     def do_load(self, arg):
         """Usage: load <filename>
