@@ -14,6 +14,7 @@ class UMLClass:
         self.name = name
         self.fields = []
         self.methods = []
+        self.location = {'x' : 100, 'y' : 100}
 
         print(f"\nAdded class {self}")
 
