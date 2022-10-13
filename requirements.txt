@@ -1,5 +1,5 @@
 prettytable
 pyfiglet
 pathvalidate
-tkinter
+tk
 pathvalidate
