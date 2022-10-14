@@ -7,10 +7,10 @@
 import pyfiglet
 import cmd2
 # Local Imports
-import model.UMLClass
-import model.attributes
-import model.relationship
-import model.parameter
+import model.UMLClass as UMLCLass
+import model.attributes as attributes
+import model.relationship as relationship
+import model.parameter as parameter
 from UMLException import UMLException, UMLSuccess
 from interface.interfaceCommands import *
 from model.saveload import *
