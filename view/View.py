@@ -229,19 +229,46 @@ class View(tk.Tk):
    #refreshes canvas and prints the 'UMLclass' in a nice format to the canvas  
     def printClassToCanvas(self, UMLclass):
         t = classToString(UMLclass)
+        sourceList = []
+        destList = []
+        
+        #check if a relation exist and deletes the line
+        if UMLclass.name in UMLBoxes:
+            for each in list(UMLLines):
+                if UMLBoxes[UMLclass.name] in each:
+                    if each.index(UMLBoxes[UMLclass.name]) == 0:
+                        destList.append(each[1])
+                        self.deleteLine(each[0].winfo_name(), each[1].winfo_name())
+                    else:
+                        sourceList.append(each[0])
+                        self.deleteLine(each[0].winfo_name(), each[1].winfo_name())
+            self.removeClassFromCanvas(UMLclass.name)
         UMLBoxes[UMLclass.name] = tk.Label(self.canvas, text=t[0], height=t[1], width=t[2], borderwidth=1, relief="solid", justify=LEFT, name = UMLclass.name)
         UMLBoxes[UMLclass.name].place(x=UMLclass.location['x'], y=UMLclass.location['y'])
+        #name = u.classIndex[u.findClass(widget.winfo_name())]
+        #name.location['x'] = x
+        #name.location['y'] = y
         print(t[0])
         print(t[1])
         print(t[2])
         UMLBoxes[UMLclass.name].bind("<Button-1>", self.dragStart)
         UMLBoxes[UMLclass.name].bind("<B1-Motion>", self.dragMove)
+        #remakes the line with the new label
+        for each in sourceList:
+            self.makeLine(each.winfo_name(), UMLBoxes[UMLclass.name].winfo_name())
+        for each in destList:
+            self.makeLine(UMLBoxes[UMLclass.name].winfo_name(), each.winfo_name())
         
     def removeClassFromCanvas(self, UMLclass):
+        if UMLclass in UMLBoxes:
+            for each in list(UMLLines):
+                if UMLBoxes[UMLclass] in each:
+                    self.deleteLine(each[0].winfo_name(), each[1].winfo_name())
         UMLBoxes[UMLclass].destroy()
         del UMLBoxes[UMLclass]    
 
     def makeLine(self, s, d):
+        self.canvas.update()
         source = UMLBoxes[s]
         dest = UMLBoxes[d]
         sXCoord = source.winfo_x()
@@ -1059,7 +1086,7 @@ class View(tk.Tk):
         name.location['x'] = x
         name.location['y'] = y
         print(str(name.location['x']) + " : " + str(name.location['x']))
-        for each in UMLLines:
+        for each in list(UMLLines):
             if widget in each:
                 if each.index(widget) == 0:
                     self.deleteLine(each[0].winfo_name(), each[1].winfo_name())
