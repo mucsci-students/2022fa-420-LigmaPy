@@ -5,12 +5,15 @@ Description : Constructs and displays the gui
 """
 
 
+from operator import index
 import tkinter as tk
 #import UMLNotebook as notebook
-from tkinter import RIGHT, VERTICAL, Y, OptionMenu, StringVar, ttk, filedialog
+from tkinter import LEFT, RIGHT, VERTICAL, Y, Canvas, OptionMenu, StringVar, ttk, filedialog
+from turtle import width
 import model.UMLClass as u
 import model.relationship as r
 import model.attributes as a
+import math
 
 
 
@@ -86,12 +89,12 @@ class View(tk.Tk):
         #helpmenu.add_command(label="Commands", command=None)
         #menubar.add_cascade(label="Help", menu=helpmenu)
         # List menu
-        listmenu = tk.Menu(menubar,tearoff=0)
-        listmenu.add_command(label="List class", command = lambda : self.listClassFrame())
-        listmenu.add_command(label="List all classes", command = lambda : self.controller.clickListAllClassesButton())
-        listmenu.add_command(label="List Relationships", command= lambda : self.controller.clickListRelationsButton())
-        listmenu.add_command(label="Clear", command= lambda : self.clearScreen())
-        menubar.add_cascade(label="List", menu=listmenu)
+        #listmenu = tk.Menu(menubar,tearoff=0)
+        #listmenu.add_command(label="List class", command = lambda : self.listClassFrame())
+        #listmenu.add_command(label="List all classes", command = lambda : self.controller.clickListAllClassesButton())
+        #listmenu.add_command(label="List Relationships", command= lambda : self.controller.clickListRelationsButton())
+        #listmenu.add_command(label="Clear", command= lambda : self.clearScreen())
+        #menubar.add_cascade(label="List", menu=listmenu)
         self.config(menu=menubar)
 
     #creates all the button in the top left
@@ -189,19 +192,20 @@ class View(tk.Tk):
         self.buttonFrame.rowconfigure(0, weight=1)
         self.buttonFrame.columnconfigure(1, weight=1)
         self.pane.grid(row=0, column=0, sticky="nsew", rowspan=2)
-    
+        #self.buttonFrame.pack(side = LEFT, fill=Y)
     #creates input frame on bottom right to put in input fields 
     def makeInputFrame(self):
         self.inputFrame = tk.Frame(self)
         self.inputFrame.grid(row = 1, column=0)
 
-    #creates canvase for output on right side
+    #creates canvas for output on right side
     def makeOutputFrame(self):
         self.outputFrame = tk.Frame(self)
         self.canvas = tk.Canvas(self.outputFrame, bg='white')
         self.outputFrame.grid(row=0, column=1, sticky="nswe", rowspan=2)
         self.outputFrame.rowconfigure(0, weight=1)
         self.outputFrame.columnconfigure(1, weight=1)
+        #self.outputFrame.pack(side = RIGHT, fill=Y)
         self.canvas.pack(fill=tk.BOTH, expand=1)
         self.canvas.grid(row=0, column=1, sticky="nswe", rowspan=2)
         self.makeScrollBar()
@@ -213,22 +217,95 @@ class View(tk.Tk):
     
     #creates the scrollbar
     def makeScrollBar(self):
+        
         self.scrollbar = ttk.Scrollbar(self.outputFrame, orient=VERTICAL, command=self.canvas.yview)
         self.scrollbar.grid(row=0, column=2, sticky="nswe")
         self.canvas.configure(yscrollcommand=self.scrollbar.set)
         self.canvas.bind('<Configure>', lambda e: self.canvas.configure(scrollregion = self.canvas.bbox("all")))
         self.outputFrame2 = tk.Frame(self.canvas)
         self.canvas.create_window((0,0), window=self.outputFrame2, anchor="nw")        
-   
+        
+
    #refreshes canvas and prints the 'UMLclass' in a nice format to the canvas  
     def printClassToCanvas(self, UMLclass):
-        self.canvas.destroy()
-        self.scrollbar.destroy()
-        self.canvas = tk.Canvas(self.outputFrame, bg='white')
         t = classToString(UMLclass)
-        self.canvas.create_text(100, 100, text= t, fill="black", font=('Helvetica 10 bold'))
-        self.canvas.grid(row=0, column=1, sticky="nswe", rowspan=2)    
-        self.makeScrollBar()
+        sourceList = []
+        destList = []
+        
+        #check if a relation exist and deletes the line
+        if UMLclass.name in UMLBoxes:
+            for each in list(UMLLines):
+                if UMLBoxes[UMLclass.name] in each:
+                    if each.index(UMLBoxes[UMLclass.name]) == 0:
+                        destList.append(each[1])
+                        self.deleteLine(each[0].winfo_name(), each[1].winfo_name())
+                    else:
+                        sourceList.append(each[0])
+                        self.deleteLine(each[0].winfo_name(), each[1].winfo_name())
+            self.removeClassFromCanvas(UMLclass.name)
+        UMLBoxes[UMLclass.name] = tk.Label(self.canvas, text=t[0], height=t[1], width=t[2], borderwidth=1, relief="solid", justify=LEFT, name = UMLclass.name)
+        UMLBoxes[UMLclass.name].place(x=UMLclass.location['x'], y=UMLclass.location['y'])
+        #name = u.classIndex[u.findClass(widget.winfo_name())]
+        #name.location['x'] = x
+        #name.location['y'] = y
+        print(t[0])
+        print(t[1])
+        print(t[2])
+        UMLBoxes[UMLclass.name].bind("<Button-1>", self.dragStart)
+        UMLBoxes[UMLclass.name].bind("<B1-Motion>", self.dragMove)
+        #remakes the line with the new label
+        for each in sourceList:
+            self.makeLine(each.winfo_name(), UMLBoxes[UMLclass.name].winfo_name())
+        for each in destList:
+            self.makeLine(UMLBoxes[UMLclass.name].winfo_name(), each.winfo_name())
+        
+    def removeClassFromCanvas(self, UMLclass):
+        if UMLclass in UMLBoxes:
+            for each in list(UMLLines):
+                if UMLBoxes[UMLclass] in each:
+                    self.deleteLine(each[0].winfo_name(), each[1].winfo_name())
+        UMLBoxes[UMLclass].destroy()
+        del UMLBoxes[UMLclass]    
+
+    def makeLine(self, s, d):
+        self.canvas.update()
+        source = UMLBoxes[s]
+        dest = UMLBoxes[d]
+        sXCoord = source.winfo_x()
+        sYCoord = source.winfo_y()
+        dXCoord = dest.winfo_x()
+        dYCoord = dest.winfo_y()
+        sWidth = source.winfo_reqwidth()
+        sHeigth = source.winfo_reqheight()
+        dWidth = dest.winfo_reqwidth()
+        dHeigth = dest.winfo_reqheight()
+
+        sCenterCoord = (sXCoord + sWidth//2, sYCoord + sHeigth //2)
+        dTopCoord = (dXCoord + dWidth//2, dYCoord)
+        dLeftCoord = (dXCoord, dYCoord + dHeigth//2)
+        dRightCoord = (dXCoord + dWidth, dYCoord + dHeigth//2)
+        dBottomCoord = (dXCoord + dWidth//2, dYCoord + dHeigth)
+        closest = []
+        closest.append(math.dist(sCenterCoord,dTopCoord))
+        closest.append(math.dist(sCenterCoord,dLeftCoord))
+        closest.append(math.dist(sCenterCoord,dRightCoord))
+        closest.append(math.dist(sCenterCoord,dBottomCoord))
+        
+        minpos = closest.index(min(closest))
+        if minpos == 0:
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dTopCoord[0],dTopCoord[1], width=3)
+        if minpos == 1:
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dLeftCoord[0],dLeftCoord[1], width=3)
+        if minpos == 2:
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dRightCoord[0],dRightCoord[1], width=3)
+        if minpos == 3:
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dBottomCoord[0],dBottomCoord[1], width=3)
+
+    def deleteLine(self, s, d):
+        source = UMLBoxes[s]
+        dest = UMLBoxes[d]
+        self.canvas.delete(UMLLines[(source, dest)])
+        del UMLLines[(source, dest)]
 
     #clears canvas on right and input window on left
     def clearScreen(self):
@@ -243,7 +320,7 @@ class View(tk.Tk):
         self.canvas = tk.Canvas(self.outputFrame, bg='white')
         t = ''
         for c in list:
-            t += classToString(c)
+            t += classToString(c)[0]
         self.canvas.create_text(100, 500, text= t, fill="black", font=('Helvetica 10 bold'))
         self.canvas.grid(row=0, column=1, sticky="nswe", rowspan=2)  
         self.makeScrollBar()
@@ -332,7 +409,7 @@ class View(tk.Tk):
             #updates the 2nd drop down box based on the selection of the 1st drop down box
             def update2ndDrop(*args):
                 #gets the fields for whatever class was first selected
-                feilds = classDict[clicked.get()]
+                feilds = [each.name for each in classDict[clicked.get()]]
                 deleteF.set(feilds[0])
                 #gets 2nd dropmenu and delete it
                 menu = drop2['menu']
@@ -529,7 +606,7 @@ class View(tk.Tk):
             cancel.grid(row=1)
         else:
             def update2ndDrop(*args):
-                feilds = classDict[clicked.get()]
+                feilds = [each.name for each in classDict[clicked.get()]]
                 deleteF.set(feilds[0])
                 menu = drop2['menu']
                 menu.delete(0, 'end')
@@ -989,13 +1066,51 @@ class View(tk.Tk):
         self.inputFrame.destroy()
         self.makeInputFrame()
 
+    def dragStart(self, event):
+        widget = event.widget
+        #print(widget.name)
+        widget.startX = event.x
+        widget.startY = event.y
+
+    def dragMove(self, event):
+    # top left corner of widget relative to window - place where we
+    #click in the label itself + where be begin draging the widget to
+        widget = event.widget
+        print(widget.winfo_name())
+        print(widget.winfo_id())
+        
+        x = widget.winfo_x() - widget.startX + event.x
+        y = widget.winfo_y() - widget.startY + event.y
+        widget.place(x=x, y=y)
+        name = u.classIndex[u.findClass(widget.winfo_name())]
+        name.location['x'] = x
+        name.location['y'] = y
+        print(str(name.location['x']) + " : " + str(name.location['x']))
+        for each in list(UMLLines):
+            if widget in each:
+                if each.index(widget) == 0:
+                    self.deleteLine(each[0].winfo_name(), each[1].winfo_name())
+                    self.makeLine( widget.winfo_name(), each[1].winfo_name())
+                else:
+                    self.deleteLine(each[0].winfo_name(), each[1].winfo_name())
+                    self.makeLine(each[0].winfo_name(), widget.winfo_name())
+
 #returns a class 'c' in a string format for output
 def classToString(c):
+    classLen = 7
+    fieldLen = 10
+    methLen = 12
+    height = 8
     string = ''
     string += "Class: " + c.name + "\n"
+    classLen += len(c.name)
     string += "\n    Fields:\n"
     for each in c.fields:
         string += "        " + str(each.type) + " " + each.name + "\n"
+        fLen = 9 + len(each.type) + len(each.name)
+        if fLen > fieldLen:
+            fieldLen = fLen
+        height += 1 
     string += "\n    Methods:\n"
     for each in c.methods:
         parameters = ""
@@ -1004,8 +1119,13 @@ def classToString(c):
                 parameters += str(param.type) + " " + param.name + ", "
         parameters = parameters[:-2] 
         string += "        " + str(each.return_type) + " " + each.name + "(" + parameters + ")\n"
+        mLen = 11 + len(each.return_type) + len(each.name) + len(parameters)
+        if mLen > methLen:
+            methLen = mLen
+        height += 1
     string += "\n"
-    return string
+    width = max(classLen, methLen, fieldLen)
+    return (string, height, width)
 
 # returns a relationship 'r' in a string format for output
 def relationToString(r):
@@ -1015,7 +1135,36 @@ def relationToString(r):
     string += "    Destination: " + r.destination + "\n"
     string += "    Type: " + r.type + "\n\n"
     return string
+"""
+def dragStart(event):
+    widget = event.widget
+    #print(widget.name)
+    widget.startX = event.x
+    widget.startY = event.y
 
+def dragMove(event):
+# top left corner of widget relative to window - place where we
+#click in the label itself + where be begin draging the widget to
+    widget = event.widget
+    print(widget.winfo_name())
+    print(widget.winfo_id())
+    
+    x = widget.winfo_x() - widget.startX + event.x
+    y = widget.winfo_y() - widget.startY + event.y
+    widget.place(x=x, y=y)
+    name = u.classIndex[u.findClass(widget.winfo_name())]
+    name.location['x'] = x
+    name.location['y'] = y
+    print(str(name.location['x']) + " : " + str(name.location['x']))
+    for each in UMLLines:
+        if widget in each:
+            if each.index(widget) == 0:
+                View.deleteLine(tk.Tk, each[0].winfo_name(), each[1].winfo_name())
+                View.makeLine(tk.Tk, widget.winfo_name(), each[1].winfo_name())
+            else:
+                View.deleteLine(tk.Tk ,each[0].winfo_name(), each[1].winfo_name())
+                View.makeLine(tk.Tk ,each[0].winfo_name(), widget.winfo_name())
+"""
 """
 #for testing
 def printClass (c):
@@ -1034,3 +1183,5 @@ def printClass (c):
         print(f"{each.return_type} {each.name}({parameters})")
     print()
 """
+UMLBoxes = {}
+UMLLines = {}

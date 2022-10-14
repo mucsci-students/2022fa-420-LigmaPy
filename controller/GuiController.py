@@ -73,7 +73,9 @@ class Controller:
         else:
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
-            self.view.makeChangeParamInputFrame()  
+            self.view.makeChangeParamInputFrame()
+            #self.view.removeClassFromCanvas(self.view.className)
+            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])  
             self.view.makeMessage('Parameter changed')
 
     def clickAddClassButton(self):
@@ -91,6 +93,7 @@ class Controller:
         else:
             self.view.remake()
             self.view.makeAddClassFrame()
+            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage(f"\nClass \"{self.view.className}\" has been created!")
 
     def clickDeleteClassButton(self):
@@ -102,6 +105,7 @@ class Controller:
         else:
             self.view.remake()
             self.view.makeDeleteClassFrame()
+            self.view.removeClassFromCanvas(self.view.className)
             self.view.makeMessage(f"\nClass \"{self.view.className}\" has been deleted.")
 
     def clickRenameClassButton(self):
@@ -117,6 +121,8 @@ class Controller:
         else:
             self.view.remake()
             self.view.makeRenameClassFrame()
+            #self.view.removeClassFromCanvas(self.view.className)
+            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.classNameNew)])
             self.view.makeMessage("Class renamed")
         
     def clickAddRelationButton(self):
@@ -135,7 +141,8 @@ class Controller:
             self.view.makeMessage("Relationship already exists")
         else:
             self.view.remake()
-            self.view.makeAddRelationFrame() 
+            self.view.makeAddRelationFrame()
+            self.view.makeLine(self.view.source, self.view.destination) 
             self.view.makeMessage("Relationship added")
 
     def clickUpdateTypeButton(self):
@@ -159,6 +166,7 @@ class Controller:
         else:
             self.view.remake()
             self.view.makeDeleteRelationFrame()
+            self.view.deleteLine(self.view.source, self.view.destination)
             self.view.makeMessage("Relationship deleted")
 
     def clickAddFieldButton(self):
@@ -174,9 +182,14 @@ class Controller:
         else:
             self.view.remake()
             self.view.makeAddFieldFrame()
+            #self.view.removeClassFromCanvas(self.view.className)
+            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
+           
             self.view.makeMessage("Field added")
 
     def clickDeleteFieldButton(self):   
+        print(self.view.field)
+        print(self.view.className)
         num = a.deleteField(self.view.field, self.view.className)
         if num == -1:
             self.view.remake()
@@ -189,6 +202,8 @@ class Controller:
         else:
             self.view.remake()
             self.view.makeDeleteFieldFrame()
+            #self.view.removeClassFromCanvas(self.view.className)
+            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage("Field deleted")
 
     def clickRenameFieldButton(self):
@@ -208,6 +223,8 @@ class Controller:
         else:
             self.view.remake()
             self.view.makeDeleteFieldFrame()
+            #self.view.removeClassFromCanvas(self.view.className)
+            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage("Field renamed")
     
     def clickAddMethodAndParamsButton(self):
@@ -227,6 +244,8 @@ class Controller:
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeParamInputFrame()
+            #self.view.removeClassFromCanvas(self.view.className)
+            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage("Method added, please enter parameter(s)")
 
     def clickAddMethodWithoutParamsButton(self):
@@ -245,6 +264,8 @@ class Controller:
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeAddMethodFrame()
+            #self.view.removeClassFromCanvas(self.view.className)
+            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage("Method added")
 
     def clickAddParamButton(self):
@@ -275,6 +296,8 @@ class Controller:
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeParamInputFrame()
+            #self.view.removeClassFromCanvas(self.view.className)
+            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage("Parameter added")            
 
     def clickDeleteMethodButton(self):
@@ -290,6 +313,8 @@ class Controller:
         else:
             self.view.remake()
             self.view.makeDeleteMethodFrame()
+            #self.view.removeClassFromCanvas(self.view.className)
+            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage("Method Deleted")          
 
 
@@ -310,6 +335,8 @@ class Controller:
         else:    
             self.view.remake()
             self.view.makeRenameMethodFrame()
+            #self.view.removeClassFromCanvas(self.view.className)
+            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage('Method renamed')
 
     def clickAddParamToMethodButton(self):
@@ -328,7 +355,7 @@ class Controller:
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeParamInputFrame()
- 
+
     def clickDeleteParamButton(self):
         num = a.findMethod(self.view.method, self.view.className)
         if num == -1:
@@ -345,7 +372,7 @@ class Controller:
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeDeleteParamInputFrame()
-    
+
     def clickDeleteAllParamButton(self):
         num = p.deleteAllParameter(self.view.method, self.view.className)
         if num == -1:
@@ -362,6 +389,8 @@ class Controller:
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeDeleteParamFrame()
+            #self.view.removeClassFromCanvas(self.view.className)
+            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage('All parameters deleted')
     
     def clickSecondDeleteParamButton(self):
@@ -392,6 +421,8 @@ class Controller:
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeDeleteParamInputFrame()
+            #self.view.removeClassFromCanvas(self.view.className)
+            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage('Parameter deleted')
 
     def clickChangeParamButton(self):
@@ -427,6 +458,8 @@ class Controller:
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeParamInputFrame()
+            #self.view.removeClassFromCanvas(self.view.className)
+            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage('Parameters removed, add new parameter(s)') 
 
             
