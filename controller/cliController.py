@@ -14,7 +14,7 @@ import model.parameter
 from UMLException import UMLException, UMLSuccess
 from interface.interfaceCommands import *
 from model.saveload import *
-# from printColors import colors
+from view.printColors import colors
 
 
 _intro_text = """\
