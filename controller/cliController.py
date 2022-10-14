@@ -7,14 +7,14 @@
 import pyfiglet
 import cmd2
 # Local Imports
-import UMLClass
-import attributes
-import relationship
-import parameter
+import model.UMLClass as UMLCLass
+import model.attributes as attributes
+import model.relationship as relationship
+import model.parameter as parameter
 from UMLException import UMLException, UMLSuccess
 from interface.interfaceCommands import *
-from saveload import *
-from printColors import colors
+from model.saveload import *
+from view.printColors import colors
 
 
 _intro_text = """\
