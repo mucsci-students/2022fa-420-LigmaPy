@@ -141,7 +141,8 @@ class Controller:
             self.view.makeMessage("Relationship already exists")
         else:
             self.view.remake()
-            self.view.makeAddRelationFrame() 
+            self.view.makeAddRelationFrame()
+            self.view.makeLine(self.view.source, self.view.destination) 
             self.view.makeMessage("Relationship added")
 
     def clickUpdateTypeButton(self):
@@ -165,6 +166,7 @@ class Controller:
         else:
             self.view.remake()
             self.view.makeDeleteRelationFrame()
+            self.view.deleteLine(self.view.source, self.view.destination)
             self.view.makeMessage("Relationship deleted")
 
     def clickAddFieldButton(self):

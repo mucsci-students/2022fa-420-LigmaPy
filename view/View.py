@@ -5,6 +5,7 @@ Description : Constructs and displays the gui
 """
 
 
+from operator import index
 import tkinter as tk
 #import UMLNotebook as notebook
 from tkinter import LEFT, RIGHT, VERTICAL, Y, Canvas, OptionMenu, StringVar, ttk, filedialog
@@ -12,6 +13,7 @@ from turtle import width
 import model.UMLClass as u
 import model.relationship as r
 import model.attributes as a
+import math
 
 
 
@@ -226,29 +228,57 @@ class View(tk.Tk):
 
    #refreshes canvas and prints the 'UMLclass' in a nice format to the canvas  
     def printClassToCanvas(self, UMLclass):
-        #self.canvas.destroy()
-        #self.scrollbar.destroy()
-        #self.canvas = tk.Canvas(self.outputFrame, bg='white')
-        #self.outputFrame.destroy()
-        #self.makeOutputFrame()
-
         t = classToString(UMLclass)
-        #text = self.canvas.create_text(UMLclass.x, UMLclass.y, text= t[0], fill="black", font=('Helvetica 10 bold'))
-        #box1 = self.canvas.bbox(text)
-        #self.canvas.create_rectangle(box1, outline="blue")
-        #self.canvas.grid(row=0, column=1, sticky="nswe", rowspan=2)    
         UMLBoxes[UMLclass.name] = tk.Label(self.canvas, text=t[0], height=t[1], width=t[2], borderwidth=1, relief="solid", justify=LEFT, name = UMLclass.name)
         UMLBoxes[UMLclass.name].place(x=UMLclass.location['x'], y=UMLclass.location['y'])
-        
         print(t[0])
         print(t[1])
         print(t[2])
-        UMLBoxes[UMLclass.name].bind("<Button-1>", dragStart)
-        UMLBoxes[UMLclass.name].bind("<B1-Motion>", dragMove)
+        UMLBoxes[UMLclass.name].bind("<Button-1>", self.dragStart)
+        UMLBoxes[UMLclass.name].bind("<B1-Motion>", self.dragMove)
         
     def removeClassFromCanvas(self, UMLclass):
         UMLBoxes[UMLclass].destroy()
         del UMLBoxes[UMLclass]    
+
+    def makeLine(self, s, d):
+        source = UMLBoxes[s]
+        dest = UMLBoxes[d]
+        sXCoord = source.winfo_x()
+        sYCoord = source.winfo_y()
+        dXCoord = dest.winfo_x()
+        dYCoord = dest.winfo_y()
+        sWidth = source.winfo_reqwidth()
+        sHeigth = source.winfo_reqheight()
+        dWidth = dest.winfo_reqwidth()
+        dHeigth = dest.winfo_reqheight()
+
+        sCenterCoord = (sXCoord + sWidth//2, sYCoord + sHeigth //2)
+        dTopCoord = (dXCoord + dWidth//2, dYCoord)
+        dLeftCoord = (dXCoord, dYCoord + dHeigth//2)
+        dRightCoord = (dXCoord + dWidth, dYCoord + dHeigth//2)
+        dBottomCoord = (dXCoord + dWidth//2, dYCoord + dHeigth)
+        closest = []
+        closest.append(math.dist(sCenterCoord,dTopCoord))
+        closest.append(math.dist(sCenterCoord,dLeftCoord))
+        closest.append(math.dist(sCenterCoord,dRightCoord))
+        closest.append(math.dist(sCenterCoord,dBottomCoord))
+        
+        minpos = closest.index(min(closest))
+        if minpos == 0:
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dTopCoord[0],dTopCoord[1], width=3)
+        if minpos == 1:
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dLeftCoord[0],dLeftCoord[1], width=3)
+        if minpos == 2:
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dRightCoord[0],dRightCoord[1], width=3)
+        if minpos == 3:
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dBottomCoord[0],dBottomCoord[1], width=3)
+
+    def deleteLine(self, s, d):
+        source = UMLBoxes[s]
+        dest = UMLBoxes[d]
+        self.canvas.delete(UMLLines[(source, dest)])
+        del UMLLines[(source, dest)]
 
     #clears canvas on right and input window on left
     def clearScreen(self):
@@ -1009,6 +1039,35 @@ class View(tk.Tk):
         self.inputFrame.destroy()
         self.makeInputFrame()
 
+    def dragStart(self, event):
+        widget = event.widget
+        #print(widget.name)
+        widget.startX = event.x
+        widget.startY = event.y
+
+    def dragMove(self, event):
+    # top left corner of widget relative to window - place where we
+    #click in the label itself + where be begin draging the widget to
+        widget = event.widget
+        print(widget.winfo_name())
+        print(widget.winfo_id())
+        
+        x = widget.winfo_x() - widget.startX + event.x
+        y = widget.winfo_y() - widget.startY + event.y
+        widget.place(x=x, y=y)
+        name = u.classIndex[u.findClass(widget.winfo_name())]
+        name.location['x'] = x
+        name.location['y'] = y
+        print(str(name.location['x']) + " : " + str(name.location['x']))
+        for each in UMLLines:
+            if widget in each:
+                if each.index(widget) == 0:
+                    self.deleteLine(each[0].winfo_name(), each[1].winfo_name())
+                    self.makeLine( widget.winfo_name(), each[1].winfo_name())
+                else:
+                    self.deleteLine(each[0].winfo_name(), each[1].winfo_name())
+                    self.makeLine(each[0].winfo_name(), widget.winfo_name())
+
 #returns a class 'c' in a string format for output
 def classToString(c):
     classLen = 7
@@ -1049,7 +1108,7 @@ def relationToString(r):
     string += "    Destination: " + r.destination + "\n"
     string += "    Type: " + r.type + "\n\n"
     return string
-
+"""
 def dragStart(event):
     widget = event.widget
     #print(widget.name)
@@ -1070,6 +1129,15 @@ def dragMove(event):
     name.location['x'] = x
     name.location['y'] = y
     print(str(name.location['x']) + " : " + str(name.location['x']))
+    for each in UMLLines:
+        if widget in each:
+            if each.index(widget) == 0:
+                View.deleteLine(tk.Tk, each[0].winfo_name(), each[1].winfo_name())
+                View.makeLine(tk.Tk, widget.winfo_name(), each[1].winfo_name())
+            else:
+                View.deleteLine(tk.Tk ,each[0].winfo_name(), each[1].winfo_name())
+                View.makeLine(tk.Tk ,each[0].winfo_name(), widget.winfo_name())
+"""
 """
 #for testing
 def printClass (c):
@@ -1089,3 +1157,4 @@ def printClass (c):
     print()
 """
 UMLBoxes = {}
+UMLLines = {}
