@@ -28,7 +28,7 @@ class Interface(cmd2.Cmd):
     prompt = ">> "
 
     def __init__(self):
-        super().__init__()
+        super().__init__(allow_cli_args=False)
         # Remove built-in commands from cmd2.Cmd
         del cmd2.Cmd.do_edit
         del cmd2.Cmd.do_shell
