@@ -14,7 +14,8 @@ import model.parameter as parameter
 from UMLException import UMLException, UMLSuccess
 from interface.interfaceCommands import *
 from model.saveload import *
-from view.printColors import colors
+# from view.printColors import colors
+from model import UMLState
 
 
 _intro_text = """\
@@ -55,7 +56,12 @@ class Interface(cmd2.Cmd):
     @cmd2.with_category("Class")
     # Creates a uniquely named class
     def do_addClass(self, arg):
+        # Save the current state
+        UMLState.saveState()
         UMLClass.addClass(arg.class_name)
+
+        
+
     
     """
         Delete Class
@@ -66,6 +72,8 @@ class Interface(cmd2.Cmd):
     @cmd2.with_category("Class")
     # Removes a class
     def do_deleteClass(self, arg):
+        # Save the current state
+        UMLState.saveState()
         UMLClass.deleteClass(arg)
     
     """ 
@@ -78,13 +86,9 @@ class Interface(cmd2.Cmd):
     @cmd2.with_category("Class")
     # Changes the name of a class
     def do_renameClass(self, arg):
-
+        # Save the current state
+        UMLState.saveState()
         UMLClass.renameClass(arg.class_name, arg.new_name)
-        # names = arg.split()
-        # if len(names) == 2:
-        #     UMLClass.renameClass(names[0], names[1])
-        # else:
-        #     print(f"Argument error")
 
     """ RELATIONSHIP COMMANDS """
 
@@ -102,13 +106,9 @@ class Interface(cmd2.Cmd):
     @cmd2.with_category("Relationship")
     # Creates a relationship between two classes
     def do_addRelationship(self, arg):
-
+        # Save the current state
+        UMLState.saveState()
         relationship.addRelationship(arg.src, arg.dest, arg.type)
-        # classes = arg.split()
-        # if len(classes) == 3:
-        #     relationship.addRelationship(classes[0], classes[1], classes[2])
-        # else:
-        #     print(f"Argument error")
 
     """
         Delete Relationship
@@ -119,13 +119,9 @@ class Interface(cmd2.Cmd):
     @cmd2.with_category("Relationship")
     # Deletes an existing relationship between two classes
     def do_deleteRelationship(self, arg):
-
+        # Save the current state
+        UMLState.saveState()
         relationship.deleteRelationship(arg.src, arg.dest)
-        # classes = arg.split()
-        # if len(classes) == 2:
-        #     relationship.deleteRelationship(classes[0], classes[1])
-        # else:
-        #     print(f"Argument error")
 
     """
         Change Relationship Type
@@ -137,16 +133,10 @@ class Interface(cmd2.Cmd):
     @cmd2.with_argparser(changeRelTypeParser)
     @cmd2.with_category("Relationship")
     def do_changeRelType(self, arg):
-
+        # Save the current state
+        UMLState.saveState()
         relIndex = relationship.findRelationship(arg.src, arg.dest)
         relationship.relationIndex[relIndex].editType(arg.new_type)
-
-        # args = arg.split()
-        # if len(args) == 3:
-        #     relIndex = relationship.findRelationship(args[0], args[1])
-        #     relationship.relationIndex[relIndex].editType(args[2])
-        # else:
-        #     print("wrong number of arguments")
 
     """ METHOD COMMANDS """
 
@@ -163,6 +153,8 @@ class Interface(cmd2.Cmd):
     @cmd2.with_argparser(addMethodParser)
     # Creates a new method for the specified class
     def do_addMethod(self, arg):
+        # Save the current state
+        UMLState.saveState()
         # Added the method with return type to the class
         attributes.addMethod(arg.method_name, arg.class_name, arg.ret_type)
         # Check if optional arg 'p' was entered
@@ -185,22 +177,10 @@ class Interface(cmd2.Cmd):
     @cmd2.with_category("Method")
     # Removes the method from the specified class
     def do_deleteMethod(self, arg):
+        # Save the current program state
+        UMLState.saveState()
         # Remove method from class
         attributes.deleteMethod(arg.method_name, arg.class_name)
-
-
-
-        # args = arg.split()
-        # if len(args) == 2:
-        #     ret = attributes.deleteMethod(args[1], args[0])
-        #     if ret == 1:
-        #         print(UMLSuccess(f"Removed {args[1]} from {args[0]}"))
-        #     elif ret == -1:
-        #         print(UMLException("Class error", f"{args[0]} does not exist"))
-        #     elif ret == -2:
-        #         print(UMLException("Method error", f"{args[1]} does not exist in {args[0]}"))
-        # else:
-        #     print(f"Wrong")
 
     """
         Rename Method
@@ -213,22 +193,10 @@ class Interface(cmd2.Cmd):
     @cmd2.with_category("Method")
     # Renames the specified method in the specified class
     def do_renameMethod(self, arg):
+        # Save the current program state
+        UMLState.saveState()
         # Update the name of the method in a class
         attributes.renameMethod(arg.old_name, arg.new_name, arg.class_name)
-
-        # args = arg.split()
-        # if len(args) == 3:
-        #     ret = attributes.renameMethod(args[1], args[2], args[0])
-        #     if ret == 1:
-        #         print(UMLSuccess(f"Renamed {args[0]} to {args[1]}"))
-        #     elif ret == -1:
-        #         print(UMLException("Class error", f"{args[2]} does not exist"))
-        #     elif ret == -2:
-        #         print(UMLException("Method error", f"{args[0]} does not exist in {args[2]}"))
-        #     elif ret == -3:
-        #         print(UMLException("Method error", f"{args[1]} already exists in {args[2]}"))
-        # else:
-        #     print(UMLException("Argument error", "BLAH"))
 
     """ FIELD COMMANDS """
 
@@ -242,20 +210,9 @@ class Interface(cmd2.Cmd):
     @cmd2.with_argparser(addFieldParser)
     @cmd2.with_category("Field")
     def do_addField(self, arg):
-
+        # Save the current program state
+        UMLState.saveState()
         attributes.addField(arg.field_name, arg.class_name, arg.type)
-
-        # args = arg.split()
-
-        # if len(args) == 3:
-        #     ret = attributes.addField(args[1], args[0], args[2])
-
-        #     if ret == -1:
-        #         print(UMLException("Class error", f"{args[0]} does not exist"))
-        #     elif ret == -2:
-        #         print(UMLException("Field error", f"{args[1]} already exists"))
-        # else:
-        #     print("Incorrect amount of arguments")
 
     """
         Delete Field
@@ -266,18 +223,9 @@ class Interface(cmd2.Cmd):
     @cmd2.with_argparser(deleteFieldParser)
     @cmd2.with_category("Field")
     def do_deleteField(self, arg):
-
+        # Save the current program state
+        UMLState.saveState()
         attributes.deleteField(arg.field_name, arg.class_name)
-
-        # args = arg.split()
-        # if len(args) == 2:
-        #     ret = attributes.deleteField(args[1], args[0])
-        #     if ret == -1:
-        #         print(UMLException("Class error", f"{args[0]} does not exist"))
-        #     elif ret == -2:
-        #         print(UMLException("Field error", f"{args[1]} does not exist in {args[0]}"))
-        # else:
-        #     print("ARGUMENT ERROR")
 
     """
         Rename Field
@@ -289,23 +237,9 @@ class Interface(cmd2.Cmd):
     @cmd2.with_argparser(renameFieldParser)
     @cmd2.with_category("Field")
     def do_renameField(self, arg):
-
+        # Save the current program state
+        UMLState.saveState()
         attributes.renameField(arg.name, arg.new_name, arg.class_name)
-
-        # args = arg.split()
-        # if len(args) == 3:
-        #     ret = attributes.renameField(args[1], args[2], args[0])
-        #     if ret == 1:
-        #         print(UMLSuccess(f"Renamed {args[0]} to {args[1]}"))
-        #     elif ret == -1:
-        #         print(UMLException("Class error", f"{args[2]} does not exist"))
-        #     elif ret == -2:
-        #         print(UMLException("Field error", f"{args[0]} does not exist in {args[2]}"))
-        #     elif ret == -3:
-        #         print(UMLException("Field error", f"{args[1]} already exists in {args[2]}"))
-        # else:
-        #     print(UMLException("Argument error", f"expected 3 args, but was given {len(args)}"))
-
 
     """ PARAMETER COMMANDS """
 
@@ -319,6 +253,8 @@ class Interface(cmd2.Cmd):
     @cmd2.with_argparser(addParamParser)
     @cmd2.with_category("Parameter")
     def do_addParam(self, arg):
+        # Save the current program state
+        UMLState.saveState()
         # List of parameter tuples to pass to addParameter method
         paramList = []
         for param in arg.p:
@@ -338,7 +274,8 @@ class Interface(cmd2.Cmd):
     @cmd2.with_argparser(deleteParamParser)
     @cmd2.with_category("Parameter")
     def do_deleteParam(self, arg):
-
+        # Save the current program state
+        UMLState.saveState()
         if arg.a:
             parameter.deleteAllParameter(arg.method_name, arg.class_name)
         else:
@@ -354,7 +291,7 @@ class Interface(cmd2.Cmd):
         Changes the list of parameters from <old_list> to <new_list> in <method>
         """
         # args = arg.split()
-
+        
         print(f"Waiting to be implemented")
     
     """ SAVE/LOAD COMMANDS """
@@ -374,6 +311,10 @@ class Interface(cmd2.Cmd):
     # Load a previous state from a JSON file
     def do_load(self, arg):
         load(arg.filename)
+
+    """ UNDO/REDO """
+    def do_undo(self, _):
+        UMLState.loadState(UMLState.undo())
     
     """ LIST COMMANDS """
     @cmd2.with_category("Lists")
