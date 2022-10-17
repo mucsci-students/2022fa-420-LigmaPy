@@ -26,14 +26,7 @@ def saveState() -> UMLState:
     classDict = [c.toDict() for c in UMLClass.classIndex]
     relationDict = [relation.toDict() for relation in relationship.relationIndex]
     dict = {"classes": classDict, "relationships": relationDict}
-    state = UMLState(dict)
-    # undoStack.put(state)
-
-    """ 
-    TODO : put the current state onto either the undo or redo stack depending on situation preferrably outside saveState?
-    """
-
-    return state
+    return UMLState(dict)
 
 def addUndo(state : UMLState):
     """
@@ -53,13 +46,9 @@ def loadState(state : UMLState):
 
     :param state: The UMLState object that should be loaded
     """
-
-    # print(state.stateDict)
-
     # If there is no state, return
     if state is None:
         return
-
     # Clear the class and relationship lists
     UMLClass.clear()
     relationship.clear()

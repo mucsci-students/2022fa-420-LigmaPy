@@ -71,7 +71,7 @@ class Interface(cmd2.Cmd):
     def do_deleteClass(self, arg):
         # Save the current state
         UMLState.addUndo(UMLState.saveState())
-        UMLClass.deleteClass(arg)
+        UMLClass.deleteClass(arg.class_name)
     
     """ 
         Rename Class
