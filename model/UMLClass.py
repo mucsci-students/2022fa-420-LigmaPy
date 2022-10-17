@@ -16,6 +16,7 @@ class UMLClass:
         self.fields = []
         self.methods = []
         self.location = {'x' : 100, 'y' : 100}
+        #observer list
         self.subscribers = []
 
         print(f"\nAdded class {self}")
@@ -91,13 +92,19 @@ def deleteClass(name: str):
     """
     index = findClass(name)
     if index is not None:
-        listToDel = []
-        # Remove relationships 
+        # uses observer to update the relationships on class deletion
+        for sub in classIndex[index].subscribers:
+            for relation in relationship.relationIndex:
+                if sub == relation.hash:
+                    relationship.relationIndex.pop(relationship.relationIndex.index(relation))
+                    break
+        """
         for relation in relationship.relationIndex:
             if relation.source == name or relation.destination == name:
                 listToDel.append(relation)
         for each in listToDel:
             relationship.deleteRelationship(each.source,each.destination)
+        """
         classIndex.pop(index)
         print(UMLSuccess(f"Deleted class {name}"))
         return 1
@@ -120,11 +127,12 @@ def renameClass(oldName: str, newName: str):
     index = findClass(oldName)
     if index is not None:
         classIndex[index].rename(newName)
-        #go through subscriber list and change appropriate relationships
+        # uses observer to update the relationships on class rename
         for sub in classIndex[index].subscribers:
             for relation in relationship.relationIndex:
                 if sub == relation.hash:
                     relation.updateRename(oldName, newName)
+                    break
 
     else:
         print(UMLException("Class Rename Error", f"{oldName} does not exist"))

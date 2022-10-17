@@ -32,12 +32,14 @@ class UMLRelationship:
     """
     updates the relationship class
     """
+    
     def updateRename(self, oldName:str, newName:str):
         if self.source == oldName:
             self.source = newName
         else: 
             self.destination = newName
     
+
 
 ###################################################################################################
 
