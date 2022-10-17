@@ -8,7 +8,7 @@ from queue import LifoQueue
 
 from model import UMLClass, relationship, attributes, parameter
 
-undoStack = LifoQueue(maxsize=5)
+undoStack = LifoQueue()
 
 class UMLState():
     def __init__(self, state):
@@ -18,26 +18,28 @@ class UMLState():
 def saveState():
     """
     Saves the current program state to a stack
+
+    :returns: The state that was saved
     """
     classDict = [c.toDict() for c in UMLClass.classIndex]
     relationDict = [relation.toDict() for relation in relationship.relationIndex]
     dict = {"classes": classDict, "relationships": relationDict}
-    if undoStack.full():
-        print("UNDO FULL")
-        test = undoStack.get()
-        print(test.stateDict)
-        return
-    undoStack.put(UMLState(dict))
+    state = UMLState(dict)
+    undoStack.put(state)
+    return state
 
 def loadState(state : UMLState):
     """
-        TODO Reset classIndex and relationIndex
-    
+    Loads a UMLState object
+
+    :param state: The UMLState object that should be loaded
     """
 
+    # If there is no state, return
+    if state is None:
+        return
 
-    print(state.stateDict.items())
-
+    # Clear the class and relationship lists
     UMLClass.clear()
     relationship.clear()
     # Add all classes and their contents 
@@ -55,5 +57,15 @@ def loadState(state : UMLState):
                 parameter.addParameter([(param['name'], param['type'])], meth['name'], c['name'])
 
 def undo() -> UMLState:
-    return undoStack.get()
+    """
+    Pops the last state from the undoStack
+
+    :returns: None if stack is empty otherwise the popped item from the stack
+    """
+    if undoStack.empty():
+        return None
+
+    prevState = undoStack.get()
+
+    return prevState
 
