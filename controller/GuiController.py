@@ -468,8 +468,10 @@ class Controller:
     def clickLoadButton(self):
         self.view.load()
         message = s.loadGUI(self.view.fileName)
+        #clears the canvas and empties lines dictionary
         self.view.clearScreen()
         UMLLines.clear()
+        #loops thru loaded class and relationships and makes boxes/lines for each
         for each in u.classIndex:
             self.view.printClassToCanvas(each)
         for rel in r.relationIndex:
