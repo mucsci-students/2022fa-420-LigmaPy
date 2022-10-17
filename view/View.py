@@ -260,6 +260,41 @@ class View(tk.Tk):
         for each in destList:
             self.makeLine(UMLBoxes[UMLclass.name].winfo_name(), each.winfo_name())
 
+
+
+    def printRenamedClassToCanvas(self, UMLclass, UMLold):
+        #gets the text, width and heigth as tuple(t,w,h)
+        new = classToString(UMLclass)
+        #holders to recreate lines
+        sourceList = []
+        destList = []
+        
+        #checks if a box / relation exists and deletes the line and box so they can be remade
+        if UMLold in UMLBoxes:
+            for each in list(UMLLines):
+                if UMLBoxes[UMLold] in each:
+                    if each.index(UMLBoxes[UMLold]) == 0:
+                        destList.append(each[1])
+                        self.deleteLine(each[0].winfo_name(), each[1].winfo_name())
+                    else:
+                        sourceList.append(each[0])
+                        self.deleteLine(each[0].winfo_name(), each[1].winfo_name())
+            self.removeClassFromCanvas(UMLold)
+        
+        #makes/remakes boxes using tuple above
+        UMLBoxes[UMLclass.name] = tk.Label(self.canvas, text=new[0], height=new[1], width=new[2], borderwidth=1, relief="solid", justify=LEFT, name = UMLclass.name)
+        UMLBoxes[UMLclass.name].place(x=UMLclass.location['x'], y=UMLclass.location['y'])
+        #binds boxes to drag and drop event
+        UMLBoxes[UMLclass.name].bind("<Button-1>", self.dragStart)
+        UMLBoxes[UMLclass.name].bind("<B1-Motion>", self.dragMove)
+        
+        #remakes the line with the new label if a relationship existed
+        for each in sourceList:
+            self.makeLine(each.winfo_name(), UMLBoxes[UMLclass.name].winfo_name())
+        for each in destList:
+            self.makeLine(UMLBoxes[UMLclass.name].winfo_name(), each.winfo_name())
+
+        
     #delete class box from canvas and any relationship lines dependant on the box    
     def removeClassFromCanvas(self, UMLclass):
         #deletes and relation lines linked to box
@@ -299,6 +334,11 @@ class View(tk.Tk):
         dLeftCoord = (dXCoord, dYCoord + dHeigth//2)
         dRightCoord = (dXCoord + dWidth, dYCoord + dHeigth//2)
         dBottomCoord = (dXCoord + dWidth//2, dYCoord + dHeigth)
+        dTopRight = (dXCoord, dYCoord)
+        dTopLeft = (dXCoord + dWidth, dYCoord)
+        dBottomRight = (dXCoord, dYCoord + dHeigth )
+        dBottomLeft = (dXCoord + dWidth, dYCoord + dHeigth)
+
 
         #determines the closest coord from above
         closest = []
@@ -306,17 +346,33 @@ class View(tk.Tk):
         closest.append(math.dist(sCenterCoord,dLeftCoord))
         closest.append(math.dist(sCenterCoord,dRightCoord))
         closest.append(math.dist(sCenterCoord,dBottomCoord))
-        
+
+        closest.append(math.dist(sCenterCoord,dTopRight))
+        closest.append(math.dist(sCenterCoord,dTopLeft))
+        closest.append(math.dist(sCenterCoord,dBottomRight))
+        closest.append(math.dist(sCenterCoord,dBottomLeft))
+
+
         #creates the line to closest point and add it to the list
         minpos = closest.index(min(closest))
         if minpos == 0:
-            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dTopCoord[0],dTopCoord[1], width=3)
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dTopCoord[0],dTopCoord[1], width=3, arrow=tk.LAST)
         if minpos == 1:
-            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dLeftCoord[0],dLeftCoord[1], width=3)
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dLeftCoord[0],dLeftCoord[1], width=3, arrow=tk.LAST)
         if minpos == 2:
-            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dRightCoord[0],dRightCoord[1], width=3)
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dRightCoord[0],dRightCoord[1], width=3, arrow=tk.LAST)
         if minpos == 3:
-            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dBottomCoord[0],dBottomCoord[1], width=3)
+
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dBottomCoord[0],dBottomCoord[1], width=3, arrow=tk.LAST)
+        if minpos == 4:
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dTopRight[0],dTopRight[1], width=3, arrow=tk.LAST)
+        if minpos == 5:
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dTopLeft[0],dTopLeft[1], width=3, arrow=tk.LAST)            
+        if minpos == 6:
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dBottomRight[0],dBottomRight[1], width=3, arrow=tk.LAST)    
+        if minpos == 7:
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dBottomLeft[0],dBottomLeft[1], width=3, arrow=tk.LAST)
+    
 
     #delete a line and removes it from the list
     def deleteLine(self, s, d):
@@ -331,7 +387,7 @@ class View(tk.Tk):
         self.makeOutputFrame()
         self.remake()
 
-    # refreshes the canvase and prints the list of class to the canvas 
+    # refreshes the canvas and prints the list of class to the canvas 
     def printAllClassesToCanvas(self, list):
         self.canvas.destroy()
         self.scrollbar.destroy()

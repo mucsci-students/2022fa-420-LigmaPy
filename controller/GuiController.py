@@ -117,10 +117,14 @@ class Controller:
             self.view.remake()
             self.view.makeRenameClassFrame()
             self.view.makeMessage(f"\nClass \"{self.view.className}\" does not exist")
+        elif num == -3:
+            self.view.remake()
+            self.view.makeRenameClassFrame()
+            self.view.makeMessage(f"\nClass name cannot be empty")
         else:
             self.view.remake()
             self.view.makeRenameClassFrame()
-            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.classNameNew)])
+            self.view.printRenamedClassToCanvas(u.classIndex[u.findClass(self.view.classNameNew)], self.view.className)            
             self.view.makeMessage("Class renamed")
         
     def clickAddRelationButton(self):
