@@ -110,4 +110,7 @@ def deleteRelationship(source: str, destination: str):
         
 ###################################################################################################
 
+def clear():
+    relationIndex.clear()
+
 relationIndex : List[UMLRelationship]= []

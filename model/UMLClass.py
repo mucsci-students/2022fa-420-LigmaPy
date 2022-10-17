@@ -131,5 +131,8 @@ def renameClass(oldName: str, newName: str):
         print(UMLException("Class Rename Error", f"{oldName} does not exist"))
         return -2
 
+def clear():
+    classIndex.clear()
+
 # List of all class objects the user has created
 classIndex: List[UMLClass] = []
