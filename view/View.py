@@ -261,6 +261,7 @@ class View(tk.Tk):
             self.makeLine(UMLBoxes[UMLclass.name].winfo_name(), each.winfo_name())
 
 
+
     def printRenamedClassToCanvas(self, UMLclass, UMLold):
         #gets the text, width and heigth as tuple(t,w,h)
         new = classToString(UMLclass)
@@ -294,7 +295,6 @@ class View(tk.Tk):
             self.makeLine(UMLBoxes[UMLclass.name].winfo_name(), each.winfo_name())
 
         
-
     #delete class box from canvas and any relationship lines dependant on the box    
     def removeClassFromCanvas(self, UMLclass):
         #deletes and relation lines linked to box
@@ -339,16 +339,19 @@ class View(tk.Tk):
         dBottomRight = (dXCoord, dYCoord + dHeigth )
         dBottomLeft = (dXCoord + dWidth, dYCoord + dHeigth)
 
+
         #determines the closest coord from above
         closest = []
         closest.append(math.dist(sCenterCoord,dTopCoord))
         closest.append(math.dist(sCenterCoord,dLeftCoord))
         closest.append(math.dist(sCenterCoord,dRightCoord))
         closest.append(math.dist(sCenterCoord,dBottomCoord))
+
         closest.append(math.dist(sCenterCoord,dTopRight))
         closest.append(math.dist(sCenterCoord,dTopLeft))
         closest.append(math.dist(sCenterCoord,dBottomRight))
         closest.append(math.dist(sCenterCoord,dBottomLeft))
+
 
         #creates the line to closest point and add it to the list
         minpos = closest.index(min(closest))
@@ -359,6 +362,7 @@ class View(tk.Tk):
         if minpos == 2:
             UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dRightCoord[0],dRightCoord[1], width=3, arrow=tk.LAST)
         if minpos == 3:
+
             UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dBottomCoord[0],dBottomCoord[1], width=3, arrow=tk.LAST)
         if minpos == 4:
             UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dTopRight[0],dTopRight[1], width=3, arrow=tk.LAST)
@@ -369,6 +373,7 @@ class View(tk.Tk):
         if minpos == 7:
             UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dBottomLeft[0],dBottomLeft[1], width=3, arrow=tk.LAST)
     
+
     #delete a line and removes it from the list
     def deleteLine(self, s, d):
         source = UMLBoxes[s]

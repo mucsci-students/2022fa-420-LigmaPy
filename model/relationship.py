@@ -18,6 +18,14 @@ class UMLRelationship:
 
         print(f"\nRelationship added: {self}")
 
+    def toDict(self):
+        """
+        Converts a relationship to a dictionary
+
+        :returns: A dictionary of the relationship
+        """
+        return {"source": self.source, "destination": self.destination, "type": self.type}
+
     def __repr__(self):
         return f"[{self.source}] - [{self.destination}] <{self.type}>"
 
@@ -102,5 +110,11 @@ def deleteRelationship(source: str, destination: str):
         return -2
         
 ###################################################################################################
+
+def clear():
+    """
+    Clears the list of relationships
+    """
+    relationIndex.clear()
 
 relationIndex : List[UMLRelationship]= []

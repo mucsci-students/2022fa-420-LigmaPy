@@ -21,6 +21,16 @@ class UMLClass:
     def __repr__(self):
         return f"{self.name}"
 
+    def toDict(self):
+        """
+        Converts a class to a dictionary
+
+        :returns: A dictionary of the class
+        """
+        fieldDict = [field.toDict() for field in self.fields]
+        methodDict = [method.toDict() for method in self.methods]
+        return {"name": self.name, "Fields": fieldDict, "Methods": methodDict}
+
     def rename(self, newName):
         print(UMLSuccess(f"Renamed {self.name} to {newName}"))
         self.name = newName
@@ -125,6 +135,9 @@ def renameClass(oldName: str, newName: str):
     else:
         print(UMLException("Class Rename Error", f"{oldName} does not exist"))
         return -2
+
+def clear():
+    classIndex.clear()
 
 # List of all class objects the user has created
 classIndex: List[UMLClass] = []

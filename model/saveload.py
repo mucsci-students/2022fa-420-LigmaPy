@@ -146,6 +146,8 @@ def load(filename):
                 for par in mParams:
                     methodObj.params.append(p.parameter(par['name'],par['type']))
                 classObj.methods.append(methodObj)
+            loc = c['location']
+            classObj.location = {'x' : loc['x'], 'y' : loc['y']}
             returnClasses.append(classObj)
         
         #creates new relation for each json relation and adds them to return list
@@ -206,6 +208,8 @@ def loadGUI(filename):
                 for par in mParams:
                     methodObj.params.append(p.parameter(par['name'],par['type']))
                 classObj.methods.append(methodObj)
+            loc = c['location']
+            classObj.location = {'x' : loc['x'], 'y' : loc['y']}
             returnClasses.append(classObj)
         
         #creates new relation for each json relation and adds them to return list
