@@ -23,7 +23,8 @@ class UMLClass:
 
     def toDict(self):
         """
-        
+        Converts a class to a dictionary
+
         :returns: A dictionary of the class
         """
         fieldDict = [field.toDict() for field in self.fields]

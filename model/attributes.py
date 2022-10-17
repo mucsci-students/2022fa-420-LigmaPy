@@ -35,7 +35,8 @@ class method(attribute):
 
     def toDict(self):
         """
-        
+        Converts a method to a dictionary
+
         :returns: A dictionary of the method
         """
 
@@ -53,7 +54,8 @@ class field(attribute):
 
     def toDict(self):
         """
-        
+        Converts a field to a dictionary
+
         :returns: A dictionary of the field
         """
         return {"name": self.name, "type": self.type}

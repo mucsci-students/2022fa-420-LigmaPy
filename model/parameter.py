@@ -21,6 +21,7 @@ class parameter:
 
     def toDict(self):
         """
+        Converts a parameter to a dictionary
         
         :returns: A dictionary of the parameter
         """
