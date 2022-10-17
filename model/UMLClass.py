@@ -9,12 +9,14 @@ import model.relationship as relationship
 from UMLException import UMLException, UMLSuccess
 
 
+
 class UMLClass:
     def __init__(self, name: str):
         self.name = name
         self.fields = []
         self.methods = []
         self.location = {'x' : 100, 'y' : 100}
+        self.subscribers = []
 
         print(f"\nAdded class {self}")
 
@@ -24,6 +26,16 @@ class UMLClass:
     def rename(self, newName):
         print(UMLSuccess(f"Renamed {self.name} to {newName}"))
         self.name = newName
+    
+    def register(self, relationship):
+        self.subscribers.append(relationship)
+
+    def unregister(self, relationship):
+        self.subscribers.pop(relationship)
+    
+    def dispatch(self, message):
+        for subscriber in self.subscribers:
+            subscriber.update(message)
 
 
 def isNameUnique(name: str):
@@ -108,19 +120,17 @@ def renameClass(oldName: str, newName: str):
     index = findClass(oldName)
     if index is not None:
         classIndex[index].rename(newName)
-        
-        # Update it's relationships
-        for i, relation in enumerate(relationship.relationIndex):
-            # Check source
-            if relation.source == oldName:
-                relationship.relationIndex[i].source = newName
-            # Check destination
-            elif relation.destination == oldName:
-                relationship.relationIndex[i].destination = newName
-        return 1
+        #go through subscriber list and change appropriate relationships
+        for sub in classIndex[index].subscribers:
+            for relation in relationship.relationIndex:
+                if sub == relation.hash:
+                    relation.updateRename(oldName, newName)
+
     else:
         print(UMLException("Class Rename Error", f"{oldName} does not exist"))
         return -2
+
+
 
 # List of all class objects the user has created
 classIndex: List[UMLClass] = []
