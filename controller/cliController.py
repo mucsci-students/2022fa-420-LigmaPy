@@ -15,6 +15,7 @@ from UMLException import UMLException, UMLSuccess
 from interface.interfaceCommands import *
 from model.saveload import *
 from view.printColors import colors
+from model import UMLState
 
 
 _intro_text = """\
@@ -56,6 +57,8 @@ class Interface(cmd2.Cmd):
     # Creates a uniquely named class
     def do_addClass(self, arg):
         UMLClass.addClass(arg.class_name)
+        UMLState.saveState()
+
     
     """
         Delete Class

@@ -18,6 +18,13 @@ class UMLRelationship:
 
         print(f"\nRelationship added: {self}")
 
+    def toDict(self):
+        """
+        
+        :returns: A dictionary of the relationship
+        """
+        return {"source": self.source, "destination": self.destination, "type": self.type}
+
     def __repr__(self):
         return f"[{self.source}] - [{self.destination}] <{self.type}>"
 

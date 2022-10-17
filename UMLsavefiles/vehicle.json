@@ -36,7 +36,11 @@
                     "return_type": "void",
                     "params": []
                 }
-            ]
+            ],
+            "location": {
+                "x": 100,
+                "y": 100
+            }
         },
         {
             "name": "Tire",
@@ -61,7 +65,11 @@
                         }
                     ]
                 }
-            ]
+            ],
+            "location": {
+                "x": 100,
+                "y": 100
+            }
         },
         {
             "name": "Engine",
@@ -91,7 +99,11 @@
                     "return_type": "void",
                     "params": []
                 }
-            ]
+            ],
+            "location": {
+                "x": 100,
+                "y": 100
+            }
         },
         {
             "name": "Suspension",
@@ -101,7 +113,11 @@
                     "type": "float"
                 }
             ],
-            "methods": []
+            "methods": [],
+            "location": {
+                "x": 100,
+                "y": 100
+            }
         },
         {
             "name": "Wheel",
@@ -111,7 +127,11 @@
                     "type": "float"
                 }
             ],
-            "methods": []
+            "methods": [],
+            "location": {
+                "x": 100,
+                "y": 100
+            }
         },
         {
             "name": "GearBox",
@@ -136,7 +156,11 @@
                     "return_type": "int",
                     "params": []
                 }
-            ]
+            ],
+            "location": {
+                "x": 100,
+                "y": 100
+            }
         },
         {
             "name": "Brake",
@@ -162,8 +186,18 @@
                         }
                     ]
                 }
-            ]
+            ],
+            "location": {
+                "x": 100,
+                "y": 100
+            }
         }
     ],
-    "relationships": []
+    "relationships": [
+        {
+            "source": "Tire",
+            "destination": "Car",
+            "type": "composition"
+        }
+    ]
 }

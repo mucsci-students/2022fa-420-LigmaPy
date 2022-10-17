@@ -33,6 +33,16 @@ class method(attribute):
         self.return_type = retType
         self.params = []
 
+    def toDict(self):
+        """
+        
+        :returns: A dictionary of the method
+        """
+
+        paramDict = [p.toDict() for p in self.params]
+
+        return {"name": self.name, "return_type": self.return_type, "params": paramDict}
+
     def __str__(self):
         return f"{self.return_type} {self.name}({', '.join(map(str, self.params))})"
 
@@ -40,6 +50,13 @@ class field(attribute):
     def __init__(self, name : str, t : str):
         super().__init__(name)
         self.type = t
+
+    def toDict(self):
+        """
+        
+        :returns: A dictionary of the field
+        """
+        return {"name": self.name, "type": self.type}
 
     def changeType(self, newName : str):
         self.name = newName

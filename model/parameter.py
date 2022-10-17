@@ -19,6 +19,13 @@ class parameter:
         self.name = name
         self.type = type
 
+    def toDict(self):
+        """
+        
+        :returns: A dictionary of the parameter
+        """
+        return {"name": self.name, "type": self.type}
+
     # Called when printing a parameter object with print()
     def __str__(self):
         return f"{self.type} {self.name}"
