@@ -105,6 +105,10 @@ def renameClass(oldName: str, newName: str):
         print(UMLException("Class Rename Error", f"{newName} class already exists"))
         return -1
 
+    if len(newName.strip()) == 0:
+        print(UMLException("Class name cannot be empty"))
+        return -3
+
     index = findClass(oldName)
     if index is not None:
         classIndex[index].rename(newName)
