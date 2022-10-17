@@ -1,5 +1,4 @@
 """
-Author(s)   : Trevor Bender, Sam Noggle
 Filename    : UMLState.py
 Description : Takes a snapshot of the current program state
 """
@@ -9,13 +8,16 @@ from queue import LifoQueue
 from model import UMLClass, relationship, attributes, parameter
 
 undoStack = LifoQueue()
+redoStack = LifoQueue()
 
 class UMLState():
     def __init__(self, state):
         self.stateDict = state
 
+    def __repr__(self):
+        return f"{self.stateDict}"
     
-def saveState():
+def saveState() -> UMLState:
     """
     Saves the current program state to a stack
 
@@ -25,8 +27,25 @@ def saveState():
     relationDict = [relation.toDict() for relation in relationship.relationIndex]
     dict = {"classes": classDict, "relationships": relationDict}
     state = UMLState(dict)
-    undoStack.put(state)
+    # undoStack.put(state)
+
+    """ 
+    TODO : put the current state onto either the undo or redo stack depending on situation preferrably outside saveState?
+    """
+
     return state
+
+def addUndo(state : UMLState):
+    """
+    Appends the current state to the undoStack
+    """
+    undoStack.put(state)
+
+def addRedo(state : UMLState):
+    """
+    Appends the current state to the redoStack
+    """
+    redoStack.put(state)
 
 def loadState(state : UMLState):
     """
@@ -34,6 +53,8 @@ def loadState(state : UMLState):
 
     :param state: The UMLState object that should be loaded
     """
+
+    # print(state.stateDict)
 
     # If there is no state, return
     if state is None:
@@ -58,14 +79,25 @@ def loadState(state : UMLState):
 
 def undo() -> UMLState:
     """
-    Pops the last state from the undoStack
+    Pops the last state from the undoStack and puts it on the redoStack
 
     :returns: None if stack is empty otherwise the popped item from the stack
     """
     if undoStack.empty():
         return None
 
-    prevState = undoStack.get()
+    redoStack.put(saveState())
+    return undoStack.get()
 
-    return prevState
+def redo() -> UMLState:
+    """
+    Pops the last state from the redoStack and puts it on the undoStack
+
+    :returns: None if the stack is empty otherwise the popped item from the stack
+    """
+    if redoStack.empty():
+        return None
+
+    undoStack.put(saveState())
+    return redoStack.get()
 

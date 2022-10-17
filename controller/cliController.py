@@ -57,12 +57,9 @@ class Interface(cmd2.Cmd):
     # Creates a uniquely named class
     def do_addClass(self, arg):
         # Save the current state
-        UMLState.saveState()
+        UMLState.addUndo(UMLState.saveState())
         UMLClass.addClass(arg.class_name)
 
-        
-
-    
     """
         Delete Class
     """
@@ -73,7 +70,7 @@ class Interface(cmd2.Cmd):
     # Removes a class
     def do_deleteClass(self, arg):
         # Save the current state
-        UMLState.saveState()
+        UMLState.addUndo(UMLState.saveState())
         UMLClass.deleteClass(arg)
     
     """ 
@@ -87,7 +84,7 @@ class Interface(cmd2.Cmd):
     # Changes the name of a class
     def do_renameClass(self, arg):
         # Save the current state
-        UMLState.saveState()
+        UMLState.addUndo(UMLState.saveState())
         UMLClass.renameClass(arg.class_name, arg.new_name)
 
     """ RELATIONSHIP COMMANDS """
@@ -107,7 +104,7 @@ class Interface(cmd2.Cmd):
     # Creates a relationship between two classes
     def do_addRelationship(self, arg):
         # Save the current state
-        UMLState.saveState()
+        UMLState.addUndo(UMLState.saveState())
         relationship.addRelationship(arg.src, arg.dest, arg.type)
 
     """
@@ -120,7 +117,7 @@ class Interface(cmd2.Cmd):
     # Deletes an existing relationship between two classes
     def do_deleteRelationship(self, arg):
         # Save the current state
-        UMLState.saveState()
+        UMLState.addUndo(UMLState.saveState())
         relationship.deleteRelationship(arg.src, arg.dest)
 
     """
@@ -134,7 +131,7 @@ class Interface(cmd2.Cmd):
     @cmd2.with_category("Relationship")
     def do_changeRelType(self, arg):
         # Save the current state
-        UMLState.saveState()
+        UMLState.addUndo(UMLState.saveState())
         relIndex = relationship.findRelationship(arg.src, arg.dest)
         relationship.relationIndex[relIndex].editType(arg.new_type)
 
@@ -154,7 +151,7 @@ class Interface(cmd2.Cmd):
     # Creates a new method for the specified class
     def do_addMethod(self, arg):
         # Save the current state
-        UMLState.saveState()
+        UMLState.addUndo(UMLState.saveState())
         # Added the method with return type to the class
         attributes.addMethod(arg.method_name, arg.class_name, arg.ret_type)
         # Check if optional arg 'p' was entered
@@ -178,7 +175,7 @@ class Interface(cmd2.Cmd):
     # Removes the method from the specified class
     def do_deleteMethod(self, arg):
         # Save the current program state
-        UMLState.saveState()
+        UMLState.addUndo(UMLState.saveState())
         # Remove method from class
         attributes.deleteMethod(arg.method_name, arg.class_name)
 
@@ -194,7 +191,7 @@ class Interface(cmd2.Cmd):
     # Renames the specified method in the specified class
     def do_renameMethod(self, arg):
         # Save the current program state
-        UMLState.saveState()
+        UMLState.addUndo(UMLState.saveState())
         # Update the name of the method in a class
         attributes.renameMethod(arg.old_name, arg.new_name, arg.class_name)
 
@@ -211,7 +208,7 @@ class Interface(cmd2.Cmd):
     @cmd2.with_category("Field")
     def do_addField(self, arg):
         # Save the current program state
-        UMLState.saveState()
+        UMLState.addUndo(UMLState.saveState())
         attributes.addField(arg.field_name, arg.class_name, arg.type)
 
     """
@@ -224,7 +221,7 @@ class Interface(cmd2.Cmd):
     @cmd2.with_category("Field")
     def do_deleteField(self, arg):
         # Save the current program state
-        UMLState.saveState()
+        UMLState.addUndo(UMLState.saveState())
         attributes.deleteField(arg.field_name, arg.class_name)
 
     """
@@ -238,7 +235,7 @@ class Interface(cmd2.Cmd):
     @cmd2.with_category("Field")
     def do_renameField(self, arg):
         # Save the current program state
-        UMLState.saveState()
+        UMLState.addUndo(UMLState.saveState())
         attributes.renameField(arg.name, arg.new_name, arg.class_name)
 
     """ PARAMETER COMMANDS """
@@ -254,7 +251,7 @@ class Interface(cmd2.Cmd):
     @cmd2.with_category("Parameter")
     def do_addParam(self, arg):
         # Save the current program state
-        UMLState.saveState()
+        UMLState.addUndo(UMLState.saveState())
         # List of parameter tuples to pass to addParameter method
         paramList = []
         for param in arg.p:
@@ -275,7 +272,7 @@ class Interface(cmd2.Cmd):
     @cmd2.with_category("Parameter")
     def do_deleteParam(self, arg):
         # Save the current program state
-        UMLState.saveState()
+        UMLState.addUndo(UMLState.saveState())
         if arg.a:
             parameter.deleteAllParameter(arg.method_name, arg.class_name)
         else:
@@ -316,6 +313,9 @@ class Interface(cmd2.Cmd):
     def do_undo(self, _):
         UMLState.loadState(UMLState.undo())
     
+    def do_redo(self, _):
+        UMLState.loadState(UMLState.redo())
+
     """ LIST COMMANDS """
     @cmd2.with_category("Lists")
     # List all classes and their contents
