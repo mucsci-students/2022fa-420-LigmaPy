@@ -4,7 +4,7 @@ Filename    : GuiController.py
 Description : Controller that links the view and the model
 """
 
-from view.View import View as v
+from view.View import UMLLines, View as v
 import model.relationship as r
 import model.UMLClass as u
 import model.saveload as s
@@ -74,7 +74,6 @@ class Controller:
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeChangeParamInputFrame()
-            #self.view.removeClassFromCanvas(self.view.className)
             self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])  
             self.view.makeMessage('Parameter changed')
 
@@ -121,7 +120,6 @@ class Controller:
         else:
             self.view.remake()
             self.view.makeRenameClassFrame()
-            #self.view.removeClassFromCanvas(self.view.className)
             self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.classNameNew)])
             self.view.makeMessage("Class renamed")
         
@@ -182,7 +180,6 @@ class Controller:
         else:
             self.view.remake()
             self.view.makeAddFieldFrame()
-            #self.view.removeClassFromCanvas(self.view.className)
             self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
            
             self.view.makeMessage("Field added")
@@ -202,7 +199,6 @@ class Controller:
         else:
             self.view.remake()
             self.view.makeDeleteFieldFrame()
-            #self.view.removeClassFromCanvas(self.view.className)
             self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage("Field deleted")
 
@@ -223,7 +219,6 @@ class Controller:
         else:
             self.view.remake()
             self.view.makeDeleteFieldFrame()
-            #self.view.removeClassFromCanvas(self.view.className)
             self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage("Field renamed")
     
@@ -244,7 +239,6 @@ class Controller:
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeParamInputFrame()
-            #self.view.removeClassFromCanvas(self.view.className)
             self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage("Method added, please enter parameter(s)")
 
@@ -264,7 +258,6 @@ class Controller:
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeAddMethodFrame()
-            #self.view.removeClassFromCanvas(self.view.className)
             self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage("Method added")
 
@@ -296,7 +289,6 @@ class Controller:
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeParamInputFrame()
-            #self.view.removeClassFromCanvas(self.view.className)
             self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage("Parameter added")            
 
@@ -313,7 +305,6 @@ class Controller:
         else:
             self.view.remake()
             self.view.makeDeleteMethodFrame()
-            #self.view.removeClassFromCanvas(self.view.className)
             self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage("Method Deleted")          
 
@@ -335,7 +326,6 @@ class Controller:
         else:    
             self.view.remake()
             self.view.makeRenameMethodFrame()
-            #self.view.removeClassFromCanvas(self.view.className)
             self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage('Method renamed')
 
@@ -389,7 +379,6 @@ class Controller:
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeDeleteParamFrame()
-            #self.view.removeClassFromCanvas(self.view.className)
             self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage('All parameters deleted')
     
@@ -421,7 +410,6 @@ class Controller:
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeDeleteParamInputFrame()
-            #self.view.removeClassFromCanvas(self.view.className)
             self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage('Parameter deleted')
 
@@ -458,7 +446,6 @@ class Controller:
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeParamInputFrame()
-            #self.view.removeClassFromCanvas(self.view.className)
             self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage('Parameters removed, add new parameter(s)') 
 
@@ -470,13 +457,25 @@ class Controller:
             return
         message = s.saveGUI(u.classIndex, r.relationIndex, self.view.fileName)
         if message == "":
+            self.view.inputFrame.destroy()
+            self.view.makeInputFrame()
             self.view.makeMessage('Saved successfully')
         else:
+            self.view.inputFrame.destroy()
+            self.view.makeInputFrame()
             self.view.makeMessage(message)
 
     def clickLoadButton(self):
         self.view.load()
         message = s.loadGUI(self.view.fileName)
+        self.view.clearScreen()
+        UMLLines.clear()
+        for each in u.classIndex:
+            self.view.printClassToCanvas(each)
+        for rel in r.relationIndex:
+            self.view.makeLine(rel.source, rel.destination)
+        self.view.inputFrame.destroy()
+        self.view.makeInputFrame()
         self.view.makeMessage(message)
 
     def clickListClassButton(self):
