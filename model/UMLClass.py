@@ -60,8 +60,10 @@ def findClass(name: str):
     :returns: the index of that class in classIndex if it is found 
                 or None if it was not found 
     """
+    print(name)
     for i, c in enumerate(classIndex):
         if c.name == name:
+            print(c.name)
             return i
     return None
 

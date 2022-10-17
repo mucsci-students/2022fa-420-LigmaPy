@@ -66,7 +66,7 @@ class Interface(cmd2.Cmd):
     @cmd2.with_category("Class")
     # Removes a class
     def do_deleteClass(self, arg):
-        UMLClass.deleteClass(arg)
+        UMLClass.deleteClass(arg.class_name)
     
     """ 
         Rename Class
