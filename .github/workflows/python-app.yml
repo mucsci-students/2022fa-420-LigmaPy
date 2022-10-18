@@ -39,4 +39,4 @@ jobs:
         coverage run -m pytest -ra tests/ -v
     - name: Code coverage results
       run: |
-        coverage report --skip-covered --fail-under=89 -m
+        coverage report --skip-covered --fail-under=80 -m
