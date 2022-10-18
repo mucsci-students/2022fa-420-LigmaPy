@@ -39,4 +39,4 @@ jobs:
         coverage run -m pytest -ra tests/ -v
     - name: Coverage results
       run: |
-        coverage run -m
+        coverage report -m
