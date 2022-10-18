@@ -88,5 +88,12 @@ def redo() -> UMLState:
         return None
 
     undoStack.put(saveState())
-    return redoStack.get()
+    state = redoStack.get()
+
+    print(state)
+
+    return state
+def clearRedo():
+    while not redoStack.empty():
+        print(redoStack.get())
 
