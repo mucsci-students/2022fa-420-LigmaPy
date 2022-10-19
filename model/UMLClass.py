@@ -9,12 +9,15 @@ import model.relationship as relationship
 from UMLException import UMLException, UMLSuccess
 
 
+
 class UMLClass:
     def __init__(self, name: str):
         self.name = name
         self.fields = []
         self.methods = []
         self.location = {'x' : 100, 'y' : 100}
+        #observer list
+        self.subscribers = []
 
         print(f"\nAdded class {self}")
 
@@ -34,6 +37,16 @@ class UMLClass:
     def rename(self, newName):
         print(UMLSuccess(f"Renamed {self.name} to {newName}"))
         self.name = newName
+    
+    def register(self, relationship):
+        self.subscribers.append(relationship)
+
+    def unregister(self, relationship):
+        self.subscribers.pop(relationship)
+    
+    def dispatch(self, message):
+        for subscriber in self.subscribers:
+            subscriber.update(message)
 
 
 def isNameUnique(name: str):
@@ -59,6 +72,7 @@ def findClass(name: str):
     """
     for i, c in enumerate(classIndex):
         if c.name == name:
+            
             return i
     return None
 
@@ -89,13 +103,19 @@ def deleteClass(name: str):
     """
     index = findClass(name)
     if index is not None:
-        listToDel = []
-        # Remove relationships 
+        # uses observer to update the relationships on class deletion
+        for sub in classIndex[index].subscribers:
+            for relation in relationship.relationIndex:
+                if sub == relation.hash():
+                    relationship.deleteRelationship(relation.source, relation.destination)
+                    break
+        """
         for relation in relationship.relationIndex:
             if relation.source == name or relation.destination == name:
                 listToDel.append(relation)
         for each in listToDel:
             relationship.deleteRelationship(each.source,each.destination)
+        """
         classIndex.pop(index)
         print(UMLSuccess(f"Deleted class {name}"))
         return 1
@@ -122,16 +142,13 @@ def renameClass(oldName: str, newName: str):
     index = findClass(oldName)
     if index is not None:
         classIndex[index].rename(newName)
-        
-        # Update it's relationships
-        for i, relation in enumerate(relationship.relationIndex):
-            # Check source
-            if relation.source == oldName:
-                relationship.relationIndex[i].source = newName
-            # Check destination
-            elif relation.destination == oldName:
-                relationship.relationIndex[i].destination = newName
-        return 1
+        # uses observer to update the relationships on class rename
+        for sub in classIndex[index].subscribers:
+            for relation in relationship.relationIndex:
+                if sub == relation.hash():
+                    relation.updateRename(oldName, newName)
+                    break
+
     else:
         print(UMLException("Class Rename Error", f"{oldName} does not exist"))
         return -2

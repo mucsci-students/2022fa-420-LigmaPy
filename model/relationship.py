@@ -35,6 +35,20 @@ class UMLRelationship:
         print(UMLSuccess(f"Changed type to {newType}"))
         return 1
 
+    def hash(self):
+        return hash(self)
+    """
+    updates the relationship class
+    """
+    
+    def updateRename(self, oldName:str, newName:str):
+        if self.source == oldName:
+            self.source = newName
+        else: 
+            self.destination = newName
+    
+
+
 ###################################################################################################
 
 def findRelationship(source: str, destination: str):
@@ -79,6 +93,7 @@ def addRelationship(source: str, destination: str, type: str):
         # Append the new relationship to the relationIndex list
         newRelation = UMLRelationship(source, destination, type)
         relationIndex.append(newRelation)
+        UMLClass.classIndex[UMLClass.findClass(source)].register(newRelation.hash())
         return 1
     else:
         print(UMLException("Class Error", f"Source or Destination class does not exist"))
