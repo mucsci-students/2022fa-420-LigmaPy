@@ -86,6 +86,7 @@ def addRelationship(source: str, destination: str, type: str):
         newRelation = UMLRelationship(source, destination, type)
         relationIndex.append(newRelation)
         UMLClass.classIndex[UMLClass.findClass(source)].register(newRelation.hash())
+        UMLClass.classIndex[UMLClass.findClass(destination)].register(newRelation.hash())
         return 1
     else:
         print(UMLException("Class Error", f"Source or Destination class does not exist"))
