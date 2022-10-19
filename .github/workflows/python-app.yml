@@ -42,8 +42,8 @@ jobs:
         coverage run -m pytest -ra tests/ -v
 
     - name: Codecov
-      uses: actions/checkout@v3
-      uses: codecov/codecov-action@v3.1.1
+      - uses: actions/checkout@v3
+      - uses: codecov/codecov-action@v3.1.1
       with:
         token: CODECOV
         fail_ci_if_error: true
