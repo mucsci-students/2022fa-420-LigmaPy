@@ -14,9 +14,8 @@ import model.parameter as parameter
 from UMLException import UMLException, UMLSuccess
 from interface.interfaceCommands import *
 from model.saveload import *
-from view.printColors import colors
+# from view.printColors import colors
 from model import UMLState
-
 
 _intro_text = """\
 {}
@@ -66,10 +65,7 @@ class Interface(cmd2.Cmd):
     @cmd2.with_argparser(deleteClassParser)
     @cmd2.with_category("Class")
     # Removes a class
-    def do_deleteClass(self, arg):
-        UMLClass.deleteClass(arg.class_name)
-        UMLClass.deleteClass(arg.class_name)
-
+     def do_deleteClass(self, arg):
         # Save the current state
         UMLState.addUndo(UMLState.saveState())
         UMLClass.deleteClass(arg.class_name)
