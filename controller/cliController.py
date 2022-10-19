@@ -17,6 +17,7 @@ from model.saveload import *
 # from view.printColors import colors
 from model import UMLState
 
+
 _intro_text = """\
 {}
 Type `help` for an overview `help <command>` for more details.
