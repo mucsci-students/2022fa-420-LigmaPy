@@ -55,3 +55,41 @@ def test_find_relation_exists():
     # Test not finding a non existing relation
 def test_find_relation_exists():
     assert relationship.findRelationship("Car", "Fire") == -1    
+
+"""     Updating with Class Tests     """ 
+
+def test_source_deleted():
+    UMLClass.addClass("Tire")
+    UMLClass.addClass("Car")
+    relationship.addRelationship("Car", "Tire", "Composition") == 1
+    UMLClass.deleteClass("Car")
+    # Should no longer exist once one of the classes is deleted
+    assert relationship.findRelationship("Car", "Tire") == -1
+
+def test_destination_deleted():
+    UMLClass.addClass("Tire")
+    UMLClass.addClass("Car")
+    relationship.addRelationship("Car", "Tire", "Composition") == 1
+    UMLClass.deleteClass("Tire")
+    # Should no longer exist once one of the classes is deleted
+    assert relationship.findRelationship("Car", "Tire") == -1
+
+def test_source_renamed():
+    UMLClass.addClass("Tire")
+    UMLClass.addClass("Car")
+    relationship.addRelationship("Tire", "Car", "Composition") == 1
+    UMLClass.renameClass("Tire", "Engine")
+    # Relationship's source should now be changed
+    assert relationship.relationIndex[0].source == "Engine"
+
+def test_destination_renamed():
+    UMLClass.addClass("Tire")
+    UMLClass.addClass("Car")
+    relationship.addRelationship("Tire", "Car", "Composition") == 1
+    UMLClass.renameClass("Car", "Engine")
+    # Relationship's destination should now be changed
+    assert relationship.relationIndex[0].destination == "Engine"
+
+
+
+
