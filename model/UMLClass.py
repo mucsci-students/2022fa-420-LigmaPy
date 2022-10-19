@@ -60,10 +60,9 @@ def findClass(name: str):
     :returns: the index of that class in classIndex if it is found 
                 or None if it was not found 
     """
-    print(name)
     for i, c in enumerate(classIndex):
         if c.name == name:
-            print(c.name)
+            
             return i
     return None
 
@@ -97,8 +96,8 @@ def deleteClass(name: str):
         # uses observer to update the relationships on class deletion
         for sub in classIndex[index].subscribers:
             for relation in relationship.relationIndex:
-                if sub == relation.hash:
-                    relationship.relationIndex.pop(relationship.relationIndex.index(relation))
+                if sub == relation.hash():
+                    relationship.deleteRelationship(relation.source, relation.destination)
                     break
         """
         for relation in relationship.relationIndex:
@@ -132,7 +131,7 @@ def renameClass(oldName: str, newName: str):
         # uses observer to update the relationships on class rename
         for sub in classIndex[index].subscribers:
             for relation in relationship.relationIndex:
-                if sub == relation.hash:
+                if sub == relation.hash():
                     relation.updateRename(oldName, newName)
                     break
 
