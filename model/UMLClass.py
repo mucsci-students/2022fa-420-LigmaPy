@@ -141,6 +141,6 @@ def renameClass(oldName: str, newName: str):
 
 def clear():
     classIndex.clear()
-    
+
 # List of all class objects the user has created
 classIndex: List[UMLClass] = []

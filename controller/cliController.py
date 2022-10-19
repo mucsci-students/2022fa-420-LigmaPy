@@ -65,7 +65,7 @@ class Interface(cmd2.Cmd):
     @cmd2.with_argparser(deleteClassParser)
     @cmd2.with_category("Class")
     # Removes a class
-     def do_deleteClass(self, arg):
+    def do_deleteClass(self, arg):
         # Save the current state
         UMLState.addUndo(UMLState.saveState())
         UMLClass.deleteClass(arg.class_name)
