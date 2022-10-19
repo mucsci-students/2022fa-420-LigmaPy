@@ -15,6 +15,7 @@ from UMLException import UMLException, UMLSuccess
 from interface.interfaceCommands import *
 from model.saveload import *
 from view.printColors import colors
+from model import UMLState
 
 
 _intro_text = """\
@@ -67,6 +68,12 @@ class Interface(cmd2.Cmd):
     # Removes a class
     def do_deleteClass(self, arg):
         UMLClass.deleteClass(arg.class_name)
+        UMLClass.deleteClass(arg.class_name)
+
+        # Save the current state
+        UMLState.addUndo(UMLState.saveState())
+        UMLClass.deleteClass(arg.class_name)
+        UMLState.clearRedo()
     
     """ 
         Rename Class
