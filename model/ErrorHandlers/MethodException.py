@@ -26,11 +26,11 @@ class MethodException(UMLException):
         """
         output = f"\n{colors.fg.lightgreen}*** Success:"
         if self.code == codes.ADDED_METHOD:
-            pass
+            output = f"{output} Added method {methodName} to {className} class"
         elif self.code == codes.DELETED_METHOD:
-            pass
+            output = f"{output} Deleted method {methodName} from {className} class"
         elif self.code == codes.RENAMED_METHOD:
-            pass
+            output = f"{output} Renamed method {methodName} to {newName} in {className} class"
 
         output = f"{output}{colors.reset}"
         return output
@@ -41,9 +41,20 @@ class MethodException(UMLException):
         """
         output = f"\n{colors.fg.lightred}*** Method"
 
-        """
-            TODO
-        """
+        if self.code == codes.ADD_NOT_EXISTING_CLASS:
+            output = f"{output} Class Error ({self.code}): {className} class does not exist"
+        elif self.code == codes.ADD_EXISTING_METHOD:
+            output = f"{output} Add Error ({self.code}): Method {methodName} already exists"
+        elif self.code == codes.DELETE_METHOD_NOT_EXISTING_CLASS:
+            output = f"{output} Class Error ({self.code}): {className} class does not exist"
+        elif self.code == codes.DELETE_NOT_EXISTING_METHOD:
+            output = f"{output} Delete Error ({self.code}): Method {methodName} does not exist"
+        elif self.code == codes.RENAME_METHOD_CLASS_NOT_EXIST:
+            output = f"{output} Rename Error ({self.code}): Class {className} does not exist"
+        elif self.code == codes.RENAME_METHOD_METHOD_NOT_EXIST:
+            output = f"{output} Rename Error ({self.code}): Method {methodName} does not exist"
+        elif self.code == codes.RENAME_METHOD_NEW_EXISTS:
+            output = f"{output} Rename Error ({self.code}): Method {newName} already exists"
 
         output = f"{output}{colors.reset}"
         return output

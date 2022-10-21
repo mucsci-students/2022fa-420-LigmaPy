@@ -6,6 +6,7 @@
 
 import pyfiglet
 import cmd2
+from model.ErrorHandlers.MethodException import MethodException
 # Local Imports
 import model.UMLClass as UMLCLass
 import model.attributes as attributes
@@ -166,7 +167,8 @@ class Interface(cmd2.Cmd):
         # Save the current state
         UMLState.addUndo(UMLState.saveState())
         # Added the method with return type to the class
-        attributes.addMethod(arg.method_name, arg.class_name, arg.ret_type)
+        ret = attributes.addMethod(arg.method_name, arg.class_name, arg.ret_type)
+        MethodException(ret).throwStatus(arg.class_name, arg.method_name, None)
         # Check if optional arg 'p' was entered
         if arg.p != None:
             # Create a list of tuples containing (paramName, paramType)
@@ -175,7 +177,8 @@ class Interface(cmd2.Cmd):
                 paramName, paramType = param.split(":")
                 paramList.append((paramName, paramType))
             # Add parameter list to the newly created method            
-            parameter.addParameter(paramList, arg.method_name, arg.class_name)
+            retPar = parameter.addParameter(paramList, arg.method_name, arg.class_name)
+
 
         UMLState.clearRedo()
 
@@ -192,8 +195,11 @@ class Interface(cmd2.Cmd):
         # Save the current program state
         UMLState.addUndo(UMLState.saveState())
         # Remove method from class
-        attributes.deleteMethod(arg.method_name, arg.class_name)
+        ret = attributes.deleteMethod(arg.method_name, arg.class_name)
         UMLState.clearRedo()
+
+        MethodException(ret).throwStatus(arg.class_name, arg.method_name, None)
+
 
     """
         Rename Method
@@ -209,8 +215,10 @@ class Interface(cmd2.Cmd):
         # Save the current program state
         UMLState.addUndo(UMLState.saveState())
         # Update the name of the method in a class
-        attributes.renameMethod(arg.old_name, arg.new_name, arg.class_name)
+        ret = attributes.renameMethod(arg.old_name, arg.new_name, arg.class_name)
         UMLState.clearRedo()
+
+        MethodException(ret).throwStatus(arg.class_name, arg.old_name, arg.new_name)
 
     """ FIELD COMMANDS """
 
