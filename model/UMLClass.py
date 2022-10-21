@@ -81,16 +81,14 @@ def addClass(name: str):
     :param name: the name of the new class
     """
     if len(name.strip()) == 0:
-        # print(UMLException("Class name cannot be empty"))
-        return codes.EMPTY_NAME
+        return codes.ADD_EMPTY_CLASS
 
     if isNameUnique(name):
         newClass = UMLClass(name)
         classIndex.append(newClass)
-        return codes.SUCCESS
+        return codes.ADDED_CLASS
     else:
-        # print(UMLException("Class Name Error", f"{name} already exists"))
-        return codes.EXISTS
+        return codes.ADD_EXISTING_CLASS
 
 def deleteClass(name: str):
     """ 
@@ -114,9 +112,9 @@ def deleteClass(name: str):
             relationship.deleteRelationship(each.source,each.destination)
         """
         classIndex.pop(index)
-        return codes.SUCCESS
+        return codes.DELETED_CLASS
     else:
-        return codes.NOT_EXISTS
+        return codes.DELETE_NOT_EXISTING_CLASS
 
 
 def renameClass(oldName: str, newName: str):
@@ -127,10 +125,10 @@ def renameClass(oldName: str, newName: str):
     :param newName: the new name for the target class
     """
     if findClass(newName) != None:
-        return codes.EXISTS
+        return codes.RENAME_NEW_CLASS_EXIST
 
     if len(newName.strip()) == 0:
-        return codes.EMPTY_NAME
+        return codes.RENAME_CLASS_EMPTY
 
     index = findClass(oldName)
     if index is not None:
@@ -142,10 +140,10 @@ def renameClass(oldName: str, newName: str):
                     relation.updateRename(oldName, newName)
                     break
 
-        return codes.SUCCESS
+        return codes.RENAMED_CLASS
 
     else:
-        return codes.NOT_EXISTS
+        return codes.RENAME_CLASS_NOT_EXIST
 
 def clear():
     classIndex.clear()

@@ -4,11 +4,8 @@ Description : Parent class of all error handlers
 """
 class UMLException:
     
-    def __init__(self, classCode : int, methodCode : int, statusCode : int):
-        self.classCode = classCode
-        self.methodCode = methodCode
-        self.statusCode = statusCode
-        self.code = classCode + methodCode + statusCode
+    def __init__(self, code : int):
+        self.code = code
 
     def __str__(self):
         return f"{self.code}"

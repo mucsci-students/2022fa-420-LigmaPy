@@ -14,10 +14,7 @@ import model.parameter as parameter
 from UMLException import UMLException, UMLSuccess
 from interface.interfaceCommands import *
 from model.saveload import *
-# from view.printColors import colors
 from model import UMLState
-from model.ErrorHandlers.ReturnStatus import methods
-
 from model.ErrorHandlers.UMLClassExceptions import UMLClassException
 
 
@@ -44,10 +41,6 @@ class Interface(cmd2.Cmd):
         del cmd2.Cmd.do_macro
         del cmd2.Cmd.do_quit
 
-    """
-        Commmand listeners
-    """
-
     """ CLASS COMMANDS """
 
     """
@@ -64,7 +57,7 @@ class Interface(cmd2.Cmd):
         ret = UMLClass.addClass(arg.class_name)
         UMLState.clearRedo()
 
-        UMLClassException(methods.ADD, ret).throwStatus(arg.class_name)
+        UMLClassException(ret).throwStatus(arg.class_name, None)
 
     """
         Delete Class
@@ -80,7 +73,7 @@ class Interface(cmd2.Cmd):
         ret = UMLClass.deleteClass(arg.class_name)
         UMLState.clearRedo()
 
-        UMLClassException(methods.DELETE, ret).throwStatus(arg.class_name)
+        UMLClassException(ret).throwStatus(arg.class_name, None)
     
     """ 
         Rename Class
@@ -97,7 +90,7 @@ class Interface(cmd2.Cmd):
         ret = UMLClass.renameClass(arg.class_name, arg.new_name)
         UMLState.clearRedo()
 
-        UMLClassException(methods.RENAME, ret).throwStatus(arg.class_name, arg.new_name)
+        UMLClassException(ret).throwStatus(arg.class_name, arg.new_name)
 
     """ RELATIONSHIP COMMANDS """
 
