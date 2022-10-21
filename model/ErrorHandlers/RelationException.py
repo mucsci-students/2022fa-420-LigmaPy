@@ -4,14 +4,13 @@ Description :
 """
 
 from model.ErrorHandlers.UMLException import UMLException
-import UMLClassExceptions as classException
 from view.printColors import colors
-from ReturnStatus import codes, methods
+from model.ErrorHandlers.ReturnStatus import codes
 
 
 class RelationException(UMLException):
-    def __init__(self, methodCode : int, statusCode : int):
-        super().__init__(500, methodCode, statusCode)
+    def __init__(self, code : int):
+        super().__init__(code)
 
     def __str__(self):
         return f"Relationship Error ({self.code})"
@@ -20,36 +19,47 @@ class RelationException(UMLException):
         """
         
         """
-        if self.statusCode == codes.SUCCESS:
-            print(self.__success())
+        if self.code == codes.ADDED_RELATIONSHIP or self.code == codes.DELETED_RELATIONSHIP:
+            print(self.__success(args[0], args[1]))
         else:
-            print(self.__error())
+            print(self.__error(args[0], args[1]))
 
-    def __success(self):
+    def __success(self, src : str, dest : str):
         """ PRIVATE
         
         """
         output = f"\n{colors.fg.lightgreen}*** Success:"
 
-        """
-            TODO: Success
-        """
+        if self.code == codes.ADDED_RELATIONSHIP:
+            output = f"{output} Added relationship {colors.bold}[{src}]-[{dest}]"
+        elif self.code == codes.DELETED_RELATIONSHIP:
+            output = f"{output} Deleted relationship {colors.bold}[{src}]-[{dest}]"
 
         output = f"{output}{colors.reset}"
         return output
 
-    def __error(self):
+    def __error(self, src : str, dest : str):
         """ PRIVATE
         
         """
-        output = f"\n{colors.fg.lightred}*** Error:"
+        output = f"\n{colors.fg.lightred}*** Relationship"
 
-        """
-            TODO: Src or dest classes do not exist
-            TODO: Relationship does not exist
-            TODO: Relationship already exists
-            TODO: src and dest are the same class
-        """
+        if self.code == codes.ADD_SRC_NOT_EXIST:
+            output = f"{output} Source Class Error ({self.code}): The source class does not exist"
+        elif self.code == codes.ADD_DEST_NOT_EXIST:
+            output = f"{output} Destination Class Error ({self.code}): The destination class does not exist"
+        elif self.code == codes.ADD_INVALID_TYPE:
+            pass
+        elif self.code == codes.ADD_SAME_SRC_DEST:
+            output = f"{output} Error ({self.code}): Source and destination cannot be the same class"
+        elif self.code == codes.ADD_EXISTING_RELATIONSHIP:
+            output = f"{output} Add Error ({self.code}): Relationship [{src}]-[{dest}] already exists"
+        elif self.code == codes.DELETE_NOT_EXISTING_RELATIONSHIP:
+            output = f"{output} Delete Error ({self.code}): The relationship [{src}]-[{dest}] does not exist"
+        elif self.code == codes.DELETE_NOT_EXISTING_SRC:
+            output = f"{output} Delete Source Class Error ({self.code}): {src} class does not exist"
+        elif self.code == codes.DELETE_NOT_EXISTING_DEST:
+            output = f"{output} Delete Destination Class Error ({self.code}): {dest} class does not exist"
 
         output = f"{output}{colors.reset}"
         return output

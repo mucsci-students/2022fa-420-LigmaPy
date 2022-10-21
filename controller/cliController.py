@@ -16,6 +16,7 @@ from interface.interfaceCommands import *
 from model.saveload import *
 from model import UMLState
 from model.ErrorHandlers.UMLClassExceptions import UMLClassException
+from model.ErrorHandlers.RelationException import RelationException
 
 
 _intro_text = """\
@@ -110,8 +111,10 @@ class Interface(cmd2.Cmd):
     def do_addRelationship(self, arg):
         # Save the current state
         UMLState.addUndo(UMLState.saveState())
-        relationship.addRelationship(arg.src, arg.dest, arg.type)
+        ret = relationship.addRelationship(arg.src, arg.dest, arg.type)
         UMLState.clearRedo()
+
+        RelationException(ret).throwStatus(arg.src, arg.dest)
 
     """
         Delete Relationship
@@ -124,8 +127,10 @@ class Interface(cmd2.Cmd):
     def do_deleteRelationship(self, arg):
         # Save the current state
         UMLState.addUndo(UMLState.saveState())
-        relationship.deleteRelationship(arg.src, arg.dest)
+        ret = relationship.deleteRelationship(arg.src, arg.dest)
         UMLState.clearRedo()
+
+        RelationException(ret).throwStatus(arg.src, arg.dest)
 
     """
         Change Relationship Type

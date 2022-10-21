@@ -24,6 +24,8 @@ class codes(IntEnum):
     ADD_SRC_NOT_EXIST = 212 #---------The given source class does not exist
     ADD_DEST_NOT_EXIST = 213 #--------The given destination class does not exist
     ADD_INVALID_TYPE = 214 #----------An invalid type was given
+    ADD_SAME_SRC_DEST = 215 #---------Attempted to add relationship with same source and destination
+    ADD_EXISTING_RELATIONSHIP = 216 #-Attempted to add an already existing relationship
     """ DELETE RELATIONSHIP """
     DELETED_RELATIONSHIP = 221 #--------------Successfully deleted the relationship
     DELETE_NOT_EXISTING_RELATIONSHIP = 222 #--Attempted to delete a relationship that does not exist
