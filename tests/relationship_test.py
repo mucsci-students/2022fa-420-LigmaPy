@@ -75,20 +75,24 @@ def test_destination_deleted():
     assert relationship.findRelationship("Car", "Tire") == -1
 
 def test_source_renamed():
-    UMLClass.addClass("Tire")
-    UMLClass.addClass("Car")
-    relationship.addRelationship("Tire", "Car", "Composition") == 1
-    UMLClass.renameClass("Tire", "Engine")
+    UMLClass.addClass("Foo")
+    UMLClass.addClass("Bar")
+    relationship.addRelationship("Foo", "Bar", "Composition") == 1
+    UMLClass.renameClass("Foo", "Fooooo")
+
     # Relationship's source should now be changed
-    assert relationship.relationIndex[0].source == "Engine"
+    relIndex = relationship.findRelationship("Fooooo", "Bar")
+    assert relationship.relationIndex[relIndex].source == "Fooooo"
 
 def test_destination_renamed():
-    UMLClass.addClass("Tire")
-    UMLClass.addClass("Car")
-    relationship.addRelationship("Tire", "Car", "Composition") == 1
-    UMLClass.renameClass("Car", "Engine")
+    UMLClass.addClass("Sam")
+    UMLClass.addClass("isCool")
+    relationship.addRelationship("Sam", "isCool", "Composition") == 1
+    UMLClass.renameClass("isCool", "isReallyCool")
+
     # Relationship's destination should now be changed
-    assert relationship.relationIndex[0].destination == "Engine"
+    relIndex = relationship.findRelationship("Sam", "isReallyCool")
+    assert relationship.relationIndex[relIndex].destination == "isReallyCool"
 
 
 
