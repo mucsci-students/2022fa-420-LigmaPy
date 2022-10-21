@@ -321,10 +321,10 @@ class View(tk.Tk):
         dYCoord = dest.winfo_y()
         #gets the width and heigth of the source box
         sWidth = source.winfo_reqwidth()
-        sHeigth = source.winfo_reqheight()
+        sHeight = source.winfo_reqheight()
         #gets the width and heigth of the dest box
         dWidth = dest.winfo_reqwidth()
-        dHeigth = dest.winfo_reqheight()
+        dHeight = dest.winfo_reqheight()
 
         # finds the type of the relationship
         index = r.findRelationship(s, d)
@@ -332,17 +332,17 @@ class View(tk.Tk):
         type = r.relationIndex[index].type
 
         #gets the center coord of the source where the line starts
-        sCenterCoord = (sXCoord + sWidth//2, sYCoord + sHeigth //2)
+        sCenterCoord = (sXCoord + sWidth//2, sYCoord + sHeight //2)
         #gets the topmid, leftmid, rightmid, and bottommid coord of dest (we can change these if needed)
         #one of these (the closest to the center above) is where the line will end
         dTopCoord = (dXCoord + dWidth//2, dYCoord)
-        dLeftCoord = (dXCoord, dYCoord + dHeigth//2)
-        dRightCoord = (dXCoord + dWidth, dYCoord + dHeigth//2)
-        dBottomCoord = (dXCoord + dWidth//2, dYCoord + dHeigth)
+        dLeftCoord = (dXCoord, dYCoord + dHeight//2)
+        dRightCoord = (dXCoord + dWidth, dYCoord + dHeight//2)
+        dBottomCoord = (dXCoord + dWidth//2, dYCoord + dHeight)
         dTopRight = (dXCoord, dYCoord)
         dTopLeft = (dXCoord + dWidth, dYCoord)
-        dBottomRight = (dXCoord, dYCoord + dHeigth )
-        dBottomLeft = (dXCoord + dWidth, dYCoord + dHeigth)
+        dBottomRight = (dXCoord, dYCoord + dHeight )
+        dBottomLeft = (dXCoord + dWidth, dYCoord + dHeight)
 
 
         #determines the closest coord from above
