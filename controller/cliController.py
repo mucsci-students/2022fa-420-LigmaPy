@@ -16,6 +16,9 @@ from interface.interfaceCommands import *
 from model.saveload import *
 # from view.printColors import colors
 from model import UMLState
+from model.ErrorHandlers.ReturnStatus import methods
+
+from model.ErrorHandlers.UMLClassExceptions import UMLClassException
 
 
 _intro_text = """\
@@ -58,8 +61,10 @@ class Interface(cmd2.Cmd):
     def do_addClass(self, arg):
         # Save the current state
         UMLState.addUndo(UMLState.saveState())
-        UMLClass.addClass(arg.class_name)
+        ret = UMLClass.addClass(arg.class_name)
         UMLState.clearRedo()
+
+        UMLClassException(methods.ADD, ret).throwStatus(arg.class_name)
 
     """
         Delete Class
@@ -72,8 +77,10 @@ class Interface(cmd2.Cmd):
     def do_deleteClass(self, arg):
         # Save the current state
         UMLState.addUndo(UMLState.saveState())
-        UMLClass.deleteClass(arg.class_name)
+        ret = UMLClass.deleteClass(arg.class_name)
         UMLState.clearRedo()
+
+        UMLClassException(methods.DELETE, ret).throwStatus(arg.class_name)
     
     """ 
         Rename Class
@@ -87,8 +94,10 @@ class Interface(cmd2.Cmd):
     def do_renameClass(self, arg):
         # Save the current state
         UMLState.addUndo(UMLState.saveState())
-        UMLClass.renameClass(arg.class_name, arg.new_name)
+        ret = UMLClass.renameClass(arg.class_name, arg.new_name)
         UMLState.clearRedo()
+
+        UMLClassException(methods.RENAME, ret).throwStatus(arg.class_name, arg.new_name)
 
     """ RELATIONSHIP COMMANDS """
 
