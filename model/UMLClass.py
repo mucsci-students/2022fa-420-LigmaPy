@@ -57,7 +57,7 @@ def isNameUnique(name: str):
     :returns: True if the name is unique
     """
     for c in classIndex:
-        if c.name == name:
+        if c.name.lower() == name.lower():
             return False
     return True
 
@@ -132,6 +132,10 @@ def renameClass(oldName: str, newName: str):
     :param newName: the new name for the target class
     """
     if findClass(newName) != None:
+        print(UMLException("Class Rename Error", f"{newName} class already exists"))
+        return -1
+
+    if not isNameUnique(newName):
         print(UMLException("Class Rename Error", f"{newName} class already exists"))
         return -1
 
