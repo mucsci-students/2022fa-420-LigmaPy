@@ -5,11 +5,11 @@ Description : Constructs and displays the gui
 """
 
 
-from operator import index
+
 import tkinter as tk
 #import UMLNotebook as notebook
 from tkinter import LEFT, RIGHT, VERTICAL, Y, Canvas, OptionMenu, StringVar, ttk, filedialog
-from turtle import width
+
 import model.UMLClass as u
 import model.relationship as r
 import model.attributes as a
@@ -263,13 +263,14 @@ class View(tk.Tk):
         UMLBoxes[lowercaseName].bind("<Button-1>", self.dragStart)
         UMLBoxes[lowercaseName].bind("<B1-Motion>", self.dragMove)
         
+        self.canvas.create_window((UMLClass.location['x'],UMLClass.location['y']), window=UMLBoxes[lowercaseName])
         #remakes the line with the new label if a relationship existed
         for each in sourceList:
             self.makeLine(each.winfo_name(), UMLBoxes[lowercaseName].winfo_name())
         for each in destList:
             self.makeLine(UMLBoxes[lowercaseName].winfo_name(), each.winfo_name())
 
-        self.canvas.create_window((UMLClass.location['x'],UMLClass.location['y']), window=UMLBoxes[lowercaseName])
+        
 
     def printRenamedClassToCanvas(self, UMLclass, UMLold):
         #gets the text, width and heigth as tuple(t,w,h)
@@ -294,7 +295,8 @@ class View(tk.Tk):
         
         #makes/remakes boxes using tuple above
         UMLBoxes[lowercaseName] = tk.Label(self.canvas, text=new[0], height=new[1], width=new[2], borderwidth=1, relief="solid", justify=LEFT, name = lowercaseName)
-        UMLBoxes[lowercaseName].place(x=UMLclass.location['x'], y=UMLclass.location['y'])
+        #UMLBoxes[lowercaseName].place(x=UMLclass.location['x'], y=UMLclass.location['y'])
+        self.canvas.create_window((UMLclass.location['x'],UMLclass.location['y']), window=UMLBoxes[lowercaseName])
         #binds boxes to drag and drop event
         UMLBoxes[lowercaseName].bind("<Button-1>", self.dragStart)
         UMLBoxes[lowercaseName].bind("<B1-Motion>", self.dragMove)
@@ -465,7 +467,16 @@ class View(tk.Tk):
             drop = OptionMenu(self.inputFrame, clicked, "Aggregation", "Composition", "Inheritance", "Realization") 
             drop.grid(row=3, columnspan=2)
             #function to output to the controller 
-            def output():
+            def output(event):
+                #splits the input into 2 source/dest
+                parsed = clicked1.get().split(" -> ")
+                #sets each output variable
+                self.source = parsed[0]
+                self.destination = parsed[1]
+                self.relationshipTypeNew = clicked.get()
+                #calls controller function to do stuff with output variables above
+                self.controller.clickUpdateTypeButton()
+            def output1():
                 #splits the input into 2 source/dest
                 parsed = clicked1.get().split(" -> ")
                 #sets each output variable
@@ -475,11 +486,12 @@ class View(tk.Tk):
                 #calls controller function to do stuff with output variables above
                 self.controller.clickUpdateTypeButton()
             #creates first button and when clicked calls the output function above to set the class variables.
-            ok = tk.Button(self.inputFrame, text='Change type', command=lambda: output())
+            ok = tk.Button(self.inputFrame, text='Change type', command=lambda: output1())
             ok.grid(row=6, column=0)
             #creates 2nd button and when clicked calls remake to clear the screen and remake and empty input frame.
             cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
-            cancel.grid(row=6, column=1)  
+            cancel.grid(row=6, column=1)
+            self.bind('<Return>', output)  
 
     #creates the bottom left frame for deleting fields when the 'delete field' button is clicked
     def makeDeleteFieldFrame(self):
@@ -521,15 +533,20 @@ class View(tk.Tk):
             inputlabel2 = tk.Label(self.inputFrame, text='Select field to delete:')
             inputlabel2.grid(row=2, columnspan=2) 
             #output function to set variables and call to controller function to do stuff
-            def output():
+            def output(event):
+                self.className = clicked.get().strip()
+                self.field = deleteF.get().strip()
+                self.controller.clickDeleteFieldButton()
+            def output1():
                 self.className = clicked.get().strip()
                 self.field = deleteF.get().strip()
                 self.controller.clickDeleteFieldButton()
             #creates the two buttons, one for sending input, the other to cancel and clear input frame box    
-            ok = tk.Button(self.inputFrame, text='Delete field', command=lambda: output())
+            ok = tk.Button(self.inputFrame, text='Delete field', command=lambda: output1())
             ok.grid(row=4, column=0)
             cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
             cancel.grid(row=4, column=1)
+            self.bind('<Return>', output)
 
 
     #creates the add class frame upon clicking add class
@@ -538,13 +555,19 @@ class View(tk.Tk):
         inputlabel1.grid(row=0, columnspan=2) 
         e1 = tk.Entry(self.inputFrame, width=50)
         e1.grid(row=1, columnspan=2)
-        def output():
+        e1.focus_set()
+        def output(event):
             self.className = e1.get()
             self.controller.clickAddClassButton()
-        ok = tk.Button(self.inputFrame, text='Add Class', command=lambda: output())
+        def output1():
+            self.className = e1.get()
+            self.controller.clickAddClassButton()
+        ok = tk.Button(self.inputFrame, text='Add Class', command=lambda: output1())
         ok.grid(row=4, column=0)
         cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
         cancel.grid(row=4, column=1)
+        self.bind('<Return>', output)
+        
        
 
     def makeDeleteClassFrame(self):
@@ -560,13 +583,17 @@ class View(tk.Tk):
             drop.grid(row=1, columnspan=2)
             inputlabel1 = tk.Label(self.inputFrame, text='Select name to delete', width=40)
             inputlabel1.grid(row=0, columnspan=2) 
-            def output():
+            def output(event):
                 self.className = clicked.get()
                 self.controller.clickDeleteClassButton()
-            ok = tk.Button(self.inputFrame, text='Delete Class', command=lambda: output())
+            def output1():
+                self.className = clicked.get()
+                self.controller.clickDeleteClassButton()
+            ok = tk.Button(self.inputFrame, text='Delete Class', command=lambda: output1())
             ok.grid(row=4, column=0)
             cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
             cancel.grid(row=4, column=1)
+            self.bind('<Return>', output)
 
     def makeRenameClassFrame(self):
         classList = [c.name for c in u.classIndex]
@@ -585,14 +612,20 @@ class View(tk.Tk):
             inputlabel2.grid(row=2, columnspan=2) 
             e2 = tk.Entry(self.inputFrame, width=50)
             e2.grid(row=3, columnspan=2)
-            def output():
+            e2.focus_set()
+            def output(event):
                 self.className = clicked.get()
                 self.classNameNew = e2.get()
                 self.controller.clickRenameClassButton()
-            ok = tk.Button(self.inputFrame, text='Rename Class', command=lambda: output())
+            def output1():
+                self.className = clicked.get()
+                self.classNameNew = e2.get()
+                self.controller.clickRenameClassButton()
+            ok = tk.Button(self.inputFrame, text='Rename Class', command=lambda: output1())
             ok.grid(row=4, column=0)
             cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
-            cancel.grid(row=4, column=1)   
+            cancel.grid(row=4, column=1)
+            self.bind('<Return>', output)   
        
     def makeAddRelationFrame(self):
         if len(u.classIndex) < 2:
@@ -618,15 +651,21 @@ class View(tk.Tk):
             clicked.set("Aggregation")
             drop = OptionMenu(self.inputFrame, clicked, "Aggregation", "Composition", "Inheritance", "Realization") 
             drop.grid(row=5, columnspan=2)
-            def output():
+            def output(event):
                 self.source = sor.get()
                 self.destination = des.get()
                 self.relationshipType = clicked.get()
                 self.controller.clickAddRelationButton()
-            ok = tk.Button(self.inputFrame, text='Add Relationship', command=lambda: output())
+            def output1():
+                self.source = sor.get()
+                self.destination = des.get()
+                self.relationshipType = clicked.get()
+                self.controller.clickAddRelationButton()
+            ok = tk.Button(self.inputFrame, text='Add Relationship', command=lambda: output1())
             ok.grid(row=6, column=0)
             cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
             cancel.grid(row=6, column=1)
+            self.bind('<Return>', output) 
 
     def makeDeleteRelationFrame(self):
         if len(r.relationIndex) == 0:
@@ -641,15 +680,21 @@ class View(tk.Tk):
             clicked = StringVar()
             drop = OptionMenu(self.inputFrame, clicked, *relList) 
             drop.grid(row=1, columnspan=2)
-            def output():
+            def output(event):
                 parsed = clicked.get().split(" -> ")
                 self.source = parsed[0]
                 self.destination = parsed[1]
                 self.controller.clickDeleteRelationButton()
-            ok = tk.Button(self.inputFrame, text='Delete relationship', command=lambda: output())
+            def output1():
+                parsed = clicked.get().split(" -> ")
+                self.source = parsed[0]
+                self.destination = parsed[1]
+                self.controller.clickDeleteRelationButton()
+            ok = tk.Button(self.inputFrame, text='Delete relationship', command=lambda: output1())
             ok.grid(row=4, column=0)
             cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
             cancel.grid(row=4, column=1)
+            self.bind('<Return>', output)
     
     def makeAddFieldFrame(self):
         classList = [c.name for c in u.classIndex]
@@ -668,19 +713,27 @@ class View(tk.Tk):
             inputlabel2.grid(row=2, columnspan=2) 
             e2 = tk.Entry(self.inputFrame, width=50)
             e2.grid(row=3, columnspan=2)
+            e2.focus_set()
             inputlabel3 = tk.Label(self.inputFrame, text='Enter field type (leave empty if none):')
             inputlabel3.grid(row=4, columnspan=2) 
             e3 = tk.Entry(self.inputFrame, width=50)
             e3.grid(row=5, columnspan=2)
-            def output():
+            def output(event):
                 self.className = clicked.get()
                 self.field = e2.get()
                 self.fieldType = e3.get()
                 self.controller.clickAddFieldButton()
-            ok = tk.Button(self.inputFrame, text='Add Field', command=lambda: output())
+            def output1():
+                self.className = clicked.get()
+                self.field = e2.get()
+                self.fieldType = e3.get()
+                self.controller.clickAddFieldButton()
+            ok = tk.Button(self.inputFrame, text='Add Field', command=lambda: output1())
             ok.grid(row=6, column=0)
             cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
             cancel.grid(row=6, column=1)
+            self.bind('<Return>', output)
+
 
 
     def makeRenameFieldFrame(self):
@@ -714,34 +767,47 @@ class View(tk.Tk):
             inputlabel3.grid(row=4, columnspan=2) 
             e3 = tk.Entry(self.inputFrame, width=50)
             e3.grid(row=5, columnspan=2)
-            def output():
+            e3.focus_set()
+            def output(event):
                 self.className = clicked.get().strip()
                 self.field = deleteF.get().strip()
                 self.feildNew = e3.get()
                 self.controller.clickRenameFieldButton()
-            ok = tk.Button(self.inputFrame, text='Rename Field', command=lambda: output())
+            def output1():
+                self.className = clicked.get().strip()
+                self.field = deleteF.get().strip()
+                self.feildNew = e3.get()
+                self.controller.clickRenameFieldButton()
+            ok = tk.Button(self.inputFrame, text='Rename Field', command=lambda: output1())
             ok.grid(row=6, column=0)
             cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
             cancel.grid(row=6, column=1)
+            self.bind('<Return>', output)
 
     def makeParamInputFrame(self):
         inputlabel1 = tk.Label(self.inputFrame, text='Enter parameter name:')
         inputlabel1.grid(row=0, columnspan=2) 
         e1 = tk.Entry(self.inputFrame, width=50)
         e1.grid(row=1, columnspan=2)
+        e1.focus_set()
         inputlabel2 = tk.Label(self.inputFrame, text='Enter parameter type:')
         inputlabel2.grid(row=2, columnspan=2) 
         e2 = tk.Entry(self.inputFrame, width=50)
         e2.grid(row=3, columnspan=2)
-        def addParam():
+        def addParam(event):
             self.param = e1.get()
             self.paramType = e2.get()
             self.controller.clickAddParamButton()
-        addParamButton = tk.Button(self.inputFrame, text='Add parameter', command= lambda: addParam())
+        def addParam1():
+            self.param = e1.get()
+            self.paramType = e2.get()
+            self.controller.clickAddParamButton()
+        addParamButton = tk.Button(self.inputFrame, text='Add parameter', command= lambda: addParam1())
         addParamButton.grid(row=4, column=0)
         cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
         cancel.grid(row=4, column=1)
-
+        self.bind('<Return>', addParam)
+    
     def makeAddMethodFrame(self):
         classList = [c.name for c in u.classIndex]
         if len(classList) == 0:
@@ -759,6 +825,7 @@ class View(tk.Tk):
             inputlabel2.grid(row=2, columnspan=2) 
             e2 = tk.Entry(self.inputFrame, width=50)
             e2.grid(row=3, columnspan=2)
+            e2.focus_set()
             inputlabel3 = tk.Label(self.inputFrame, text='Enter return type:')
             inputlabel3.grid(row=4, columnspan=2) 
             e3 = tk.Entry(self.inputFrame, width=50)
@@ -771,15 +838,21 @@ class View(tk.Tk):
             addParamButton = tk.Button(self.inputFrame, text='Add method and parameter(s)', command= lambda : addParam())
             addParamButton.grid(row=6, column=0)
             
-            def output():
+            def output(event):
                 self.className = clicked.get()
                 self.method = e2.get()
                 self.methodReturnType = e3.get()
                 self.controller.clickAddMethodWithoutParamsButton()
-            ok = tk.Button(self.inputFrame, text='Add method no parameter(s)', command=lambda: output())
+            def output1():
+                self.className = clicked.get()
+                self.method = e2.get()
+                self.methodReturnType = e3.get()
+                self.controller.clickAddMethodWithoutParamsButton()
+            ok = tk.Button(self.inputFrame, text='Add method no parameter(s)', command=lambda: output1())
             ok.grid(row=6, column=1)
             cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
             cancel.grid(row=6, column=2)
+            self.bind('<Return>', output)
 
     def makeDeleteMethodFrame(self):
         classDict = {c.name : c.methods for c in u.classIndex if len(c.methods) > 0}
@@ -808,14 +881,19 @@ class View(tk.Tk):
             drop2.grid(row=3, columnspan=2)
             inputlabel2 = tk.Label(self.inputFrame, text='Select method to delete:')
             inputlabel2.grid(row=2, columnspan=2) 
-            def output():
+            def output(event):
                 self.className = clicked.get().strip()
                 self.method = deleteF.get().strip()
                 self.controller.clickDeleteMethodButton()
-            ok = tk.Button(self.inputFrame, text='Delete method', command=lambda: output())
+            def output1():
+                self.className = clicked.get().strip()
+                self.method = deleteF.get().strip()
+                self.controller.clickDeleteMethodButton()
+            ok = tk.Button(self.inputFrame, text='Delete method', command=lambda: output1())
             ok.grid(row=4, column=0)
             cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
             cancel.grid(row=4, column=1)
+            self.bind('<Return>', output)
 
     def makeRenameMethodFrame(self):
         classDict = {c.name : c.methods for c in u.classIndex if len(c.methods) > 0}
@@ -848,15 +926,23 @@ class View(tk.Tk):
             inputlabel3.grid(row=4, columnspan=2) 
             e3 = tk.Entry(self.inputFrame, width=50)
             e3.grid(row=5, columnspan=2)
-            def output():
+            e3.focus_set()
+            def output(event):
                 self.className = clicked.get().strip()
                 self.method = deleteF.get().strip()
                 self.methodNew = e3.get()
                 self.controller.clickUpdateMethodButton()
-            ok = tk.Button(self.inputFrame, text='Rename method', command=lambda: output())
+            def output1():
+                self.className = clicked.get().strip()
+                self.method = deleteF.get().strip()
+                self.methodNew = e3.get()
+                self.controller.clickUpdateMethodButton()
+            ok = tk.Button(self.inputFrame, text='Rename method', command=lambda: output1())
             ok.grid(row=6, column=0)
             cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
             cancel.grid(row=6, column=1)
+            self.bind('<Return>', output)
+
 
     def makeAddParamFrame(self):        
         classDict = {c.name : c.methods for c in u.classIndex if len(c.methods) > 0}
@@ -885,14 +971,20 @@ class View(tk.Tk):
             drop2.grid(row=3, columnspan=2)
             inputlabel2 = tk.Label(self.inputFrame, text='Select method to add parameter:')
             inputlabel2.grid(row=2, columnspan=2) 
-            def addParam():
+            def addParam(event):
                 self.className = clicked.get().strip()
                 self.method = deleteF.get().strip()
-                self.controller.clickAddParamToMethodButton()        
-            ok = tk.Button(self.inputFrame, text='Add parameter(s)', command=lambda: addParam())
+                self.controller.clickAddParamToMethodButton()
+            def addParam1():
+                self.className = clicked.get().strip()
+                self.method = deleteF.get().strip()
+                self.controller.clickAddParamToMethodButton()         
+            ok = tk.Button(self.inputFrame, text='Add parameter(s)', command=lambda: addParam1())
             ok.grid(row=4, column=0)
             cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
             cancel.grid(row=4, column=1)
+            self.bind('<Return>', addParam)
+
 
     def makeParamDeleteInputFrame(self):
         
@@ -900,12 +992,18 @@ class View(tk.Tk):
         inputlabel1.grid(row=0, columnspan=2) 
         e1 = tk.Entry(self.inputFrame, width=50)
         e1.grid(row=1, columnspan=2)
-        def addParam():
+        e1.focus_set()
+        def addParam(event):
             self.param = e1.get()
             self.inputFrame.destroy()
             self.makeInputFrame()
             self.makeParamDeleteInputFrame()
-        addParamButton = tk.Button(self.inputFrame, text='Delete another parameter', command= lambda: addParam())
+        def addParam1():
+            self.param = e1.get()
+            self.inputFrame.destroy()
+            self.makeInputFrame()
+            self.makeParamDeleteInputFrame()
+        addParamButton = tk.Button(self.inputFrame, text='Delete another parameter', command= lambda: addParam1())
         addParamButton.grid(row=4, column=0)
         def output():
             self.param = e1.get()
@@ -914,6 +1012,7 @@ class View(tk.Tk):
         ok.grid(row=4, column=1)
         cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
         cancel.grid(row=4, column=2)
+        self.bind('<Return>', addParam)
 
     def makeDeleteParamInputFrame(self):
         paramList = u.classIndex[u.findClass(self.className)].methods[a.findMethod(self.method, self.className)].params
@@ -929,13 +1028,18 @@ class View(tk.Tk):
             drop.grid(row=1, columnspan=2)
             inputlabel1 = tk.Label(self.inputFrame, text='Select parameter to delete', width=40)
             inputlabel1.grid(row=0, columnspan=2) 
-            def addParam():
+            def addParam(event):
                 self.param = clicked.get()
                 self.controller.clickSecondDeleteParamButton()
-            addParamButton = tk.Button(self.inputFrame, text='Delete parameter(s)', command= lambda: addParam())
+            def addParam1():
+                self.param = clicked.get()
+                self.controller.clickSecondDeleteParamButton()
+            addParamButton = tk.Button(self.inputFrame, text='Delete parameter(s)', command= lambda: addParam1())
             addParamButton.grid(row=4, column=0)
             cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
             cancel.grid(row=4, column=1)
+            self.bind('<Return>', addParam)
+
 
     def makeDeleteParamFrame(self):        
         classDict = {c.name : c.methods for c in u.classIndex for each in c.methods if len(each.params) > 0  }
@@ -964,11 +1068,15 @@ class View(tk.Tk):
             drop2.grid(row=3, columnspan=2)
             inputlabel2 = tk.Label(self.inputFrame, text='Select method to delete parameter:')
             inputlabel2.grid(row=2, columnspan=2) 
-            def addParam():
+            def addParam(event):
                 self.className = clicked.get().strip()
                 self.method = deleteF.get().strip()
                 self.controller.clickDeleteParamButton()
-            delete = tk.Button(self.inputFrame, text='Delete parameter(s)', command = lambda: addParam())
+            def addParam1():
+                self.className = clicked.get().strip()
+                self.method = deleteF.get().strip()
+                self.controller.clickDeleteParamButton()
+            delete = tk.Button(self.inputFrame, text='Delete parameter(s)', command = lambda: addParam1())
             delete.grid(row=4,column=0)
             def delAll():
                 self.className = clicked.get().strip()
@@ -978,6 +1086,7 @@ class View(tk.Tk):
             ok.grid(row=4, column=1)
             cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
             cancel.grid(row=4, column=2)
+            self.bind('<Return>', addParam)
     
     def makeChangeParamInputFrame(self):
         paramList = u.classIndex[u.findClass(self.className)].methods[a.findMethod(self.method, self.className)].params
@@ -997,19 +1106,27 @@ class View(tk.Tk):
             inputlabel2.grid(row=2, columnspan=2) 
             e2 = tk.Entry(self.inputFrame, width=50)
             e2.grid(row=3, columnspan=2)
+            e2.focus_set()
             inputlabel3 = tk.Label(self.inputFrame, text='Enter new parameter type:')
             inputlabel3.grid(row=4, columnspan=2) 
             e3 = tk.Entry(self.inputFrame, width=50)
             e3.grid(row=5, columnspan=2)
-            def addParam():
+            def addParam(event):
                 self.param = clicked.get().strip()
                 self.paramNew = e2.get()
                 self.paramTypeNew = e3.get()
                 self.controller.clickChangeAnotherParamButton()
-            addParamButton = tk.Button(self.inputFrame, text='Change parameter(s)', command= lambda: addParam())
+            def addParam1():
+                self.param = clicked.get().strip()
+                self.paramNew = e2.get()
+                self.paramTypeNew = e3.get()
+                self.controller.clickChangeAnotherParamButton()
+            addParamButton = tk.Button(self.inputFrame, text='Change parameter(s)', command= lambda: addParam1())
             addParamButton.grid(row=6, column=0)
             cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
             cancel.grid(row=6, column=1)
+            self.bind('<Return>', addParam)
+
     
     def makeChangeParamFrame(self):
         classDict = {c.name : c.methods for c in u.classIndex for each in c.methods if len(each.params) > 0  }
@@ -1038,11 +1155,15 @@ class View(tk.Tk):
             drop2.grid(row=3, columnspan=2)
             inputlabel2 = tk.Label(self.inputFrame, text='Select method to change parameter:')
             inputlabel2.grid(row=2, columnspan=2) 
-            def addParam():
+            def addParam(event):
                 self.className = clicked.get().strip()
                 self.method = deleteF.get().strip()
                 self.controller.clickChangeParamButton()
-            delete = tk.Button(self.inputFrame, text='Change parameter(s)', command = lambda: addParam())
+            def addParam1():
+                self.className = clicked.get().strip()
+                self.method = deleteF.get().strip()
+                self.controller.clickChangeParamButton()
+            delete = tk.Button(self.inputFrame, text='Change parameter(s)', command = lambda: addParam1())
             delete.grid(row=4,column=0)
             def delAll():
                 self.className = clicked.get().strip()
@@ -1052,6 +1173,8 @@ class View(tk.Tk):
             ok.grid(row=4, column=1)
             cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
             cancel.grid(row=4, column=2)
+            self.bind('<Return>', addParam)
+
 
     def makeListClassFrame(self):
         classList = [c.name for c in u.classIndex]
@@ -1066,13 +1189,18 @@ class View(tk.Tk):
             drop.grid(row=1, columnspan=2)
             inputlabel1 = tk.Label(self.inputFrame, text='Select class name to list', width=40)
             inputlabel1.grid(row=0, columnspan=2) 
-            def output():
+            def output(event):
                 self.className = clicked.get()
                 self.controller.clickListClassButton()
-            ok = tk.Button(self.inputFrame, text='List Class', command=lambda: output())
+            def output1():
+                self.className = clicked.get()
+                self.controller.clickListClassButton()
+            ok = tk.Button(self.inputFrame, text='List Class', command=lambda: output1())
             ok.grid(row=4, column=0)
             cancel = tk.Button(self.inputFrame, text='Cancel', command=lambda: self.remake())
-            cancel.grid(row=4, column=1)            
+            cancel.grid(row=4, column=1)
+            self.bind('<Return>', output)
+            
 
     #remakes the input frame in the bottom left corner
     def remake(self):
@@ -1163,33 +1291,42 @@ class View(tk.Tk):
 
         x = widget.winfo_x() - widget.startX + event.x
         y = widget.winfo_y() - widget.startY + event.y
-        print(str(x) + " : " + str(y))
+
+        
+        cx = self.canvas.canvasx(event.x)
+        cy = self.canvas.canvasy(event.y)
         # top left corner of widget relative to window - place where we
         #click in the label itself + where be begin draging the widget to
         if (x > 0 and y > 0):
             self.canvas.create_window((x + widget.winfo_width()//2, y + widget.winfo_height()//2), window=widget)
             for each in u.classIndex:
                 if each.name.lower() == widget.winfo_name():
-                    each.location['x'] = x
-                    each.location['y'] = y
+                    each.location['x'] = x + widget.winfo_width()//2
+                    each.location['y'] = y + widget.winfo_height()//2
         elif y > 0:
             self.canvas.create_window((widget.winfo_width()//2, y + widget.winfo_height()//2), window=widget)
             for each in u.classIndex:
                 if each.name.lower() == widget.winfo_name():
                     each.location['x'] = widget.winfo_width()//2
-                    each.location['y'] = y
+                    each.location['y'] = y + widget.winfo_height()//2
+
         elif x > 0:
             self.canvas.create_window((x + widget.winfo_width()//2, widget.winfo_height()//2), window=widget)
             for each in u.classIndex:
                 if each.name.lower() == widget.winfo_name():
-                    each.location['x'] = x
-                    each.location['y'] = widget.winfo_height()//2        
+                    each.location['x'] = x + widget.winfo_width()//2
+                    each.location['y'] = widget.winfo_height()//2
+        
         else:
             self.canvas.create_window((widget.winfo_width()//2, widget.winfo_height()//2), window=widget)
             for each in u.classIndex:
                 if each.name.lower() == widget.winfo_name():
                     each.location['x'] = widget.winfo_width()//2 
-                    each.location['y'] = widget.winfo_height()//2 
+                    each.location['y'] = widget.winfo_height()//2
+
+
+        
+
         #set the widget at the location
         #widget.place(x=x, y=y)
         
