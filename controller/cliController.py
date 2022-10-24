@@ -6,6 +6,7 @@
 
 import pyfiglet
 import cmd2
+from model.ErrorHandlers.FieldException import FieldException
 from model.ErrorHandlers.MethodException import MethodException
 # Local Imports
 import model.UMLClass as UMLCLass
@@ -234,8 +235,10 @@ class Interface(cmd2.Cmd):
     def do_addField(self, arg):
         # Save the current program state
         UMLState.addUndo(UMLState.saveState())
-        attributes.addField(arg.field_name, arg.class_name, arg.type)
+        ret = attributes.addField(arg.field_name, arg.class_name, arg.type)
         UMLState.clearRedo()
+
+        FieldException(ret).throwStatus(arg.class_name, arg.field_name, None)
 
     """
         Delete Field
@@ -248,8 +251,10 @@ class Interface(cmd2.Cmd):
     def do_deleteField(self, arg):
         # Save the current program state
         UMLState.addUndo(UMLState.saveState())
-        attributes.deleteField(arg.field_name, arg.class_name)
+        ret = attributes.deleteField(arg.field_name, arg.class_name)
         UMLState.clearRedo()
+
+        FieldException(ret).throwStatus(arg.class_name, arg.field_name, None)
 
     """
         Rename Field
@@ -263,8 +268,10 @@ class Interface(cmd2.Cmd):
     def do_renameField(self, arg):
         # Save the current program state
         UMLState.addUndo(UMLState.saveState())
-        attributes.renameField(arg.name, arg.new_name, arg.class_name)
+        ret = attributes.renameField(arg.name, arg.new_name, arg.class_name)
         UMLState.clearRedo()
+
+        FieldException(ret).throwStatus(arg.class_name, arg.name, arg.new_name)
 
     """ PARAMETER COMMANDS """
 
