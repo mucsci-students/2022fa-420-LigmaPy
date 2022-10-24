@@ -1,6 +1,6 @@
 """
 Filename    : RelationException.py
-Description : 
+Description : Handles all return status codes for relationships
 """
 
 from model.ErrorHandlers.UMLException import UMLException
@@ -17,16 +17,22 @@ class RelationException(UMLException):
     
     def throwStatus(self, *args):
         """
-        
+        Prints a status message
+
+        :param *args: Used to get the name of the class name or names
         """
         if self.code == codes.ADDED_RELATIONSHIP or self.code == codes.DELETED_RELATIONSHIP:
             print(self.__success(args[0], args[1]))
         else:
             print(self.__error(args[0], args[1]))
 
-    def __success(self, src : str, dest : str):
+    def __success(self, src:str, dest:str):
         """ PRIVATE
-        
+        Prints the success message
+
+        :param src: The name of the relationship's source class
+        :param dest: The name of the relationship's destination class
+        :returns: The output message
         """
         output = f"\n{colors.fg.lightgreen}*** Success:"
 
@@ -38,9 +44,13 @@ class RelationException(UMLException):
         output = f"{output}{colors.reset}"
         return output
 
-    def __error(self, src : str, dest : str):
+    def __error(self, src:str, dest:str):
         """ PRIVATE
-        
+        Prints the error message
+
+        :param src: The relationship's source class
+        :param dest: The relationship's destination class
+        :returns: The output message
         """
         output = f"\n{colors.fg.lightred}*** Relationship"
 

@@ -25,7 +25,7 @@ class UMLClassException(UMLException):
         else:
             print(self.__error(args[0], args[1]))
 
-    def __success(self, className : str, newName : str):
+    def __success(self, className:str, newName:str=None):
         """ PRIVATE
         Prints the success message
 
@@ -47,7 +47,7 @@ class UMLClassException(UMLException):
 
         return output
 
-    def __error(self, className : str, newName : str):
+    def __error(self, className:str, newName:str=None):
         """ PRIVATE
         Prints the error message
 

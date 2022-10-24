@@ -174,15 +174,12 @@ class Interface(cmd2.Cmd):
         MethodException(ret).throwStatus(arg.class_name, arg.method_name, None)
         # Check if optional arg 'p' was entered
         if arg.p != None:
-            # Create a list of tuples containing (paramName, paramType)
-            paramList = []
+            # loop through contents of p
             for param in arg.p:
                 paramName, paramType = param.split(":")
-                paramList.append((paramName, paramType))
-            # Add parameter list to the newly created method            
-            retPar = parameter.addParameter(paramList, arg.method_name, arg.class_name)
-
-
+                ret = parameter.addParameter(paramName, paramType, arg.method_name, arg.class_name)
+                ParamException(ret).throwStatus(arg.class_name, arg.method_name, paramName, None)
+        # Clear the redo stack
         UMLState.clearRedo()
 
     """
@@ -289,20 +286,12 @@ class Interface(cmd2.Cmd):
     def do_addParam(self, arg):
         # Save the current program state
         UMLState.addUndo(UMLState.saveState())
-        # List of parameter tuples to pass to addParameter method
-        paramList = []
         for param in arg.p:
             # Split the parameter name and type
             paramName, paramType = param.split(':')
-            # paramList.append((paramName, paramType))
             ret = parameter.addParameter(paramName, paramType, arg.method_name, arg.class_name)
             ParamException(ret).throwStatus(arg.class_name, arg.method_name, paramName, None)
-        # ret = parameter.addParameter(paramList, arg.method_name, arg.class_name)
-
         UMLState.clearRedo()
-
-        # ParamException(ret).throwStatus(arg.class_name, arg.method_name, paramList, None)
-
     """
         Delete Parameter(s)
     """
@@ -317,23 +306,31 @@ class Interface(cmd2.Cmd):
         # Save the current program state
         UMLState.addUndo(UMLState.saveState())
         if arg.a:
-            parameter.deleteAllParameter(arg.method_name, arg.class_name)
+            ret = parameter.deleteAllParameter(arg.method_name, arg.class_name)
+            ParamException(ret).throwStatus(arg.class_name, arg.method_name, None, None)
         else:
-            parameter.deleteParameter(arg.p, arg.method_name, arg.class_name)
+            for param in arg.p:
+                ret = parameter.deleteParameter(param, arg.method_name, arg.class_name)
+                ParamException(ret).throwStatus(arg.class_name, arg.method_name, param)
         UMLState.clearRedo()
+
+        # ParamException(ret).throwStatus(arg.class_name, arg.method_name, )
 
     """
         Change Parameter(s)
     """
+    changeParamParser = cmd2.Cmd2ArgumentParser(description="Changes parameter list of a classes method")
+    changeParamParser.add_argument('class_name', help="Name of the class containing the target method")
+    changeParamParser.add_argument('method_name', help="Name of the method to have its parameter(s) changed")
+    changeParamParser.add_argument('-o', nargs='+', help="Parameter(s) to be changed")
+    changeParamParser.add_argument('-n', nargs='+', help="Parameter(s) to change to")
+    @cmd2.with_argparser(changeParamParser)
     @cmd2.with_category("Parameter")
     def do_changeParam(self, arg):
-        """Usage: changeParam <class> <method> -o <old_name>... -n <new_name>:<new_type>
-        
-        Changes the list of parameters from <old_list> to <new_list> in <method>
-        """
-        # args = arg.split()
-        
-        print(f"Waiting to be implemented")
+        # Loop through new and old list at the same time
+        for i in range(0, len(arg.o)):
+            ret = parameter.changeParameter(arg.o[i], arg.n[i], arg.method_name, arg.class_name)
+            ParamException(ret).throwStatus(arg.class_name, arg.method_name, arg.o[i], arg.n[i])
     
     """ SAVE/LOAD COMMANDS """
 

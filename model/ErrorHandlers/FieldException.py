@@ -1,6 +1,6 @@
 """
 Filename    : FieldException.py
-Description : 
+Description : Handles all return status codes for Fields
 """
 
 from model.ErrorHandlers.UMLException import UMLException
@@ -12,14 +12,24 @@ class FieldException(UMLException):
         super().__init__(code)
 
     def throwStatus(self, *args):
+        """
+        Prints a status message
+
+        :param *args: Used to get the name of the class name or names
+        """
         if self.code == codes.ADDED_FIELD or self.code == codes.DELETED_FIELD or self.code == codes.RENAMED_FIELD:
             print(self.__success(args[0], args[1], args[2]))
         else:
             print(self.__error(args[0], args[1], args[2]))
 
-    def __success(self, className : str, fieldName : str, newName : str):
+    def __success(self, className:str, fieldName:str, newName:str=None):
         """ PRIVATE
-        
+        Prints the success message
+
+        :param className: The name of the class
+        :param fieldName: Name of the field
+        :param newName: The new name for the class when being renamed
+        :returns: The output message
         """
         output = f"\n{colors.fg.lightgreen}*** Success:"
 
@@ -32,9 +42,14 @@ class FieldException(UMLException):
 
         return f"{output}{colors.reset}"
 
-    def __error(self, className : str, fieldName : str, newName : str):
+    def __error(self, className:str, fieldName:str, newName:str=None):
         """ PRIVATE
-        
+        Prints the error message
+
+        :param className: The name of the class
+        :param fieldName: The name of the field
+        :param newName: The new name for the Field when being renamed DEFAULT: None
+        :returns: The output message
         """
         output = f"\n{colors.fg.lightred}*** Field"
 

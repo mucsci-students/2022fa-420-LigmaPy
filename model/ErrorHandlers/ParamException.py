@@ -1,6 +1,6 @@
 """
 Filename    : ParamException.py
-Description : 
+Description : Handles all return status codes for Parameters
 """
 
 from model.ErrorHandlers.UMLException import UMLException
@@ -12,14 +12,25 @@ class ParamException(UMLException):
         super().__init__(code)
 
     def throwStatus(self, *args):
+        """
+        Prints a status message
+
+        :param *args: Used to get the name of the class name or names
+        """
         if self.code == codes.ADDED_PARAM or self.code == codes.DELETED_PARAM or self.code == codes.CHANGED_PARAM:
             print(self.__success(args[0], args[1], args[2], args[3]))
         else:
             print(self.__error(args[0], args[1], args[2], args[3]))
 
-    def __success(self, className : str, methodName : str, params : str, newParams : str):
+    def __success(self, className:str, methodName:str, params:str, newParams:str=None):
         """ PRIVATE
-        
+        Prints the success message
+
+        :param className: The name of the class
+        :param methodName: Name of the classes method
+        :param params: Name of the parameter being manipulated
+        :param newParams: The new name for the class when being renamed
+        :returns: The output message
         """
 
         output = f"\n{colors.fg.lightgreen}*** Success:"
@@ -34,11 +45,16 @@ class ParamException(UMLException):
 
         return f"{output}{colors.reset}"
 
-    def __error(self, className : str, methodName : str, param : str, newParam : str):
+    def __error(self, className:str, methodName:str, param:str, newParam:str=None):
         """ PRIVATE
-        
-        """
+        Prints the error message
 
+        :param className: The name of the class
+        :param methodName: The new name for the class when being renamed
+        :param param: The name of the parameter being manipulated
+        :param newParam: The updated name of the parameter DEFAULT: None
+        :returns: The output message
+        """
         output = f"\n{colors.fg.lightred}*** Parameter"
 
         """ TODO """
