@@ -1,8 +1,9 @@
 """
-Author(s)   : Trevor Bender
 Filename    : parameter_test.py
 Description : Tests for the parameter class
 """
+
+from model.ErrorHandlers.ReturnStatus import codes
 
 import model.UMLClass as UMLClass
 import model.attributes as attributes
@@ -16,39 +17,41 @@ attributes.addMethod("getQuality", "Tire", "string")
 """     Add Parameter Tests     """
 def test_add_parameter():
     # Test adding a parameter
-    assert parameter.addParameter([("new_psi", "string")], "setPSI", "Tire") == 1
+    assert parameter.addParameter("new_psi", "float", "setPSI", "Tire") == codes.ADDED_PARAM
 
 def test_add_multiple_parameters():
     # Test adding multiple parameters at once
-    assert parameter.addParameter([("currentTread", "Float"), ("illegalTread", "Float")], "getQuality", "Tire") == 1
+    assert parameter.addParameter("currentTread", "Float", "getQuality", "Tire") == codes.ADDED_PARAM
+    assert parameter.addParameter("illegalTread", "boolean", "getQuality", "Tire") == codes.ADDED_PARAM
 
 def test_add_duplicate_parameters():
     # Test adding a parameter that already exists
-    parameter.addParameter([("new_psi", "string")], "setPSI", "Tire")
-    assert parameter.addParameter([("new_psi", "string")], "setPSI", "Tire") == -3
+    assert parameter.addParameter("new_psi", "string", "setPSI", "Tire") == codes.ADD_PARAM_ALREADY_EXISTS
 
 def test_method_does_not_exist():
     # Test adding parameters to a method that does not exist
-    assert parameter.addParameter([("velocity", "float")], "getRotation", "Tire") == -2
+    assert parameter.addParameter("velocity", "float", "getRotation", "Tire") == codes.ADD_PARAM_METHOD_NOT_EXIST
 
 def test_class_does_not_exist():
     # Test adding a parameter to a method when the class does not exist
-    assert parameter.addParameter([("currentTread", "Float")], "getQuality", "Engine") == -1
+    assert parameter.addParameter("currentTread", "Float", "getQuality", "Engine") == codes.ADD_PARAM_CLASS_NOT_EXIST
 
 """     Delete Parameter Tests     """
 def test_delete_single_parameter():
     # Test deleting a single parameter
-    parameter.addParameter([("fudge", "long")], "setPSI", "Tire")
-    assert parameter.deleteParameter(["fudge"], "setPSI", "Tire") == 1
+    assert parameter.addParameter("fudge", "long", "setPSI", "Tire") == codes.ADDED_PARAM
+    assert parameter.deleteParameter("fudge", "setPSI", "Tire") == codes.DELETED_PARAM
 
 def test_delete_all_parameters():
     # Test deleting all parameters at once
-    parameter.addParameter([("bus", "string"), ("earned", "int"), ("idNum", "string")], "getQuality", "Tire")
-    assert parameter.deleteAllParameter("getQuality", "Tire") == 1
+    assert parameter.addParameter("idNum", "string", "getQuality", "Tire") == codes.ADDED_PARAM
+    assert parameter.addParameter("bus", "string", "getQuality", "Tire") == codes.ADDED_PARAM
+    assert parameter.addParameter("earned", "int", "getQuality", "Tire") == codes.ADDED_PARAM
+    assert parameter.deleteAllParameter("getQuality", "Tire") == codes.DELETED_PARAM
+
 
 """     Change Parameter Tests     """
 def test_change_parameters():
     # Test Changing the name of a parameter
-    parameter.addParameter([("new_pis", "float")], "setPSI", "Tire")
-    changed = parameter.changeParameter([("new_pis")], [("new_psi")], "setPSI", "Tire")
-    assert changed ==  1
+    assert parameter.addParameter("new_pis", "float", "setPSI", "Tire") == codes.ADDED_PARAM
+    changed = parameter.changeParameter("new_pis", "new_psi", "setPSI", "Tire") == codes.CHANGED_PARAM
