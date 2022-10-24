@@ -53,5 +53,5 @@ def test_delete_all_parameters():
 """     Change Parameter Tests     """
 def test_change_parameters():
     # Test Changing the name of a parameter
-    assert parameter.addParameter("new_pis", "float", "setPSI", "Tire") == codes.ADDED_PARAM
-    changed = parameter.changeParameter("new_pis", "new_psi", "setPSI", "Tire") == codes.CHANGED_PARAM
+    assert parameter.addParameter("band", "string", "setPSI", "Tire") == codes.ADDED_PARAM
+    assert parameter.changeParameter("band", "brand", "setPSI", "Tire") == codes.CHANGED_PARAM
