@@ -57,3 +57,45 @@ def test_find_relation_exists():
     # Test not finding a non existing relation
 def test_find_relation_exists():
     assert relationship.findRelationship("Car", "Fire") == -1    
+
+"""     Updating with Class Tests     """ 
+
+def test_source_deleted():
+    UMLClass.addClass("Tire")
+    UMLClass.addClass("Car")
+    relationship.addRelationship("Car", "Tire", "Composition") == 1
+    UMLClass.deleteClass("Car")
+    # Should no longer exist once one of the classes is deleted
+    assert relationship.findRelationship("Car", "Tire") == -1
+
+def test_destination_deleted():
+    UMLClass.addClass("Tire")
+    UMLClass.addClass("Car")
+    relationship.addRelationship("Car", "Tire", "Composition") == 1
+    UMLClass.deleteClass("Tire")
+    # Should no longer exist once one of the classes is deleted
+    assert relationship.findRelationship("Car", "Tire") == -1
+
+def test_source_renamed():
+    UMLClass.addClass("Foo")
+    UMLClass.addClass("Bar")
+    relationship.addRelationship("Foo", "Bar", "Composition") == 1
+    UMLClass.renameClass("Foo", "Fooooo")
+
+    # Relationship's source should now be changed
+    relIndex = relationship.findRelationship("Fooooo", "Bar")
+    assert relationship.relationIndex[relIndex].source == "Fooooo"
+
+def test_destination_renamed():
+    UMLClass.addClass("Sam")
+    UMLClass.addClass("isCool")
+    relationship.addRelationship("Sam", "isCool", "Composition") == 1
+    UMLClass.renameClass("isCool", "isReallyCool")
+
+    # Relationship's destination should now be changed
+    relIndex = relationship.findRelationship("Sam", "isReallyCool")
+    assert relationship.relationIndex[relIndex].destination == "isReallyCool"
+
+
+
+

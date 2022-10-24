@@ -154,9 +154,11 @@ class Controller:
             self.view.makeUpdateRelationType()
             self.view.makeMessage("Relationship does not exist")
         else:
+            self.view.deleteLine(self.view.source, self.view.destination) ############
             r.relationIndex[num].editType(self.view.relationshipTypeNew)
             self.view.remake()
             self.view.makeUpdateRelationType()
+            self.view.makeLine(self.view.source, self.view.destination) ###############
             self.view.makeMessage("Relationship type updated")       
     
     def clickDeleteRelationButton(self):
