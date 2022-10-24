@@ -118,7 +118,7 @@ class Interface(cmd2.Cmd):
         ret = relationship.addRelationship(arg.src, arg.dest, arg.type)
         UMLState.clearRedo()
 
-        RelationException(ret).throwStatus(arg.src, arg.dest)
+        RelationException(ret).throwStatus(arg.src, arg.dest, arg.type)
 
     """
         Delete Relationship
@@ -134,7 +134,7 @@ class Interface(cmd2.Cmd):
         ret = relationship.deleteRelationship(arg.src, arg.dest)
         UMLState.clearRedo()
 
-        RelationException(ret).throwStatus(arg.src, arg.dest)
+        RelationException(ret).throwStatus(arg.src, arg.dest, None)
 
     """
         Change Relationship Type

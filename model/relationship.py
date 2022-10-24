@@ -8,6 +8,7 @@ from typing import List
 import model.UMLClass as UMLClass
 from UMLException import UMLException, UMLSuccess
 from model.ErrorHandlers.ReturnStatus import codes
+from view.printColors import colors
 
 ###################################################################################################
 
@@ -16,8 +17,6 @@ class UMLRelationship:
         self.source = source
         self.destination = destination
         self.type = type
-
-        print(f"\nRelationship added: {self}")
 
     def toDict(self):
         """
@@ -28,7 +27,7 @@ class UMLRelationship:
         return {"source": self.source, "destination": self.destination, "type": self.type}
 
     def __repr__(self):
-        return f"[{self.source}] - [{self.destination}] <{self.type}>"
+        return f"{colors.bold}[{self.source}] - [{self.destination}] <{self.type}>{colors.reset}"
 
     #changes the type of the relationship
     def editType(self, newType:str):
@@ -91,7 +90,6 @@ def addRelationship(source: str, destination: str, type: str):
         return codes.ADD_DEST_NOT_EXIST
 
     if source == destination:
-        # print(UMLException("Relationship Error", f"Source class cannot be the same as destination class"))
         return codes.ADD_SAME_SRC_DEST
 
     for relation in relationIndex:
@@ -102,6 +100,7 @@ def addRelationship(source: str, destination: str, type: str):
     newRelation = UMLRelationship(source, destination, type)
     relationIndex.append(newRelation)
     UMLClass.classIndex[UMLClass.findClass(source)].register(newRelation.hash())
+    UMLClass.classIndex[UMLClass.findClass(destination)].register(newRelation.hash())
     return codes.ADDED_RELATIONSHIP
 
 def deleteRelationship(source: str, destination: str):
@@ -125,6 +124,7 @@ def deleteRelationship(source: str, destination: str):
 
     index = findRelationship(source, destination)
     if index > -1:
+        relationIndex.pop(index)
         return codes.DELETED_RELATIONSHIP
     else:
         # Relationship does not exist

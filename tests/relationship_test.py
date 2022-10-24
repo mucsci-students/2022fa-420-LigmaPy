@@ -63,16 +63,16 @@ def test_find_relation_exists():
 def test_source_deleted():
     UMLClass.addClass("Tire")
     UMLClass.addClass("Car")
-    relationship.addRelationship("Car", "Tire", "Composition") == 1
-    UMLClass.deleteClass("Car")
+    assert relationship.addRelationship("Car", "Tire", "Composition") == codes.ADDED_RELATIONSHIP
+    assert UMLClass.deleteClass("Car") == codes.DELETED_CLASS
     # Should no longer exist once one of the classes is deleted
     assert relationship.findRelationship("Car", "Tire") == -1
 
 def test_destination_deleted():
     UMLClass.addClass("Tire")
     UMLClass.addClass("Car")
-    relationship.addRelationship("Car", "Tire", "Composition") == 1
-    UMLClass.deleteClass("Tire")
+    assert relationship.addRelationship("Car", "Tire", "Composition") == codes.ADDED_RELATIONSHIP
+    assert UMLClass.deleteClass("Tire") == codes.DELETED_CLASS
     # Should no longer exist once one of the classes is deleted
     assert relationship.findRelationship("Car", "Tire") == -1
 
@@ -89,8 +89,8 @@ def test_source_renamed():
 def test_destination_renamed():
     UMLClass.addClass("Sam")
     UMLClass.addClass("isCool")
-    relationship.addRelationship("Sam", "isCool", "Composition") == 1
-    UMLClass.renameClass("isCool", "isReallyCool")
+    assert relationship.addRelationship("Sam", "isCool", "Composition") == codes.ADDED_RELATIONSHIP
+    assert UMLClass.renameClass("isCool", "isReallyCool") == codes.RENAMED_CLASS
 
     # Relationship's destination should now be changed
     relIndex = relationship.findRelationship("Sam", "isReallyCool")
