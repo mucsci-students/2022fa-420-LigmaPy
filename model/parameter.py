@@ -49,11 +49,12 @@ def findParameter(name, methodIndex, classIndex):
     return -1
 
 
-def addParameter(name:list, methodName:str, className:str):
+def addParameter(paramName:str, paramType:str, methodName:str, className:str):
     """
     Adds parameter to specified method in specified class
 
-    :param name: name(s) of the parameter(s) to be added
+    :param paramName: name of the parameter to be added
+    :param paramType: type of the parameter to be added
     :param methodName: name of the method parameter should be added to
     :param className: name of class containing the method the parameters will be added to
     """
@@ -63,36 +64,17 @@ def addParameter(name:list, methodName:str, className:str):
 
     # Runs if class doesn't exist
     if classIndex == None:
-        # print(UMLException("Class error", f"{className} does not exist"))
         return codes.ADD_PARAM_CLASS_NOT_EXIST
 
     # Runs if method doesn't exist within given class
     if methodIndex == -2:
-        # print(UMLException("Method error", f"{methodName} does not exist"))
         return codes.ADD_PARAM_METHOD_NOT_EXIST
-
-    # Separates list name into list of params and list of types
-    params = list(zip(*name))[0]
-    types = list(zip(*name))[1]
-    paramIndex = []
-
-    for i, n in enumerate(params):
-        paramIndex.append(findParameter(n, methodIndex, classIndex))
-    
-    # Runs if none of the given parameters already exist in given method
-    if paramIndex[0] == -1 and all(ele == paramIndex[0] for ele in paramIndex):
-        for i, p in enumerate(paramIndex):
-            newParameter = parameter(params[i], types[i])
-
-            C.classIndex[classIndex].methods[methodIndex].params.append(newParameter)
-
-            # print(UMLSuccess(f"{params[i]} added to {methodName}"))
+    # Check if parameter already exists in the method
+    if findParameter(paramName, methodIndex, classIndex) == -1:
+        C.classIndex[classIndex].methods[methodIndex].params.append(parameter(paramName, paramType))
         return codes.ADDED_PARAM
-    
-    for i, p in enumerate(paramIndex):
-        if p >= 0:
-            print(UMLException("Parameter error", f"{params[i]} already exists in {methodName}"))
-    return codes.ADD_PARAM_ALREADY_EXISTS
+    else:
+        return codes.ADD_PARAM_ALREADY_EXISTS
 
 
 def deleteParameter(name:list, methodName:str, className:str):

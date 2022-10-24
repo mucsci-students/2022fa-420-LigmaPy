@@ -4,6 +4,7 @@
     Description: Basic CLI interface and commands to go along with it.
 """
 
+from ast import Param
 import pyfiglet
 import cmd2
 from model.ErrorHandlers.FieldException import FieldException
@@ -293,12 +294,14 @@ class Interface(cmd2.Cmd):
         for param in arg.p:
             # Split the parameter name and type
             paramName, paramType = param.split(':')
-            paramList.append((paramName, paramType))
-        ret = parameter.addParameter(paramList, arg.method_name, arg.class_name)
+            # paramList.append((paramName, paramType))
+            ret = parameter.addParameter(paramName, paramType, arg.method_name, arg.class_name)
+            ParamException(ret).throwStatus(arg.class_name, arg.method_name, paramName, None)
+        # ret = parameter.addParameter(paramList, arg.method_name, arg.class_name)
 
         UMLState.clearRedo()
 
-        ParamException(ret).throwStatus(arg.class_name, arg.method_name, paramList, None)
+        # ParamException(ret).throwStatus(arg.class_name, arg.method_name, paramList, None)
 
     """
         Delete Parameter(s)

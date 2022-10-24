@@ -13,9 +13,9 @@ class ParamException(UMLException):
 
     def throwStatus(self, *args):
         if self.code == codes.ADDED_PARAM or self.code == codes.DELETED_PARAM or self.code == codes.CHANGED_PARAM:
-            print(self.__success(args[0], args[1], args[2]))
+            print(self.__success(args[0], args[1], args[2], args[3]))
         else:
-            print(self.__error(args[0], args[1], args[2]))
+            print(self.__error(args[0], args[1], args[2], args[3]))
 
     def __success(self, className : str, methodName : str, params : str, newParams : str):
         """ PRIVATE
