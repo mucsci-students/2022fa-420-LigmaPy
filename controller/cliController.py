@@ -8,6 +8,7 @@ import pyfiglet
 import cmd2
 from model.ErrorHandlers.FieldException import FieldException
 from model.ErrorHandlers.MethodException import MethodException
+from model.ErrorHandlers.ParamException import ParamException
 # Local Imports
 import model.UMLClass as UMLCLass
 import model.attributes as attributes
@@ -293,9 +294,11 @@ class Interface(cmd2.Cmd):
             # Split the parameter name and type
             paramName, paramType = param.split(':')
             paramList.append((paramName, paramType))
-        parameter.addParameter(paramList, arg.method_name, arg.class_name)
+        ret = parameter.addParameter(paramList, arg.method_name, arg.class_name)
 
         UMLState.clearRedo()
+
+        ParamException(ret).throwStatus(arg.class_name, arg.method_name, paramList, None)
 
     """
         Delete Parameter(s)

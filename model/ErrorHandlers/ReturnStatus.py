@@ -75,3 +75,4 @@ class codes(IntEnum):
     CHANGE_PARAM_CLASS_NOT_EXIST = 532 #--Attempted to change parameter(s) in a class that does not exist
     CHANGE_PARAM_METHOD_NOT_EXIST = 533 #-Attempted to change parameter(s) in a method that does not exist
     CHANGE_PARAM_ALREADY_EXISTS = 534 #---Attempted to change parameter(s) to ones that already exist
+    CHANGE_PARAM_PARAM_NOT_EXIST = 535 #--Attempted to change a parameter that does not exist
