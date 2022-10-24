@@ -6,7 +6,7 @@ Description: Adds, deletes, and renames parameters
 
 import model.UMLClass as C
 import model.attributes as A
-from UMLException import UMLException, UMLSuccess
+from model.ErrorHandlers.ReturnStatus import codes
 
 class parameter:
     def __init__(self, name:str, type:str):
@@ -48,11 +48,12 @@ def findParameter(name, methodIndex, classIndex):
     return -1
 
 
-def addParameter(name:list, methodName:str, className:str):
+def addParameter(paramName:str, paramType:str, methodName:str, className:str):
     """
     Adds parameter to specified method in specified class
 
-    :param name: name(s) of the parameter(s) to be added
+    :param paramName: name of the parameter to be added
+    :param paramType: type of the parameter to be added
     :param methodName: name of the method parameter should be added to
     :param className: name of class containing the method the parameters will be added to
     """
@@ -62,43 +63,24 @@ def addParameter(name:list, methodName:str, className:str):
 
     # Runs if class doesn't exist
     if classIndex == None:
-        print(UMLException("Class error", f"{className} does not exist"))
-        return -1
+        return codes.ADD_PARAM_CLASS_NOT_EXIST
 
     # Runs if method doesn't exist within given class
     if methodIndex == -2:
-        print(UMLException("Method error", f"{methodName} does not exist"))
-        return -2
-
-    # Separates list name into list of params and list of types
-    params = list(zip(*name))[0]
-    types = list(zip(*name))[1]
-    paramIndex = []
-
-    for i, n in enumerate(params):
-        paramIndex.append(findParameter(n, methodIndex, classIndex))
-    
-    # Runs if none of the given parameters already exist in given method
-    if paramIndex[0] == -1 and all(ele == paramIndex[0] for ele in paramIndex):
-        for i, p in enumerate(paramIndex):
-            newParameter = parameter(params[i], types[i])
-
-            C.classIndex[classIndex].methods[methodIndex].params.append(newParameter)
-
-            print(UMLSuccess(f"{params[i]} added to {methodName}"))
-        return 1
-    
-    for i, p in enumerate(paramIndex):
-        if p >= 0:
-            print(UMLException("Parameter error", f"{params[i]} already exists in {methodName}"))
-    return -3
+        return codes.ADD_PARAM_METHOD_NOT_EXIST
+    # Check if parameter already exists in the method
+    if findParameter(paramName, methodIndex, classIndex) == -1:
+        C.classIndex[classIndex].methods[methodIndex].params.append(parameter(paramName, paramType))
+        return codes.ADDED_PARAM
+    else:
+        return codes.ADD_PARAM_ALREADY_EXISTS
 
 
-def deleteParameter(name:list, methodName:str, className:str):
+def deleteParameter(paramName:str, methodName:str, className:str):
     """
     Removes parameter from a specified method in specified class
 
-    :param name: name(s) of the parameter(s) to be removed
+    :param paramName: name of the parameter to be removed
     :param methodName: name of the method parameter should be removed from
     :param className: name of class containing the method the parameters will be removed from
     """
@@ -108,31 +90,19 @@ def deleteParameter(name:list, methodName:str, className:str):
 
     # Runs if class does not exist
     if cIndex == None:
-        print(UMLException("Class error", f"{className} does not exist"))
-        return -1
-
+        return codes.DELETE_PARAM_CLASS_NOT_EXIST
 
     # Runs if method does not exist
     if methodIndex == -2:
-        print(UMLException("Method error", f"{methodName} does not exist in {className}"))
-        return -2
-  
-    paramList = C.classIndex[cIndex].methods[methodIndex].params    
-    paramNames = []
-    
-    for par in paramList:
-        paramNames.append(par.name)
-    for n in name:
-        if n not in paramNames:
-            print(UMLException("Parameter error", f"{n} does not exist in {methodName}"))
-            return -3
+        return codes.DELETE_PARAM_METHOD_NOT_EXIST
 
-    for par in paramList:
-        if par.name in name:
-            paramList.remove(par)
-            print(UMLSuccess(f"Removed {par.name} from {methodName}"))
-    C.classIndex[cIndex].methods[methodIndex].params = paramList
-    return 1
+    pIndex = findParameter(paramName, methodIndex, cIndex)
+
+    if pIndex > -1:
+        C.classIndex[cIndex].methods[methodIndex].params.pop(pIndex)
+        return codes.DELETED_PARAM
+    else:
+        return codes.DELETE_PARAM_NOT_EXIST
 
 def deleteAllParameter(methodName:str, className:str):
     """
@@ -146,18 +116,16 @@ def deleteAllParameter(methodName:str, className:str):
 
     # Runs if class does not exist
     if classIndex == None:
-        print(f"Class \"{className}\" does not exist.")
-        return -1
+        return codes.DELETE_PARAM_CLASS_NOT_EXIST
 
     # Runs if method does not exist
     if methodIndex == -2:
-        print(f"Method \"{methodName}\" does not exist in class \"{className}\".")
-        return -2
+        return codes.DELETE_PARAM_METHOD_NOT_EXIST
 
-    C.classIndex[classIndex].methods[methodIndex].params = []
-    return 1
+    C.classIndex[classIndex].methods[methodIndex].params.clear()
+    return codes.DELETED_PARAM
 
-def changeParameter(oldName:list, newName:list, methodName:str, className:str):
+def changeParameter(oldName:str, newName:str, methodName:str, className:str):
     """
     Changes and replaces parameter(s) to specified method in specified class
 
@@ -169,32 +137,24 @@ def changeParameter(oldName:list, newName:list, methodName:str, className:str):
 
     cIndex = C.findClass(className)
     methodIndex = A.findMethod(methodName, className)
-
+    # Check if class exists
     if cIndex == None:
-        print(f"Class \"{className}\" does not exist.")
-        return -1    
-
+        return codes.CHANGE_PARAM_CLASS_NOT_EXIST 
+    # Check if method exists
     if methodIndex == -2:
-        print(f"Method \"{methodName}\" does not exist in class \"{className}\".")
-        return -2
+        return codes.CHANGE_PARAM_METHOD_NOT_EXIST
 
-    paramList = C.classIndex[cIndex].methods[methodIndex].params    
-    paramNames = []
-    for par in paramList:
-        paramNames.append(par.name)
+    pIndex = findParameter(oldName, methodIndex, cIndex)
+    # Check if the parameter does not exist
+    if pIndex == -1:
+        return codes.CHANGE_PARAM_PARAM_NOT_EXIST
+    # Check if the new parameter already exists
+    if findParameter(newName, methodIndex, cIndex) > -1:
+        return codes.CHANGE_PARAM_ALREADY_EXISTS
     
-    for n in oldName:
-        if n not in paramNames:
-            print(f"Parameter \"{n}\" does not exist in method \"{methodName}\"!")
-            return -3
-    
-    params = list(zip(*newName))[0]
-    for n in params:
-        if n in paramNames:
-            print(f"Parameter \"{n}\" already exists in method \"{methodName}\"!")
-            return -4
-    
+    oldType = C.classIndex[cIndex].methods[methodIndex].params[pIndex].type
+
     deleteParameter(oldName, methodName, className)
-    addParameter(newName, methodName, className)
-    return 1
+    addParameter(newName, oldType, methodName, className)
+    return codes.CHANGED_PARAM
     
