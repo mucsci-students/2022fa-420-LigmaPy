@@ -54,7 +54,7 @@ def isNameUnique(name: str):
     :returns: True if the name is unique
     """
     for c in classIndex:
-        if c.name == name:
+        if c.name.lower() == name.lower():
             return False
     return True
 
