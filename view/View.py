@@ -44,7 +44,7 @@ class View(tk.Tk):
         #screenWidth = self.winfo_screenwidth() - 100
         #screenHeight = self.winfo_screenheight() - 100
         # Sets the size of the window
-        self.state('zoomed')
+        # self.state('zoomed')
         #self.geometry(f"{screenWidth}x{screenHeight}")
         self.rowconfigure(0, weight=1)
         self.rowconfigure(1, weight=1)
