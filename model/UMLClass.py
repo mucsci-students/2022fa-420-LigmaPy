@@ -126,6 +126,10 @@ def renameClass(oldName: str, newName: str):
     """
     if findClass(newName) != None:
         return codes.RENAME_NEW_CLASS_EXIST
+    
+    if not isNameUnique(newName):
+        print(UMLException("Class Rename Error", f"{newName} class already exists"))
+        return codes.ADD_EXISTING_CLASS
 
     if len(newName.strip()) == 0:
         return codes.RENAME_CLASS_EMPTY
