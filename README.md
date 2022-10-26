@@ -26,7 +26,9 @@ python uml.py [--cli]
 ```
 Note: Add the --cli flag to run the CLI editor
 
-## CLI Commands
+<details>
+
+<summary style="font-weight:bold;font-size:18.5pt;">CLI Commands</summary>
 
 ### `addClass` - <i>Creates a class</i>
 
@@ -133,6 +135,17 @@ help [command]
 ```bash
 exit
 ```
+</details>
+<br>
+<details>
+
+<summary style="font-weight:bold;font-size:18.5pt;">Design Patterns</summary>
+
+## MVC
+## Memento
+## Observer
+## Singleton
+</details>
 <br>
 
 ## Team
