@@ -13,6 +13,7 @@ from turtle import width
 import model.UMLClass as u
 import model.relationship as r
 import model.attributes as a
+import model.UMLState as s
 import math
 
 
@@ -95,6 +96,10 @@ class View(tk.Tk):
         #listmenu.add_command(label="List Relationships", command= lambda : self.controller.clickListRelationsButton())
         #listmenu.add_command(label="Clear", command= lambda : self.clearScreen())
         #menubar.add_cascade(label="List", menu=listmenu)
+        editMenu = tk.Menu(menubar, tearoff=0)
+        editMenu.add_command(label="Undo", command = lambda : self.controller.clickUndoButton())
+        editMenu.add_command(label="Redo", command = lambda : self.controller.clickRedoButton())
+        menubar.add_cascade(label="Edit", menu=editMenu)
         self.config(menu=menubar)
 
     #creates all the button in the top left
@@ -253,7 +258,8 @@ class View(tk.Tk):
         #binds boxes to drag and drop event
         UMLBoxes[UMLclass.name].bind("<Button-1>", self.dragStart)
         UMLBoxes[UMLclass.name].bind("<B1-Motion>", self.dragMove)
-        
+        UMLBoxes[UMLclass.name].bind("<ButtonRelease-1>", self.release)
+
         #remakes the line with the new label if a relationship existed
         for each in sourceList:
             self.makeLine(each.winfo_name(), UMLBoxes[UMLclass.name].winfo_name())
@@ -287,6 +293,8 @@ class View(tk.Tk):
         #binds boxes to drag and drop event
         UMLBoxes[UMLclass.name].bind("<Button-1>", self.dragStart)
         UMLBoxes[UMLclass.name].bind("<B1-Motion>", self.dragMove)
+        UMLBoxes[UMLclass.name].bind("<ButtonRelease-1>", self.release)
+
         
         #remakes the line with the new label if a relationship existed
         for each in sourceList:
@@ -399,6 +407,11 @@ class View(tk.Tk):
         self.outputFrame.destroy()
         self.makeOutputFrame()
         self.remake()
+
+    #clears canvas on right and input window on left
+    def clearCanvas(self):
+        self.outputFrame.destroy()
+        self.makeOutputFrame()
 
     # refreshes the canvas and prints the list of class to the canvas 
     def printAllClassesToCanvas(self, list):
@@ -1153,10 +1166,16 @@ class View(tk.Tk):
         self.inputFrame.destroy()
         self.makeInputFrame()
 
+
+    def release(self, event):
+        s.addUndo(s.saveState())
+        s.clearRedo()
+
     def dragStart(self, event):
         widget = event.widget
         widget.startX = event.x
         widget.startY = event.y
+
 
     def dragMove(self, event):
 
@@ -1192,7 +1211,7 @@ def classToString(c):
     methLen = 12
     height = 8
     string = ''
-    string += "Class: " + c.name + "\n"
+    string += "Class: " + c.name + "\n" 
     classLen += len(c.name)
     string += "\n    Fields:\n"
     for each in c.fields:

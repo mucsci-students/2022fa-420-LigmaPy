@@ -32,7 +32,7 @@ class UMLClass:
         """
         fieldDict = [field.toDict() for field in self.fields]
         methodDict = [method.toDict() for method in self.methods]
-        return {"name": self.name, "Fields": fieldDict, "Methods": methodDict}
+        return {"name": self.name, "Fields": fieldDict, "Methods": methodDict, "x": self.location['x'], "y": self.location["y"]}
 
     def rename(self, newName):
         print(UMLSuccess(f"Renamed {self.name} to {newName}"))
