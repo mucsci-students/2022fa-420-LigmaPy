@@ -1,5 +1,4 @@
 """
-Author : Christian Shepperson
 Filename : relationship.py
 Description : Adds, deletes and updates the type of relationships
 """

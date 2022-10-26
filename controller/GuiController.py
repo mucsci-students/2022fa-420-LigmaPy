@@ -1,5 +1,4 @@
 """
-Author(s)   : Aaron Heinbaugh
 Filename    : GuiController.py
 Description : Controller that links the view and the model
 """

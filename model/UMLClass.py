@@ -1,5 +1,4 @@
 """
-Author: Sam Noggle
 Filename: UMLClass.py
 Description: Adds, renames, and deletes a class object
 """

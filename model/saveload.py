@@ -1,5 +1,4 @@
 """
-Author: Aaron Heinbaugh
 Filename: saveload.py
 Description: Saves and loads a user's session as a json
 """

@@ -1,5 +1,4 @@
 """
-Author(s)   : Trevor Bender
 Filename    : attributes_test.py
 Description : Tests for the attributes class
 """

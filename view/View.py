@@ -1,5 +1,4 @@
 """
-Author(s)   : Trevor Bender and Aaron Heinbaugh
 Filename    : View.py
 Description : Constructs and displays the gui
 """

@@ -1,5 +1,4 @@
 """
-Authors: Julia Geesaman, Sam Noggle
 Filename: attributes.py
 Description: Adds, deletes, and renames an attribute (method or field)
 """
