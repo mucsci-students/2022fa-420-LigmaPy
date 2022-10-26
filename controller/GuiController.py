@@ -25,14 +25,16 @@ class Controller:
     in the lower left of the GUI or the file menu (save, load, list...).
     Each then calls the approprate function in the model and interprets the return value
     to inform the user in the lower left of the GUI 
-    The function's name decribes which button was click in GUI
+    The function's name decribes which button was clicked in GUI
     Instead of commenting each function, apply the idea of comments from 
     clickChangeAnotherParamButton directly below to the others
     """
     
-    #calls changeParameter in the model and return an error/success message
-    #and remakes the inputframe so users can change another param if needed
     def clickChangeAnotherParamButton(self):
+        """
+        Calls changeParameter in the model and return an error/success message
+        and remakes the inputframe so users can change another param if needed
+        """
         #check if empty string was given and tells user not to do that
         if len(self.view.paramNew) == 0:
             #destroys base input frame and everything in it
@@ -78,6 +80,9 @@ class Controller:
             self.view.makeMessage('Parameter changed')
 
     def clickAddClassButton(self):
+        """
+        Adds a class
+        """
         num = u.addClass(self.view.className)
         if num == -1:
             self.view.inputFrame.destroy()
@@ -96,6 +101,9 @@ class Controller:
             self.view.makeMessage(f"\nClass \"{self.view.className}\" has been created!")
 
     def clickDeleteClassButton(self):
+        """
+        Deletes a class
+        """
         num = u.deleteClass(self.view.className)
         if num == -1:
             self.view.remake()
@@ -108,6 +116,9 @@ class Controller:
             self.view.makeMessage(f"\nClass \"{self.view.className}\" has been deleted.")
 
     def clickRenameClassButton(self):
+        """
+        Renames a class
+        """
         num = u.renameClass(self.view.className, self.view.classNameNew)
         if num == -1:
             self.view.remake()
@@ -128,6 +139,9 @@ class Controller:
             self.view.makeMessage("Class renamed")
         
     def clickAddRelationButton(self):
+        """
+        Adds a relationship
+        """
         num = r.addRelationship( self.view.source, self.view.destination, self.view.relationshipType)
         if num == -2:
             self.view.remake()
@@ -148,6 +162,9 @@ class Controller:
             self.view.makeMessage("Relationship added")
 
     def clickUpdateTypeButton(self):
+        """
+        Updates a relationship's type
+        """
         num = r.findRelationship(self.view.source, self.view.destination)
         if num == -1:
             self.view.remake()
@@ -162,6 +179,9 @@ class Controller:
             self.view.makeMessage("Relationship type updated")       
     
     def clickDeleteRelationButton(self):
+        """
+        Deletes a relationship
+        """
         num = r.deleteRelationship( self.view.source, self.view.destination)
         if num == -1:
             self.view.remake()
@@ -174,6 +194,9 @@ class Controller:
             self.view.makeMessage("Relationship deleted")
 
     def clickAddFieldButton(self):
+        """
+        Adds a field
+        """
         num = a.addField(self.view.field, self.view.className, self.view.fieldType)
         if num == -1:
             self.view.remake()
@@ -190,7 +213,10 @@ class Controller:
            
             self.view.makeMessage("Field added")
 
-    def clickDeleteFieldButton(self):   
+    def clickDeleteFieldButton(self): 
+        """
+        Deletes a field
+        """  
         print(self.view.field)
         print(self.view.className)
         num = a.deleteField(self.view.field, self.view.className)
@@ -209,6 +235,9 @@ class Controller:
             self.view.makeMessage("Field deleted")
 
     def clickRenameFieldButton(self):
+        """
+        Renames a field
+        """
         num = a.renameField(self.view.field, self.view.feildNew, self.view.className)
         if num == -1:
             self.view.remake()
@@ -229,7 +258,9 @@ class Controller:
             self.view.makeMessage("Field renamed")
     
     def clickAddMethodAndParamsButton(self):
-
+        """
+        Adds a method and its parameters
+        """
         num = a.addMethod(self.view.method, self.view.className, self.view.methodReturnType)
         if num == -1:
             self.view.inputFrame.destroy()
@@ -249,6 +280,9 @@ class Controller:
             self.view.makeMessage("Method added, please enter parameter(s)")
 
     def clickAddMethodWithoutParamsButton(self):
+        """
+        Adds a method without parameters
+        """
         num = a.addMethod(self.view.method, self.view.className, self.view.methodReturnType)
         if num == -1:
             self.view.inputFrame.destroy()
@@ -268,6 +302,9 @@ class Controller:
             self.view.makeMessage("Method added")
 
     def clickAddParamButton(self):
+        """
+        Adds a parameter
+        """
         if len(self.view.param) == 0:
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
@@ -299,6 +336,9 @@ class Controller:
             self.view.makeMessage("Parameter added")            
 
     def clickDeleteMethodButton(self):
+        """
+        Deletes a method
+        """
         num = a.deleteMethod(self.view.method, self.view.className)
         if num == -1:
             self.view.remake()
@@ -316,6 +356,9 @@ class Controller:
 
 
     def clickUpdateMethodButton(self):
+        """
+        Renames a method
+        """
         num = a.renameMethod(self.view.method, self.view.methodNew, self.view.className)
         if num == -1:    
             self.view.remake()
@@ -336,6 +379,9 @@ class Controller:
             self.view.makeMessage('Method renamed')
 
     def clickAddParamToMethodButton(self):
+        """
+        Adds a parameter to a method
+        """
         num = a.findMethod(self.view.method, self.view.className)
         if num == -1:
             self.view.inputFrame.destroy()
@@ -353,6 +399,9 @@ class Controller:
             self.view.makeParamInputFrame()
 
     def clickDeleteParamButton(self):
+        """
+        Deletes a parameter
+        """
         num = a.findMethod(self.view.method, self.view.className)
         if num == -1:
             self.view.inputFrame.destroy()
@@ -370,6 +419,9 @@ class Controller:
             self.view.makeDeleteParamInputFrame()
 
     def clickDeleteAllParamButton(self):
+        """
+        Deletes all parameters from a method
+        """
         num = p.deleteAllParameter(self.view.method, self.view.className)
         if num == -1:
             self.view.inputFrame.destroy()
@@ -389,6 +441,9 @@ class Controller:
             self.view.makeMessage('All parameters deleted')
     
     def clickSecondDeleteParamButton(self):
+        """
+        Deletes... another parameter
+        """
         if len(self.view.param) == 0:
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
@@ -420,6 +475,9 @@ class Controller:
             self.view.makeMessage('Parameter deleted')
 
     def clickChangeParamButton(self):
+        """
+        Changes a parameter
+        """
         num = a.findMethod(self.view.method, self.view.className)
         if num == -1:
             self.view.inputFrame.destroy()
@@ -437,6 +495,9 @@ class Controller:
             self.view.makeChangeParamInputFrame()                
 
     def clickChangeAllParamButton(self):
+        """
+        Changes all parameters
+        """
         num = p.deleteAllParameter(self.view.method, self.view.className)
         if num == -1:
             self.view.inputFrame.destroy()
@@ -456,8 +517,10 @@ class Controller:
             self.view.makeMessage('Parameters removed, add new parameter(s)') 
 
             
-    
     def clickSaveButton(self):
+        """
+        Saves the state of the UML
+        """
         self.view.save()
         if self.view.fileName == "":
             return
@@ -472,6 +535,9 @@ class Controller:
             self.view.makeMessage(message)
 
     def clickLoadButton(self):
+        """
+        Loads a state into the view
+        """
         self.view.load()
         message = s.loadGUI(self.view.fileName)
         #clears the canvas and empties lines dictionary
@@ -487,6 +553,9 @@ class Controller:
         self.view.makeMessage(message)
 
     def clickListClassButton(self):
+        """
+        Lists a particular class and its data
+        """
         name = self.view.className
         index = u.findClass(name)
         if index == None:
@@ -501,6 +570,9 @@ class Controller:
             self.view.makeListClassFrame()
 
     def clickListAllClassesButton(self):
+        """
+        Lists all classes and their data
+        """
         self.view.remake()
         if len(u.classIndex) == 0:
             self.view.clearScreen()
@@ -510,6 +582,9 @@ class Controller:
             self.view.remake()
 
     def clickListRelationsButton(self):
+        """
+        Lists all relationships
+        """
         self.view.remake()
         if len(r.relationIndex) == 0:
             self.view.clearScreen()
