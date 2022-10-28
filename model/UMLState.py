@@ -56,6 +56,13 @@ def loadState(state : UMLState):
     for c in state.stateDict['classes']:
         # Add the class
         UMLClass.addClass(c['name'])
+        # Adds location to class
+        # for x in c['x']:
+        # print(c['x'])
+        # print(c['name'])
+        w = UMLClass.classIndex[UMLClass.findClass(c['name'])]
+        w.location['x'] = c['x']
+        w.location['y'] = c['y']
         # Add the fields to the class
         for field in c['Fields']:
             attributes.addField(field['name'], c['name'], field['type'])
@@ -65,6 +72,10 @@ def loadState(state : UMLState):
             # Add parameters to the method
             for param in meth['params']:
                 parameter.addParameter([(param['name'], param['type'])], meth['name'], c['name'])
+    
+    for rel in state.stateDict['relationships']:
+        print(rel)
+        relationship.addRelationship(rel['source'], rel['destination'], rel['type'])
 
 def undo() -> UMLState:
     """
