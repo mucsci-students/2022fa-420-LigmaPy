@@ -44,13 +44,11 @@ class Controller:
             #output message to user below new changeparam frame
             self.view.makeMessage('New parameter name cannot be empty')
             return
-        #sets up parameters to call changeParameter
-        oldParam = [self.view.param]
-        newParam = [(self.view.paramNew, self.view.paramTypeNew)]
+
         # saves state
         state = us.saveState()
         #creates num to hold result of changeParam call
-        num = p.changeParameter(oldParam, newParam, self.view.method, self.view.className)
+        num = p.changeParameter(self.view.param, self.view.paramNew, self.view.method, self.view.className)
         #each conditional below recreates the changeParam frame and alerts user based on the result of changeParam call
         if num == -1:
             self.view.inputFrame.destroy()
@@ -344,10 +342,11 @@ class Controller:
             self.view.makeParamInputFrame()
             self.view.makeMessage('Parameter name cannot be empty')
             return 
-        l = [(self.view.param, self.view.paramType)]
+
         # saves state
         state = us.saveState()
-        num = p.addParameter(l, self.view.method, self.view.className)
+        num = p.addParameter(self.view.param, self.view.paramType, self.view.method, self.view.className)
+
         if num == -1:
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
@@ -501,10 +500,11 @@ class Controller:
             self.view.makeDeleteParamInputFrame()
             self.view.makeMessage('Parameter does not exist')
             return
-        l = [self.view.param]
+
         # saves state
         state = us.saveState()
-        num = p.deleteParameter(l, self.view.method, self.view.className)
+        num = p.deleteParameter(self.view.param, self.view.method, self.view.className)
+
         if num == -1:
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()

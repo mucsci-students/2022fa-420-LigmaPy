@@ -44,11 +44,13 @@ class View(tk.Tk):
         self.canvasSizeX = 2000
         self.canvasSizeY = 2000
         self.title("UML Editor")
-        #screenWidth = self.winfo_screenwidth() - 100
-        #screenHeight = self.winfo_screenheight() - 100
+
+        screenWidth = self.winfo_screenwidth() - 100
+        screenHeight = self.winfo_screenheight() - 100
+
         # Sets the size of the window
         # self.state('zoomed')
-        #self.geometry(f"{screenWidth}x{screenHeight}")
+        self.geometry(f"{screenWidth}x{screenHeight}")
         self.rowconfigure(0, weight=1)
         self.rowconfigure(1, weight=1)
         self.columnconfigure(1, weight=1)
@@ -397,32 +399,40 @@ class View(tk.Tk):
 
         # determines color of arrow from relationship type
         if type == "Aggregation":
-            color = "red"
+            color = "gray"
+            arrowShape = (24, 12, 12)
+            d = None
         elif type == "Composition":
-            color = "blue"
+            color = "black"
+            arrowShape = (24, 12, 12)
+            d = None
         elif type == "Inheritance":
-            color = "green"
+            color = "gray"
+            arrowShape = (12, 12, 12)
+            d = None
         else: 
-            color = "purple"
+            color = "gray"
+            arrowShape = (12, 12, 12)
+            d = (1,1)
 
         #creates the line to closest point and add it to the list
         minpos = closest.index(min(closest))
         if minpos == 0:
-            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dTopCoord[0],dTopCoord[1], width=3, arrow=tk.LAST, fill=color)
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dTopCoord[0],dTopCoord[1], width=3, arrow=tk.LAST, fill=color, arrowshape=arrowShape, dash=d)
         if minpos == 1:
-            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dLeftCoord[0],dLeftCoord[1], width=3, arrow=tk.LAST, fill=color)
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dLeftCoord[0],dLeftCoord[1], width=3, arrow=tk.LAST, fill=color, arrowshape=arrowShape, dash=d)
         if minpos == 2:
-            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dRightCoord[0],dRightCoord[1], width=3, arrow=tk.LAST, fill=color)
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dRightCoord[0],dRightCoord[1], width=3, arrow=tk.LAST, fill=color, arrowshape=arrowShape, dash=d)
         if minpos == 3:
-            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dBottomCoord[0],dBottomCoord[1], width=3, arrow=tk.LAST, fill=color)
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dBottomCoord[0],dBottomCoord[1], width=3, arrow=tk.LAST, fill=color, arrowshape=arrowShape, dash=d)
         if minpos == 4:
-            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dTopRight[0],dTopRight[1], width=3, arrow=tk.LAST, fill=color)
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dTopRight[0],dTopRight[1], width=3, arrow=tk.LAST, fill=color, arrowshape=arrowShape, dash=d)
         if minpos == 5:
-            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dTopLeft[0],dTopLeft[1], width=3, arrow=tk.LAST, fill=color)            
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dTopLeft[0],dTopLeft[1], width=3, arrow=tk.LAST, fill=color, arrowshape=arrowShape, dash=d)            
         if minpos == 6:
-            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dBottomRight[0],dBottomRight[1], width=3, arrow=tk.LAST, fill=color)    
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dBottomRight[0],dBottomRight[1], width=3, arrow=tk.LAST, fill=color, arrowshape=arrowShape, dash=d)    
         if minpos == 7:
-            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dBottomLeft[0],dBottomLeft[1], width=3, arrow=tk.LAST, fill=color)
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dBottomLeft[0],dBottomLeft[1], width=3, arrow=tk.LAST, fill=color, arrowshape=arrowShape, dash=d)
     
 
     #delete a line and removes it from the list
@@ -1205,19 +1215,19 @@ class View(tk.Tk):
             e2 = tk.Entry(self.inputFrame, width=50)
             e2.grid(row=3, columnspan=2)
             e2.focus_set()
-            inputlabel3 = tk.Label(self.inputFrame, text='Enter new parameter type:')
-            inputlabel3.grid(row=4, columnspan=2) 
-            e3 = tk.Entry(self.inputFrame, width=50)
-            e3.grid(row=5, columnspan=2)
+            #inputlabel3 = tk.Label(self.inputFrame, text='Enter new parameter type:')
+            #inputlabel3.grid(row=4, columnspan=2) 
+            #e3 = tk.Entry(self.inputFrame, width=50)
+            #e3.grid(row=5, columnspan=2)
             def addParam(event):
                 self.param = clicked.get().strip()
                 self.paramNew = e2.get()
-                self.paramTypeNew = e3.get()
+                #self.paramTypeNew = e3.get()
                 self.controller.clickChangeAnotherParamButton()
             def addParam1():
                 self.param = clicked.get().strip()
                 self.paramNew = e2.get()
-                self.paramTypeNew = e3.get()
+                #self.paramTypeNew = e3.get()
                 self.controller.clickChangeAnotherParamButton()
             addParamButton = tk.Button(self.inputFrame, text='Change parameter(s)', command= lambda: addParam1())
             addParamButton.grid(row=6, column=0)
