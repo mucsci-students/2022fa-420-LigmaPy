@@ -4,8 +4,12 @@
     Description: Basic CLI interface and commands to go along with it.
 """
 
+from ast import Param
 import pyfiglet
 import cmd2
+from model.ErrorHandlers.FieldException import FieldException
+from model.ErrorHandlers.MethodException import MethodException
+from model.ErrorHandlers.ParamException import ParamException
 # Local Imports
 import model.UMLClass as UMLCLass
 import model.attributes as attributes
@@ -14,8 +18,9 @@ import model.parameter as parameter
 from UMLException import UMLException, UMLSuccess
 from interface.interfaceCommands import *
 from model.saveload import *
-# from view.printColors import colors
 from model import UMLState
+from model.ErrorHandlers.UMLClassExceptions import UMLClassException
+from model.ErrorHandlers.RelationException import RelationException
 
 
 _intro_text = """\
@@ -41,10 +46,6 @@ class Interface(cmd2.Cmd):
         del cmd2.Cmd.do_macro
         del cmd2.Cmd.do_quit
 
-    """
-        Commmand listeners
-    """
-
     """ CLASS COMMANDS """
 
     """
@@ -58,8 +59,10 @@ class Interface(cmd2.Cmd):
     def do_addClass(self, arg):
         # Save the current state
         UMLState.addUndo(UMLState.saveState())
-        UMLClass.addClass(arg.class_name)
+        ret = UMLClass.addClass(arg.class_name)
         UMLState.clearRedo()
+
+        UMLClassException(ret).throwStatus(arg.class_name, None)
 
     """
         Delete Class
@@ -72,8 +75,10 @@ class Interface(cmd2.Cmd):
     def do_deleteClass(self, arg):
         # Save the current state
         UMLState.addUndo(UMLState.saveState())
-        UMLClass.deleteClass(arg.class_name)
+        ret = UMLClass.deleteClass(arg.class_name)
         UMLState.clearRedo()
+
+        UMLClassException(ret).throwStatus(arg.class_name, None)
     
     """ 
         Rename Class
@@ -87,8 +92,10 @@ class Interface(cmd2.Cmd):
     def do_renameClass(self, arg):
         # Save the current state
         UMLState.addUndo(UMLState.saveState())
-        UMLClass.renameClass(arg.class_name, arg.new_name)
+        ret = UMLClass.renameClass(arg.class_name, arg.new_name)
         UMLState.clearRedo()
+
+        UMLClassException(ret).throwStatus(arg.class_name, arg.new_name)
 
     """ RELATIONSHIP COMMANDS """
 
@@ -108,8 +115,10 @@ class Interface(cmd2.Cmd):
     def do_addRelationship(self, arg):
         # Save the current state
         UMLState.addUndo(UMLState.saveState())
-        relationship.addRelationship(arg.src, arg.dest, arg.type)
+        ret = relationship.addRelationship(arg.src, arg.dest, arg.type)
         UMLState.clearRedo()
+
+        RelationException(ret).throwStatus(arg.src, arg.dest, arg.type)
 
     """
         Delete Relationship
@@ -122,8 +131,10 @@ class Interface(cmd2.Cmd):
     def do_deleteRelationship(self, arg):
         # Save the current state
         UMLState.addUndo(UMLState.saveState())
-        relationship.deleteRelationship(arg.src, arg.dest)
+        ret = relationship.deleteRelationship(arg.src, arg.dest)
         UMLState.clearRedo()
+
+        RelationException(ret).throwStatus(arg.src, arg.dest, None)
 
     """
         Change Relationship Type
@@ -159,17 +170,16 @@ class Interface(cmd2.Cmd):
         # Save the current state
         UMLState.addUndo(UMLState.saveState())
         # Added the method with return type to the class
-        attributes.addMethod(arg.method_name, arg.class_name, arg.ret_type)
+        ret = attributes.addMethod(arg.method_name, arg.class_name, arg.ret_type)
+        MethodException(ret).throwStatus(arg.class_name, arg.method_name, None)
         # Check if optional arg 'p' was entered
         if arg.p != None:
-            # Create a list of tuples containing (paramName, paramType)
-            paramList = []
+            # loop through contents of p
             for param in arg.p:
                 paramName, paramType = param.split(":")
-                paramList.append((paramName, paramType))
-            # Add parameter list to the newly created method            
-            parameter.addParameter(paramList, arg.method_name, arg.class_name)
-
+                ret = parameter.addParameter(paramName, paramType, arg.method_name, arg.class_name)
+                ParamException(ret).throwStatus(arg.class_name, arg.method_name, paramName, None)
+        # Clear the redo stack
         UMLState.clearRedo()
 
     """
@@ -185,8 +195,11 @@ class Interface(cmd2.Cmd):
         # Save the current program state
         UMLState.addUndo(UMLState.saveState())
         # Remove method from class
-        attributes.deleteMethod(arg.method_name, arg.class_name)
+        ret = attributes.deleteMethod(arg.method_name, arg.class_name)
         UMLState.clearRedo()
+
+        MethodException(ret).throwStatus(arg.class_name, arg.method_name, None)
+
 
     """
         Rename Method
@@ -202,8 +215,10 @@ class Interface(cmd2.Cmd):
         # Save the current program state
         UMLState.addUndo(UMLState.saveState())
         # Update the name of the method in a class
-        attributes.renameMethod(arg.old_name, arg.new_name, arg.class_name)
+        ret = attributes.renameMethod(arg.old_name, arg.new_name, arg.class_name)
         UMLState.clearRedo()
+
+        MethodException(ret).throwStatus(arg.class_name, arg.old_name, arg.new_name)
 
     """ FIELD COMMANDS """
 
@@ -219,8 +234,10 @@ class Interface(cmd2.Cmd):
     def do_addField(self, arg):
         # Save the current program state
         UMLState.addUndo(UMLState.saveState())
-        attributes.addField(arg.field_name, arg.class_name, arg.type)
+        ret = attributes.addField(arg.field_name, arg.class_name, arg.type)
         UMLState.clearRedo()
+
+        FieldException(ret).throwStatus(arg.class_name, arg.field_name, None)
 
     """
         Delete Field
@@ -233,8 +250,10 @@ class Interface(cmd2.Cmd):
     def do_deleteField(self, arg):
         # Save the current program state
         UMLState.addUndo(UMLState.saveState())
-        attributes.deleteField(arg.field_name, arg.class_name)
+        ret = attributes.deleteField(arg.field_name, arg.class_name)
         UMLState.clearRedo()
+
+        FieldException(ret).throwStatus(arg.class_name, arg.field_name, None)
 
     """
         Rename Field
@@ -248,8 +267,10 @@ class Interface(cmd2.Cmd):
     def do_renameField(self, arg):
         # Save the current program state
         UMLState.addUndo(UMLState.saveState())
-        attributes.renameField(arg.name, arg.new_name, arg.class_name)
+        ret = attributes.renameField(arg.name, arg.new_name, arg.class_name)
         UMLState.clearRedo()
+
+        FieldException(ret).throwStatus(arg.class_name, arg.name, arg.new_name)
 
     """ PARAMETER COMMANDS """
 
@@ -265,16 +286,12 @@ class Interface(cmd2.Cmd):
     def do_addParam(self, arg):
         # Save the current program state
         UMLState.addUndo(UMLState.saveState())
-        # List of parameter tuples to pass to addParameter method
-        paramList = []
         for param in arg.p:
             # Split the parameter name and type
             paramName, paramType = param.split(':')
-            paramList.append((paramName, paramType))
-        parameter.addParameter(paramList, arg.method_name, arg.class_name)
-
+            ret = parameter.addParameter(paramName, paramType, arg.method_name, arg.class_name)
+            ParamException(ret).throwStatus(arg.class_name, arg.method_name, paramName, None)
         UMLState.clearRedo()
-
     """
         Delete Parameter(s)
     """
@@ -289,23 +306,31 @@ class Interface(cmd2.Cmd):
         # Save the current program state
         UMLState.addUndo(UMLState.saveState())
         if arg.a:
-            parameter.deleteAllParameter(arg.method_name, arg.class_name)
+            ret = parameter.deleteAllParameter(arg.method_name, arg.class_name)
+            ParamException(ret).throwStatus(arg.class_name, arg.method_name, None, None)
         else:
-            parameter.deleteParameter(arg.p, arg.method_name, arg.class_name)
+            for param in arg.p:
+                ret = parameter.deleteParameter(param, arg.method_name, arg.class_name)
+                ParamException(ret).throwStatus(arg.class_name, arg.method_name, param)
         UMLState.clearRedo()
+
+        # ParamException(ret).throwStatus(arg.class_name, arg.method_name, )
 
     """
         Change Parameter(s)
     """
+    changeParamParser = cmd2.Cmd2ArgumentParser(description="Changes parameter list of a classes method")
+    changeParamParser.add_argument('class_name', help="Name of the class containing the target method")
+    changeParamParser.add_argument('method_name', help="Name of the method to have its parameter(s) changed")
+    changeParamParser.add_argument('-o', nargs='+', help="Parameter(s) to be changed")
+    changeParamParser.add_argument('-n', nargs='+', help="Parameter(s) to change to")
+    @cmd2.with_argparser(changeParamParser)
     @cmd2.with_category("Parameter")
     def do_changeParam(self, arg):
-        """Usage: changeParam <class> <method> -o <old_name>... -n <new_name>:<new_type>
-        
-        Changes the list of parameters from <old_list> to <new_list> in <method>
-        """
-        # args = arg.split()
-        
-        print(f"Waiting to be implemented")
+        # Loop through new and old list at the same time
+        for i in range(0, len(arg.o)):
+            ret = parameter.changeParameter(arg.o[i], arg.n[i], arg.method_name, arg.class_name)
+            ParamException(ret).throwStatus(arg.class_name, arg.method_name, arg.o[i], arg.n[i])
     
     """ SAVE/LOAD COMMANDS """
 
