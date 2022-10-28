@@ -9,7 +9,6 @@ import model.relationship as r
 import model.UMLClass as u
 import model.UMLState as us
 import model.saveload as s
-# import model.relationship as r
 import model.attributes as a
 import model.parameter as p
 
@@ -48,6 +47,8 @@ class Controller:
         #sets up parameters to call changeParameter
         oldParam = [self.view.param]
         newParam = [(self.view.paramNew, self.view.paramTypeNew)]
+        # saves state
+        state = us.saveState()
         #creates num to hold result of changeParam call
         num = p.changeParameter(oldParam, newParam, self.view.method, self.view.className)
         #each conditional below recreates the changeParam frame and alerts user based on the result of changeParam call
@@ -73,17 +74,18 @@ class Controller:
             self.view.makeMessage('Parameter already exists within method')            
         else:
             # save undo
-            us.addUndo(us.saveState())    
+            us.addUndo(state)    
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeChangeParamInputFrame()
-            #self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])  
             self.view.printClass(u.classIndex[u.findClass(self.view.className)])  
             self.view.makeMessage('Parameter changed')
             # clear redo
             us.clearRedo()
 
     def clickAddClassButton(self):
+        # saves state
+        state = us.saveState()
         num = u.addClass(self.view.className)
         if num == -1:
             self.view.inputFrame.destroy()
@@ -97,16 +99,17 @@ class Controller:
             self.view.makeMessage(f"\nClass \"{self.view.className}\" already exists, could not create.")            
         else:
             # save undo
-            us.addUndo(us.saveState())    
+            us.addUndo(state)    
             self.view.remake()
             self.view.makeAddClassFrame()
-            #self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.printClass(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage(f"\nClass \"{self.view.className}\" has been created!")
             # clear redo
             us.clearRedo()
 
     def clickDeleteClassButton(self):
+        # saves state
+        state = us.saveState()
         num = u.deleteClass(self.view.className)
         if num == -1:
             self.view.remake()
@@ -114,7 +117,7 @@ class Controller:
             self.view.makeMessage(f"\nClass \"{ self.view.className}\" does not exist")
         else:
             # save undo
-            us.addUndo(us.saveState())    
+            us.addUndo(state)    
             self.view.remake()
             self.view.makeDeleteClassFrame()
             self.view.removeClassFromCanvas(self.view.className)
@@ -123,6 +126,8 @@ class Controller:
             us.clearRedo()
 
     def clickRenameClassButton(self):
+        # saves state
+        state = us.saveState()
         num = u.renameClass(self.view.className, self.view.classNameNew)
         if num == -1:
             self.view.remake()
@@ -138,16 +143,17 @@ class Controller:
             self.view.makeMessage(f"\nClass name cannot be empty")
         else:
             # save undo
-            us.addUndo(us.saveState())    
+            us.addUndo(state)    
             self.view.remake()
             self.view.makeRenameClassFrame()
-            # self.view.printRenamedClassToCanvas(u.classIndex[u.findClass(self.view.classNameNew)], self.view.className)     
             self.view.printClass(u.classIndex[u.findClass(self.view.classNameNew)], self.view.className)            
             self.view.makeMessage("Class renamed")
             # clear redo
             us.clearRedo()
         
     def clickAddRelationButton(self):
+        # saves state
+        state = us.saveState()
         num = r.addRelationship( self.view.source, self.view.destination, self.view.relationshipType)
         if num == -2:
             self.view.remake()
@@ -163,7 +169,7 @@ class Controller:
             self.view.makeMessage("Relationship already exists")
         else:
             # save undo
-            us.addUndo(us.saveState())    
+            us.addUndo(state)    
             self.view.remake()
             self.view.makeAddRelationFrame()
             self.view.makeLine(self.view.source, self.view.destination) 
@@ -172,6 +178,8 @@ class Controller:
             us.clearRedo()
 
     def clickUpdateTypeButton(self):
+        # saves state
+        state = us.saveState()
         num = r.findRelationship(self.view.source, self.view.destination)
         if num == -1:
             self.view.remake()
@@ -179,7 +187,7 @@ class Controller:
             self.view.makeMessage("Relationship does not exist")
         else:
             # save undo
-            us.addUndo(us.saveState())    
+            us.addUndo(state)    
             self.view.deleteLine(self.view.source, self.view.destination) 
             r.relationIndex[num].editType(self.view.relationshipTypeNew)
             self.view.remake()
@@ -190,6 +198,8 @@ class Controller:
             us.clearRedo()   
     
     def clickDeleteRelationButton(self):
+        # saves state
+        state = us.saveState()
         num = r.deleteRelationship( self.view.source, self.view.destination)
         if num == -1:
             self.view.remake()
@@ -197,7 +207,7 @@ class Controller:
             self.view.makeMessage("Relationship does not exist")
         else:
             # save undo
-            us.addUndo(us.saveState())    
+            us.addUndo(state)    
             self.view.remake()
             self.view.makeDeleteRelationFrame()
             self.view.deleteLine(self.view.source, self.view.destination)
@@ -206,6 +216,8 @@ class Controller:
             us.clearRedo() 
 
     def clickAddFieldButton(self):
+        # saves state
+        state = us.saveState()
         num = a.addField(self.view.field, self.view.className, self.view.fieldType)
         if num == -1:
             self.view.remake()
@@ -217,10 +229,9 @@ class Controller:
             self.view.makeMessage("Field already exists")
         else:
             # save undo
-            us.addUndo(us.saveState())    
+            us.addUndo(state)    
             self.view.remake()
             self.view.makeAddFieldFrame()
-            # self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.printClass(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage("Field added")
             # clear redo
@@ -229,6 +240,8 @@ class Controller:
     def clickDeleteFieldButton(self):   
         print(self.view.field)
         print(self.view.className)
+        # saves state
+        state = us.saveState()
         num = a.deleteField(self.view.field, self.view.className)
         if num == -1:
             self.view.remake()
@@ -240,16 +253,17 @@ class Controller:
             self.view.makeMessage("Field does not exist")
         else:
             # save undo
-            us.addUndo(us.saveState())    
+            us.addUndo(state)    
             self.view.remake()
             self.view.makeDeleteFieldFrame()
-            # self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.printClass(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage("Field deleted")
             # clear redo
             us.clearRedo() 
 
     def clickRenameFieldButton(self):
+        # saves state
+        state = us.saveState()
         num = a.renameField(self.view.field, self.view.feildNew, self.view.className)
         if num == -1:
             self.view.remake()
@@ -265,17 +279,17 @@ class Controller:
             self.view.makeMessage("Another field already exists with that name")
         else:
             # save undo
-            us.addUndo(us.saveState())    
+            us.addUndo(state)    
             self.view.remake()
             self.view.makeDeleteFieldFrame()
-            # self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.printClass(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage("Field renamed")
             # clear redo
             us.clearRedo() 
     
     def clickAddMethodAndParamsButton(self):
-
+        # saves state
+        state = us.saveState()
         num = a.addMethod(self.view.method, self.view.className, self.view.methodReturnType)
         if num == -1:
             self.view.inputFrame.destroy()
@@ -289,17 +303,18 @@ class Controller:
             self.view.makeMessage("Method already exists")
         else:   
             # save undo
-            us.addUndo(us.saveState())        
+            us.addUndo(state)        
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeParamInputFrame()
-            # self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.printClass(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage("Method added, please enter parameter(s)")
             # clear redo
             us.clearRedo() 
 
     def clickAddMethodWithoutParamsButton(self):
+        # saves state
+        state = us.saveState()
         num = a.addMethod(self.view.method, self.view.className, self.view.methodReturnType)
         if num == -1:
             self.view.inputFrame.destroy()
@@ -313,11 +328,10 @@ class Controller:
             self.view.makeMessage("Method already exists")
         else:
             # save undo
-            us.addUndo(us.saveState())               
+            us.addUndo(state)               
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeAddMethodFrame()
-            # self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.printClass(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage("Method added")
             # clear redo
@@ -331,6 +345,8 @@ class Controller:
             self.view.makeMessage('Parameter name cannot be empty')
             return 
         l = [(self.view.param, self.view.paramType)]
+        # saves state
+        state = us.saveState()
         num = p.addParameter(l, self.view.method, self.view.className)
         if num == -1:
             self.view.inputFrame.destroy()
@@ -349,17 +365,18 @@ class Controller:
             self.view.makeMessage("Parameter already exists in method")
         else:
             # save undo
-            us.addUndo(us.saveState())        
+            us.addUndo(state)        
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeParamInputFrame()
-            # self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.printClass(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage("Parameter added")    
             # clear redo
             us.clearRedo()        
 
     def clickDeleteMethodButton(self):
+        # saves state
+        state = us.saveState()
         num = a.deleteMethod(self.view.method, self.view.className)
         if num == -1:
             self.view.remake()
@@ -371,10 +388,9 @@ class Controller:
             self.view.makeMessage("Method does not exist")  
         else:
             # save undo
-            us.addUndo(us.saveState())        
+            us.addUndo(state)        
             self.view.remake()
             self.view.makeDeleteMethodFrame()
-            # self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.printClass(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage("Method Deleted")     
             # clear redo
@@ -382,6 +398,8 @@ class Controller:
 
 
     def clickUpdateMethodButton(self):
+        # saves state
+        state = us.saveState()
         num = a.renameMethod(self.view.method, self.view.methodNew, self.view.className)
         if num == -1:    
             self.view.remake()
@@ -397,16 +415,17 @@ class Controller:
             self.view.makeMessage('New method name already exists')
         else:    
             # save undo
-            us.addUndo(us.saveState())        
+            us.addUndo(state)        
             self.view.remake()
             self.view.makeRenameMethodFrame()
-            # self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.printClass(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage('Method renamed')
             # clear redo
             us.clearRedo()
 
     def clickAddParamToMethodButton(self):
+        # saves state
+        state = us.saveState()
         num = a.findMethod(self.view.method, self.view.className)
         if num == -1:
             self.view.inputFrame.destroy()
@@ -420,7 +439,7 @@ class Controller:
             self.view.makeMessage('Method does not exist in class')
         else:  
             # save undo
-            us.addUndo(us.saveState())        
+            us.addUndo(state)        
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeParamInputFrame()
@@ -428,6 +447,8 @@ class Controller:
             us.clearRedo()
 
     def clickDeleteParamButton(self):
+        # saves state
+        state = us.saveState()
         num = a.findMethod(self.view.method, self.view.className)
         if num == -1:
             self.view.inputFrame.destroy()
@@ -441,7 +462,7 @@ class Controller:
             self.view.makeMessage('Method does not exist in class')
         else:
             # save undo
-            us.addUndo(us.saveState())        
+            us.addUndo(state)        
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeDeleteParamInputFrame()
@@ -449,6 +470,8 @@ class Controller:
             us.clearRedo()
 
     def clickDeleteAllParamButton(self):
+        # saves state
+        state = us.saveState()
         num = p.deleteAllParameter(self.view.method, self.view.className)
         if num == -1:
             self.view.inputFrame.destroy()
@@ -462,11 +485,10 @@ class Controller:
             self.view.makeMessage('Method does not exist in class')
         else:
             # save undo
-            us.addUndo(us.saveState())        
+            us.addUndo(state)        
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeDeleteParamFrame()
-            # self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.printClass(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage('All parameters deleted')
             # clear redo
@@ -480,6 +502,8 @@ class Controller:
             self.view.makeMessage('Parameter does not exist')
             return
         l = [self.view.param]
+        # saves state
+        state = us.saveState()
         num = p.deleteParameter(l, self.view.method, self.view.className)
         if num == -1:
             self.view.inputFrame.destroy()
@@ -498,17 +522,18 @@ class Controller:
             self.view.makeMessage('Parameter does not exist in method')
         else:
             # save undo
-            us.addUndo(us.saveState())        
+            us.addUndo(state)        
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeDeleteParamInputFrame()
-            # self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.printClass(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage('Parameter deleted')
         # clear redo
             us.clearRedo()
 
     def clickChangeParamButton(self):
+        # saves state
+        state = us.saveState()
         num = a.findMethod(self.view.method, self.view.className)
         if num == -1:
             self.view.inputFrame.destroy()
@@ -522,7 +547,7 @@ class Controller:
             self.view.makeMessage('Method does not exist in class')
         else:
             # save undo
-            us.addUndo(us.saveState())        
+            us.addUndo(state)        
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeChangeParamInputFrame()  
@@ -530,6 +555,8 @@ class Controller:
             us.clearRedo()              
 
     def clickChangeAllParamButton(self):
+        # saves state
+        state = us.saveState()
         num = p.deleteAllParameter(self.view.method, self.view.className)
         if num == -1:
             self.view.inputFrame.destroy()
@@ -543,11 +570,10 @@ class Controller:
             self.view.makeMessage('Method does not exist in class')
         else:
             # save undo
-            us.addUndo(us.saveState())           
+            us.addUndo(state)           
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeParamInputFrame()
-            # self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.printClass(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage('Parameters removed, add new parameter(s)') 
             # clear redo
@@ -560,30 +586,27 @@ class Controller:
         state = us.undo()
         print(state)
 
+        # runs if needs to print blank canvas
         if state is None:
-            print('i am here')
             self.view.clearScreen()
             UMLLines.clear()
             UMLBoxes.clear()
+            # prints success message
             self.view.makeMessage('Action has been undone.') 
         else:
-            print('im not supposed to be here')
-            # self.view.clearCanvas()
             # load this state
             us.loadState(state)
             # clear screen
-            # self.view.clearScreen()
             self.view.clearScreen()
             UMLLines.clear()
             UMLBoxes.clear()
             # reprint classes to canvas
             for c in u.classIndex:
-                # self.view.printClassToCanvas(c)
                 self.view.printClass(c)
             # reprint relationships to canvas
             for rel in r.relationIndex:
                 self.view.makeLine(rel.source, rel.destination)
-            
+            # prints success message
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeMessage('Action has been undone.') 
@@ -598,7 +621,6 @@ class Controller:
         state = us.redo()
         print(state)
 
-        
         # load this state
         us.loadState(state)
         # clear screen
@@ -613,15 +635,14 @@ class Controller:
         # reprint relationships to canvas
         for rel in r.relationIndex:
             self.view.makeLine(rel.source, rel.destination)
-        
+        # prints success method
         self.view.inputFrame.destroy()
         self.view.makeInputFrame()
         self.view.makeMessage('Action has been redone.') 
-
-        # # save undo
-        # us.addUndo(us.saveState())           
-        # # clear redo
-        # us.clearRedo()
+        # saves new state
+        newState = us.saveState()
+        # adds new state to undo stack
+        us.addUndo(newState)           
 
         
         
@@ -649,7 +670,6 @@ class Controller:
         UMLLines.clear()
         #loops thru loaded class and relationships and makes boxes/lines for each
         for each in u.classIndex:
-            # self.view.printClassToCanvas(each)
             self.view.printClass(each)
         for rel in r.relationIndex:
             self.view.makeLine(rel.source, rel.destination)
@@ -666,7 +686,6 @@ class Controller:
             self.view.makeListClassFrame()
             self.view.makeMessage('Class does not exist')
         else:
-            # self.view.printClassToCanvas(u.classIndex[index])
             self.view.printClass(u.classIndex[index])
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()

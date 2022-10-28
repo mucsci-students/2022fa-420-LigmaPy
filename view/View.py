@@ -39,6 +39,7 @@ class View(tk.Tk):
         self.paramType = None
         self.paramTypeNew = None
         self.fileName = None
+        self.state = None
         self.geometry("800x600")
         self.title("UML Editor")
         screenWidth = self.winfo_screenwidth()
@@ -96,12 +97,12 @@ class View(tk.Tk):
         #listmenu.add_command(label="List Relationships", command= lambda : self.controller.clickListRelationsButton())
         #listmenu.add_command(label="Clear", command= lambda : self.clearScreen())
         #menubar.add_cascade(label="List", menu=listmenu)
-        # undoMenu = tk.Menu(menubar, tearoff=0)
-        # redoMenu = tk.Menu(menubar, tearoff=0)
-        menubar.add_command(label="Undo", command = lambda : self.controller.clickUndoButton())
-        menubar.add_command(label="Redo", command = lambda : self.controller.clickRedoButton())
-        # menubar.add_cascade(label="Undo", menu=undoMenu)
-        # menubar.add_cascade(label="Redo", menu=redoMenu)
+        # Edit Menu
+        # Adds undo and redo commands to edit menu
+        editMenu = tk.Menu(menubar, tearoff=0)
+        editMenu.add_command(label="Undo", command = lambda : self.controller.clickUndoButton())
+        editMenu.add_command(label="Redo", command = lambda : self.controller.clickRedoButton())
+        menubar.add_cascade(label="Edit", menu=editMenu)
         self.config(menu=menubar)
 
     #creates all the button in the top left
@@ -216,7 +217,6 @@ class View(tk.Tk):
         self.canvas.pack(fill=tk.BOTH, expand=1)
         self.canvas.grid(row=0, column=1, sticky="nswe", rowspan=2)
         self.makeScrollBar()
-        # s.addUndo(s.saveState()) #######################
 
    #creates the output message label below the input
     def makeMessage(self, message):
@@ -234,6 +234,12 @@ class View(tk.Tk):
         self.canvas.create_window((0,0), window=self.outputFrame2, anchor="nw")        
         
     def printClass(self, UMLclass, oldClass = ""):
+        """
+        prints classes to the canvas
+
+        :param UMLclass: the class to be added to the canvas
+        :param oldClass: optional parameter that is used when a class has been renamed
+        """
         #gets the text, width and heigth as tuple(t,w,h)
         t = classToString(UMLclass)
         
@@ -254,6 +260,7 @@ class View(tk.Tk):
                             self.deleteLine(each[0].winfo_name(), each[1].winfo_name())
                 self.removeClassFromCanvas(UMLclass.name)
         else:
+            # runs if class was renamed and optional parameter is used
             #checks if a box / relation exists and deletes the line and box so they can be remade
             if oldClass in UMLBoxes:
                 for each in list(UMLLines):
@@ -279,77 +286,6 @@ class View(tk.Tk):
             self.makeLine(each.winfo_name(), UMLBoxes[UMLclass.name].winfo_name())
         for each in destList:
             self.makeLine(UMLBoxes[UMLclass.name].winfo_name(), each.winfo_name())
-
-    # #prints the 'UMLclass' in a nice box to the canvas
-    # def printClassToCanvas(self, UMLclass):
-    #     #gets the text, width and heigth as tuple(t,w,h)
-    #     t = classToString(UMLclass)
-        
-    #     #holders to recreate lines
-    #     sourceList = []
-    #     destList = []
-        
-    #     #checks if a box / relation exists and deletes the line and box so they can be remade
-    #     if UMLclass.name in UMLBoxes:
-    #         for each in list(UMLLines):
-    #             if UMLBoxes[UMLclass.name] in each:
-    #                 if each.index(UMLBoxes[UMLclass.name]) == 0:
-    #                     destList.append(each[1])
-    #                     self.deleteLine(each[0].winfo_name(), each[1].winfo_name())
-    #                 else:
-    #                     sourceList.append(each[0])
-    #                     self.deleteLine(each[0].winfo_name(), each[1].winfo_name())
-    #         self.removeClassFromCanvas(UMLclass.name)
-        
-    #     #makes/remakes boxes using tuple above
-    #     UMLBoxes[UMLclass.name] = tk.Label(self.canvas, text=t[0], height=t[1], width=t[2], borderwidth=1, relief="solid", justify=LEFT, name = UMLclass.name)
-    #     UMLBoxes[UMLclass.name].place(x=UMLclass.location['x'], y=UMLclass.location['y'])
-    #     #binds boxes to drag and drop event
-    #     UMLBoxes[UMLclass.name].bind("<Button-1>", self.dragStart)
-    #     UMLBoxes[UMLclass.name].bind("<B1-Motion>", self.dragMove)
-    #     UMLBoxes[UMLclass.name].bind("<ButtonRelease-1>", self.release)
-
-    #     #remakes the line with the new label if a relationship existed
-    #     for each in sourceList:
-    #         self.makeLine(each.winfo_name(), UMLBoxes[UMLclass.name].winfo_name())
-    #     for each in destList:
-    #         self.makeLine(UMLBoxes[UMLclass.name].winfo_name(), each.winfo_name())
-
-
-
-    # def printRenamedClassToCanvas(self, UMLclass, UMLold):
-    #     #gets the text, width and heigth as tuple(t,w,h)
-    #     new = classToString(UMLclass)
-    #     #holders to recreate lines
-    #     sourceList = []
-    #     destList = []
-        
-    #     #checks if a box / relation exists and deletes the line and box so they can be remade
-    #     if UMLold in UMLBoxes:
-    #         for each in list(UMLLines):
-    #             if UMLBoxes[UMLold] in each:
-    #                 if each.index(UMLBoxes[UMLold]) == 0:
-    #                     destList.append(each[1])
-    #                     self.deleteLine(each[0].winfo_name(), each[1].winfo_name())
-    #                 else:
-    #                     sourceList.append(each[0])
-    #                     self.deleteLine(each[0].winfo_name(), each[1].winfo_name())
-    #         self.removeClassFromCanvas(UMLold)
-        
-    #     #makes/remakes boxes using tuple above
-    #     UMLBoxes[UMLclass.name] = tk.Label(self.canvas, text=new[0], height=new[1], width=new[2], borderwidth=1, relief="solid", justify=LEFT, name = UMLclass.name)
-    #     UMLBoxes[UMLclass.name].place(x=UMLclass.location['x'], y=UMLclass.location['y'])
-    #     #binds boxes to drag and drop event
-    #     UMLBoxes[UMLclass.name].bind("<Button-1>", self.dragStart)
-    #     UMLBoxes[UMLclass.name].bind("<B1-Motion>", self.dragMove)
-    #     UMLBoxes[UMLclass.name].bind("<ButtonRelease-1>", self.release)
-
-        
-    #     #remakes the line with the new label if a relationship existed
-    #     for each in sourceList:
-    #         self.makeLine(each.winfo_name(), UMLBoxes[UMLclass.name].winfo_name())
-    #     for each in destList:
-    #         self.makeLine(UMLBoxes[UMLclass.name].winfo_name(), each.winfo_name())
 
         
     #delete class box from canvas and any relationship lines dependant on the box    
@@ -1215,23 +1151,29 @@ class View(tk.Tk):
         self.inputFrame.destroy()
         self.makeInputFrame()
 
+    
     def release(self, event):
+        """
+        saves state and adds it to undo stack when button is released
+        """
         widget = event.widget
-        s.addUndo(s.saveState())
+        s.addUndo(self.state)
         s.clearRedo()
+
 
     def dragStart(self, event):
         widget = event.widget
         widget.startX = event.x
         widget.startY = event.y
+        # saves state when object is clicked
+        self.state = s.saveState()
 
 
-    def dragMove(self, event
-    ):
+    def dragMove(self, event):
 
         widget = event.widget
-        print(widget.winfo_name())
-        print(widget.winfo_id())
+        # print(widget.winfo_name())
+        # print(widget.winfo_id())
         
         # top left corner of widget relative to window - place where we
         #click in the label itself + where be begin draging the widget to
@@ -1243,7 +1185,7 @@ class View(tk.Tk):
         name = u.classIndex[u.findClass(widget.winfo_name())]
         name.location['x'] = x
         name.location['y'] = y
-        print(str(name.location['x']) + " : " + str(name.location['x']))
+        # print(str(name.location['x']) + " : " + str(name.location['x']))
         #updates the relationship lines (deletes then remakes)
         for each in list(UMLLines):
             if widget in each:
