@@ -73,9 +73,9 @@ def loadState(state : UMLState):
             for param in meth['params']:
                 parameter.addParameter([(param['name'], param['type'])], meth['name'], c['name'])
     
-    # for rel in state.stateDict['relationships']:
-    #     print(rel)
-    #     relationship.addRelationship(rel['source'], rel['destination'], rel['type'])
+    for rel in state.stateDict['relationships']:
+        print(rel)
+        relationship.addRelationship(rel['source'], rel['destination'], rel['type'])
 
 def undo() -> UMLState:
     """

@@ -4,7 +4,7 @@ Filename    : GuiController.py
 Description : Controller that links the view and the model
 """
 
-from view.View import UMLLines, View as v
+from view.View import UMLLines, UMLBoxes, View as v
 import model.relationship as r
 import model.UMLClass as u
 import model.UMLState as us
@@ -77,9 +77,10 @@ class Controller:
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeChangeParamInputFrame()
-            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])  
+            #self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])  
+            self.view.printClass(u.classIndex[u.findClass(self.view.className)])  
             self.view.makeMessage('Parameter changed')
-        # clear redo
+            # clear redo
             us.clearRedo()
 
     def clickAddClassButton(self):
@@ -99,9 +100,10 @@ class Controller:
             us.addUndo(us.saveState())    
             self.view.remake()
             self.view.makeAddClassFrame()
-            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
+            #self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
+            self.view.printClass(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage(f"\nClass \"{self.view.className}\" has been created!")
-        # clear redo
+            # clear redo
             us.clearRedo()
 
     def clickDeleteClassButton(self):
@@ -117,7 +119,7 @@ class Controller:
             self.view.makeDeleteClassFrame()
             self.view.removeClassFromCanvas(self.view.className)
             self.view.makeMessage(f"\nClass \"{self.view.className}\" has been deleted.")
-        # clear redo
+            # clear redo
             us.clearRedo()
 
     def clickRenameClassButton(self):
@@ -139,9 +141,10 @@ class Controller:
             us.addUndo(us.saveState())    
             self.view.remake()
             self.view.makeRenameClassFrame()
-            self.view.printRenamedClassToCanvas(u.classIndex[u.findClass(self.view.classNameNew)], self.view.className)            
+            # self.view.printRenamedClassToCanvas(u.classIndex[u.findClass(self.view.classNameNew)], self.view.className)     
+            self.view.printClass(u.classIndex[u.findClass(self.view.classNameNew)], self.view.className)            
             self.view.makeMessage("Class renamed")
-        # clear redo
+            # clear redo
             us.clearRedo()
         
     def clickAddRelationButton(self):
@@ -165,7 +168,7 @@ class Controller:
             self.view.makeAddRelationFrame()
             self.view.makeLine(self.view.source, self.view.destination) 
             self.view.makeMessage("Relationship added")
-        # clear redo
+            # clear redo
             us.clearRedo()
 
     def clickUpdateTypeButton(self):
@@ -183,7 +186,7 @@ class Controller:
             self.view.makeUpdateRelationType()
             self.view.makeLine(self.view.source, self.view.destination) 
             self.view.makeMessage("Relationship type updated") 
-        # clear redo
+            # clear redo
             us.clearRedo()   
     
     def clickDeleteRelationButton(self):
@@ -199,7 +202,7 @@ class Controller:
             self.view.makeDeleteRelationFrame()
             self.view.deleteLine(self.view.source, self.view.destination)
             self.view.makeMessage("Relationship deleted")
-        # clear redo
+            # clear redo
             us.clearRedo() 
 
     def clickAddFieldButton(self):
@@ -217,9 +220,10 @@ class Controller:
             us.addUndo(us.saveState())    
             self.view.remake()
             self.view.makeAddFieldFrame()
-            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
+            # self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
+            self.view.printClass(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage("Field added")
-        # clear redo
+            # clear redo
             us.clearRedo() 
 
     def clickDeleteFieldButton(self):   
@@ -239,9 +243,10 @@ class Controller:
             us.addUndo(us.saveState())    
             self.view.remake()
             self.view.makeDeleteFieldFrame()
-            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
+            # self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
+            self.view.printClass(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage("Field deleted")
-        # clear redo
+            # clear redo
             us.clearRedo() 
 
     def clickRenameFieldButton(self):
@@ -263,9 +268,10 @@ class Controller:
             us.addUndo(us.saveState())    
             self.view.remake()
             self.view.makeDeleteFieldFrame()
-            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
+            # self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
+            self.view.printClass(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage("Field renamed")
-        # clear redo
+            # clear redo
             us.clearRedo() 
     
     def clickAddMethodAndParamsButton(self):
@@ -287,9 +293,10 @@ class Controller:
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeParamInputFrame()
-            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
+            # self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
+            self.view.printClass(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage("Method added, please enter parameter(s)")
-        # clear redo
+            # clear redo
             us.clearRedo() 
 
     def clickAddMethodWithoutParamsButton(self):
@@ -310,9 +317,10 @@ class Controller:
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeAddMethodFrame()
-            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
+            # self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
+            self.view.printClass(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage("Method added")
-        # clear redo
+            # clear redo
             us.clearRedo()
 
     def clickAddParamButton(self):
@@ -345,9 +353,10 @@ class Controller:
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeParamInputFrame()
-            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
+            # self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
+            self.view.printClass(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage("Parameter added")    
-        # clear redo
+            # clear redo
             us.clearRedo()        
 
     def clickDeleteMethodButton(self):
@@ -365,9 +374,10 @@ class Controller:
             us.addUndo(us.saveState())        
             self.view.remake()
             self.view.makeDeleteMethodFrame()
-            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
+            # self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
+            self.view.printClass(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage("Method Deleted")     
-        # clear redo
+            # clear redo
             us.clearRedo()     
 
 
@@ -390,9 +400,10 @@ class Controller:
             us.addUndo(us.saveState())        
             self.view.remake()
             self.view.makeRenameMethodFrame()
-            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
+            # self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
+            self.view.printClass(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage('Method renamed')
-        # clear redo
+            # clear redo
             us.clearRedo()
 
     def clickAddParamToMethodButton(self):
@@ -413,7 +424,7 @@ class Controller:
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeParamInputFrame()
-        # clear redo
+            # clear redo
             us.clearRedo()
 
     def clickDeleteParamButton(self):
@@ -434,7 +445,7 @@ class Controller:
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeDeleteParamInputFrame()
-        # clear redo
+            # clear redo
             us.clearRedo()
 
     def clickDeleteAllParamButton(self):
@@ -455,9 +466,10 @@ class Controller:
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeDeleteParamFrame()
-            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
+            # self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
+            self.view.printClass(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage('All parameters deleted')
-        # clear redo
+            # clear redo
             us.clearRedo()
     
     def clickSecondDeleteParamButton(self):
@@ -490,7 +502,8 @@ class Controller:
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeDeleteParamInputFrame()
-            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
+            # self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
+            self.view.printClass(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage('Parameter deleted')
         # clear redo
             us.clearRedo()
@@ -534,7 +547,8 @@ class Controller:
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeParamInputFrame()
-            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
+            # self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
+            self.view.printClass(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage('Parameters removed, add new parameter(s)') 
             # clear redo
             us.clearRedo()
@@ -543,38 +557,74 @@ class Controller:
         """
         Calls model and view to undo action
         """ 
-        # us.addUndo(us.saveState())        
         state = us.undo()
-        # load this state
-        us.loadState(state)
-        # classes = state.stateDict.get("classes")
-        # relationships = state.stateDict.get("relationships")
-        # self.view.clearCanvas()
-        for c in u.classIndex:
-            self.view.printClassToCanvas(c)
-        for rel in r.relationIndex:
-            self.view.makeLine(rel.source, rel.destination)
-        # self.view.inputFrame.destroy()
-        # self.view.makeInputFrame()
+        print(state)
 
+        if state is None:
+            print('i am here')
+            self.view.clearScreen()
+            UMLLines.clear()
+            UMLBoxes.clear()
+            self.view.makeMessage('Action has been undone.') 
+        else:
+            print('im not supposed to be here')
+            # self.view.clearCanvas()
+            # load this state
+            us.loadState(state)
+            # clear screen
+            # self.view.clearScreen()
+            self.view.clearScreen()
+            UMLLines.clear()
+            UMLBoxes.clear()
+            # reprint classes to canvas
+            for c in u.classIndex:
+                # self.view.printClassToCanvas(c)
+                self.view.printClass(c)
+            # reprint relationships to canvas
+            for rel in r.relationIndex:
+                self.view.makeLine(rel.source, rel.destination)
+            
+            self.view.inputFrame.destroy()
+            self.view.makeInputFrame()
+            self.view.makeMessage('Action has been undone.') 
 
+        
     def clickRedoButton(self):
         """
         Calls model and view to redo action
         """
+
         # retrieve saved state
-        # us.addRedo(us.saveState())
         state = us.redo()
+        print(state)
+
+        
         # load this state
         us.loadState(state)
-        # classes = state.stateDict.get("classes")
-        # relationships = state.stateDict.get("relationships")
+        # clear screen
+        # self.view.clearScreen()
+        self.view.clearCanvas()
+        UMLLines.clear()
+        UMLBoxes.clear()
+        # reprint classes to canvas
         for c in u.classIndex:
-            self.view.printClassToCanvas(c)
+            # self.view.printClassToCanvas(c)
+            self.view.printClass(c)
+        # reprint relationships to canvas
         for rel in r.relationIndex:
             self.view.makeLine(rel.source, rel.destination)
-        # self.view.inputFrame.destroy()
-        # self.view.makeInputFrame()
+        
+        self.view.inputFrame.destroy()
+        self.view.makeInputFrame()
+        self.view.makeMessage('Action has been redone.') 
+
+        # # save undo
+        # us.addUndo(us.saveState())           
+        # # clear redo
+        # us.clearRedo()
+
+        
+        
 
     
     def clickSaveButton(self):
@@ -599,7 +649,8 @@ class Controller:
         UMLLines.clear()
         #loops thru loaded class and relationships and makes boxes/lines for each
         for each in u.classIndex:
-            self.view.printClassToCanvas(each)
+            # self.view.printClassToCanvas(each)
+            self.view.printClass(each)
         for rel in r.relationIndex:
             self.view.makeLine(rel.source, rel.destination)
         self.view.inputFrame.destroy()
@@ -615,7 +666,8 @@ class Controller:
             self.view.makeListClassFrame()
             self.view.makeMessage('Class does not exist')
         else:
-            self.view.printClassToCanvas(u.classIndex[index])
+            # self.view.printClassToCanvas(u.classIndex[index])
+            self.view.printClass(u.classIndex[index])
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeListClassFrame()
