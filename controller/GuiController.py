@@ -78,7 +78,7 @@ class Controller:
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeChangeParamInputFrame()
-            self.view.printClass(u.classIndex[u.findClass(self.view.className)])  
+            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])  
             self.view.makeMessage('Parameter changed')
             # clear redo
             us.clearRedo()
@@ -102,7 +102,7 @@ class Controller:
             us.addUndo(state)    
             self.view.remake()
             self.view.makeAddClassFrame()
-            self.view.printClass(u.classIndex[u.findClass(self.view.className)])
+            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage(f"\nClass \"{self.view.className}\" has been created!")
             # clear redo
             us.clearRedo()
@@ -146,7 +146,7 @@ class Controller:
             us.addUndo(state)    
             self.view.remake()
             self.view.makeRenameClassFrame()
-            self.view.printClass(u.classIndex[u.findClass(self.view.classNameNew)], self.view.className)            
+            self.view.printRenamedClassToCanvas(u.classIndex[u.findClass(self.view.classNameNew)], self.view.className)            
             self.view.makeMessage("Class renamed")
             # clear redo
             us.clearRedo()
@@ -232,7 +232,7 @@ class Controller:
             us.addUndo(state)    
             self.view.remake()
             self.view.makeAddFieldFrame()
-            self.view.printClass(u.classIndex[u.findClass(self.view.className)])
+            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage("Field added")
             # clear redo
             us.clearRedo() 
@@ -256,7 +256,7 @@ class Controller:
             us.addUndo(state)    
             self.view.remake()
             self.view.makeDeleteFieldFrame()
-            self.view.printClass(u.classIndex[u.findClass(self.view.className)])
+            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage("Field deleted")
             # clear redo
             us.clearRedo() 
@@ -282,7 +282,7 @@ class Controller:
             us.addUndo(state)    
             self.view.remake()
             self.view.makeDeleteFieldFrame()
-            self.view.printClass(u.classIndex[u.findClass(self.view.className)])
+            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage("Field renamed")
             # clear redo
             us.clearRedo() 
@@ -307,7 +307,7 @@ class Controller:
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeParamInputFrame()
-            self.view.printClass(u.classIndex[u.findClass(self.view.className)])
+            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage("Method added, please enter parameter(s)")
             # clear redo
             us.clearRedo() 
@@ -332,7 +332,7 @@ class Controller:
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeAddMethodFrame()
-            self.view.printClass(u.classIndex[u.findClass(self.view.className)])
+            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage("Method added")
             # clear redo
             us.clearRedo()
@@ -369,7 +369,7 @@ class Controller:
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeParamInputFrame()
-            self.view.printClass(u.classIndex[u.findClass(self.view.className)])
+            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage("Parameter added")    
             # clear redo
             us.clearRedo()        
@@ -391,7 +391,7 @@ class Controller:
             us.addUndo(state)        
             self.view.remake()
             self.view.makeDeleteMethodFrame()
-            self.view.printClass(u.classIndex[u.findClass(self.view.className)])
+            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage("Method Deleted")     
             # clear redo
             us.clearRedo()     
@@ -418,7 +418,7 @@ class Controller:
             us.addUndo(state)        
             self.view.remake()
             self.view.makeRenameMethodFrame()
-            self.view.printClass(u.classIndex[u.findClass(self.view.className)])
+            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage('Method renamed')
             # clear redo
             us.clearRedo()
@@ -489,7 +489,7 @@ class Controller:
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeDeleteParamFrame()
-            self.view.printClass(u.classIndex[u.findClass(self.view.className)])
+            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage('All parameters deleted')
             # clear redo
             us.clearRedo()
@@ -526,7 +526,7 @@ class Controller:
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeDeleteParamInputFrame()
-            self.view.printClass(u.classIndex[u.findClass(self.view.className)])
+            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage('Parameter deleted')
         # clear redo
             us.clearRedo()
@@ -574,7 +574,7 @@ class Controller:
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeParamInputFrame()
-            self.view.printClass(u.classIndex[u.findClass(self.view.className)])
+            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.className)])
             self.view.makeMessage('Parameters removed, add new parameter(s)') 
             # clear redo
             us.clearRedo()
@@ -602,7 +602,7 @@ class Controller:
             UMLBoxes.clear()
             # reprint classes to canvas
             for c in u.classIndex:
-                self.view.printClass(c)
+                self.view.printClassToCanvas(c)
             # reprint relationships to canvas
             for rel in r.relationIndex:
                 self.view.makeLine(rel.source, rel.destination)
@@ -630,8 +630,7 @@ class Controller:
         UMLBoxes.clear()
         # reprint classes to canvas
         for c in u.classIndex:
-            # self.view.printClassToCanvas(c)
-            self.view.printClass(c)
+            self.view.printClassToCanvas(c)
         # reprint relationships to canvas
         for rel in r.relationIndex:
             self.view.makeLine(rel.source, rel.destination)
@@ -670,7 +669,7 @@ class Controller:
         UMLLines.clear()
         #loops thru loaded class and relationships and makes boxes/lines for each
         for each in u.classIndex:
-            self.view.printClass(each)
+            self.view.printClassToCanvas(each)
         for rel in r.relationIndex:
             self.view.makeLine(rel.source, rel.destination)
         self.view.inputFrame.destroy()
@@ -686,7 +685,7 @@ class Controller:
             self.view.makeListClassFrame()
             self.view.makeMessage('Class does not exist')
         else:
-            self.view.printClass(u.classIndex[index])
+            self.view.printClassToCanvas(u.classIndex[index])
             self.view.inputFrame.destroy()
             self.view.makeInputFrame()
             self.view.makeListClassFrame()

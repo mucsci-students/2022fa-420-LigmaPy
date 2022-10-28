@@ -316,6 +316,8 @@ class View(tk.Tk):
         #binds boxes to drag and drop event
         UMLBoxes[lowercaseName].bind("<Button-1>", self.dragStart)
         UMLBoxes[lowercaseName].bind("<B1-Motion>", self.dragMove)
+        UMLBoxes[lowercaseName].bind("<ButtonRelease-1>", self.release)
+
         
         #remakes the line with the new label if a relationship existed
         for each in sourceList:
