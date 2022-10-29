@@ -5,7 +5,6 @@ Description: Adds, renames, and deletes a class object
 
 from typing import List
 import model.relationship as relationship
-from UMLException import UMLException, UMLSuccess
 from model.ErrorHandlers.ReturnStatus import codes
 
 
@@ -127,7 +126,6 @@ def renameClass(oldName: str, newName: str):
         return codes.RENAME_NEW_CLASS_EXIST
     
     if not isNameUnique(newName):
-        print(UMLException("Class Rename Error", f"{newName} class already exists"))
         return codes.ADD_EXISTING_CLASS
 
     if len(newName.strip()) == 0:

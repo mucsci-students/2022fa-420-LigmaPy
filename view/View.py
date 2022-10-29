@@ -120,7 +120,6 @@ class View(tk.Tk):
         self.buttonFrame = tk.Frame(self)
         
         def createNotebook(frame : tk.Frame):
-            
             """
                 Creates a tkinter Notebook
 
@@ -502,11 +501,6 @@ class View(tk.Tk):
     def load(self):
         self.fileName = filedialog.askopenfilename(title="Open File", initialdir="UMLsavefiles", filetypes=[("JSON File", "*.json")])
         
-    """
-    Instead of making comments for each and every input frame (bottom left box in GUI):
-    See makeUpdateRelationType and makeDeleteFieldFrame below and apply their comments to every other makeXXXXX(self) function
-    The name of the function describes what frame will be made when called
-    """
     
     def makeUpdateRelationType(self):
         """

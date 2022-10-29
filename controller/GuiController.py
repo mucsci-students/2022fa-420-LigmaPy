@@ -605,7 +605,7 @@ class Controller:
     
     def clickSecondDeleteParamButton(self):
         """
-        Deletes... another parameter
+        Deletes a parameter from a method
         """
         if len(self.view.param) == 0:
             self.view.inputFrame.destroy()

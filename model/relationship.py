@@ -5,7 +5,6 @@ Description : Adds, deletes and updates the type of relationships
 from typing import List
 # Local Imports
 import model.UMLClass as UMLClass
-from UMLException import UMLException, UMLSuccess
 from model.ErrorHandlers.ReturnStatus import codes
 from view.printColors import colors
 
@@ -31,7 +30,6 @@ class UMLRelationship:
     #changes the type of the relationship
     def editType(self, newType:str):
         self.type = newType
-        print(UMLSuccess(f"Changed type to {newType}"))
         return 1
 
     def hash(self):
