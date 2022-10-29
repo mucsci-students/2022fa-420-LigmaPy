@@ -4,10 +4,7 @@
 name: Unit Tests
 
 on:
-  push:
-    branches: [ "develop", "main", "bus" ]
-  pull_request:
-    branches: [ "develop" ]
+  [ pull_request ]
 
 permissions:
   contents: read
