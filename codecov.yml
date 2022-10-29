@@ -1,0 +1,16 @@
+codecov:
+  token: 97bfb416-2521-4e76-b000-d8b014fb6a5c
+  require_ci_to_pass: yes
+
+ignore:
+  - "model/saveload.py"
+  - "model/ErrorHandlers/"
+
+coverage:
+  round: down
+
+  status:
+    project:
+      default:
+        target: 80%
+
