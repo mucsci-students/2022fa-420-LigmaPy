@@ -36,11 +36,14 @@ def test_multi_undo():
 
 # Test redo command
 def test_redo():
-    assert True
+    UMLState.loadState(UMLState.redo())
+    assert relationship.findRelationship("Tire", "Car") > -1
 
 # Test clearing redo stack when command is run after undo
 def test_command_after_undo():
-    assert True
+    assert not UMLState.redoStack.empty()
+    UMLState.clearRedo()
+    assert UMLState.redoStack.empty()
 
 
 
