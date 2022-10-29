@@ -66,6 +66,10 @@ def loadState(state : UMLState):
             for param in meth['params']:
                 parameter.addParameter([(param['name'], param['type'])], meth['name'], c['name'])
 
+    # Add all relationships back
+    for relation in state.stateDict['relationships']:
+        relationship.addRelationship(relation["source"], relation["destination"], relation["type"])
+
 def undo() -> UMLState:
     """
     Pops the last state from the undoStack and puts it on the redoStack
@@ -88,12 +92,9 @@ def redo() -> UMLState:
         return None
 
     undoStack.put(saveState())
-    state = redoStack.get()
+    return redoStack.get()
 
-    print(state)
-
-    return state
 def clearRedo():
     while not redoStack.empty():
-        print(redoStack.get())
+        redoStack.get()
 
