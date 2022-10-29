@@ -71,10 +71,9 @@ def loadState(state : UMLState):
             attributes.addMethod(meth['name'], c['name'], meth['return_type'])
             # Add parameters to the method
             for param in meth['params']:
-                parameter.addParameter([(param['name'], param['type'])], meth['name'], c['name'])
+                parameter.addParameter(param['name'], param['type'], meth['name'], c['name'])
     
     for rel in state.stateDict['relationships']:
-        print(rel)
         relationship.addRelationship(rel['source'], rel['destination'], rel['type'])
 
 def undo() -> UMLState:
