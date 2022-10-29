@@ -9,6 +9,7 @@ import model.UMLState as UMLState
 import model.relationship as relationship
 import model.attributes as attributes
 
+
 # Test undo command
 def test_undo():
     relationship.clear()
