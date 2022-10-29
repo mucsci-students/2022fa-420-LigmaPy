@@ -5,6 +5,8 @@ codecov:
 
 paths:
   - "model/"
+  - "model/ErrorHandlers/"
+  - "model/saveload.py"
 
 coverage:
   round: down
