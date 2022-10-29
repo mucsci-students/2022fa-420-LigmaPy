@@ -19,6 +19,12 @@ import math
 
 
 class View(tk.Tk):
+    def __new__(self, controller):
+        # Make an instance ONLY if one is not already created
+        if not hasattr(self, 'instance'):
+            self.instance = super(View, self).__new__(self)
+        return self.instance
+
     def __init__(self, controller):
         super().__init__()
         self.controller = controller
