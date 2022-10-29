@@ -1,15 +1,13 @@
 codecov:
   token: 97bfb416-2521-4e76-b000-d8b014fb6a5c
   require_ci_to_pass: yes
-  status:
-    project: off
-    patch: off
 
-flag_management:
-  individual_flags:
-    - name: model
-      paths:
-        - model/
-      statuses:
-        - type: project
-          target: 80%
+coverage:
+  round: down
+
+  status:
+    project:
+      default:
+        path: model/
+        target: 80%
+
