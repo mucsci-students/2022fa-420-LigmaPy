@@ -19,7 +19,7 @@ def test_add_field():
 
 def test_add_to_nonexisting_class():
     # Test adding a field to a class that does not exist
-    assert attributes.addField("psi", "Car", "float") == codes.ADD_FIELD_NOT_EXISTING_CLASS
+    assert attributes.addField("psi", "Van", "float") == codes.ADD_FIELD_NOT_EXISTING_CLASS
 
 def test_add_existing_field():
     # Test adding a field that already exists
@@ -65,7 +65,7 @@ def test_delete_method():
 
 def test_delete_method_nonexisting_class():
     # Test deleting a method from a class that does not exist
-    assert attributes.deleteMethod("setPSI", "Car") == codes.DELETE_METHOD_NOT_EXISTING_CLASS
+    assert attributes.deleteMethod("setPSI", "Van") == codes.DELETE_METHOD_NOT_EXISTING_CLASS
 
 def test_delete_nonexisting_method():
     # Test deleting a method that does not exist

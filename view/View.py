@@ -12,11 +12,18 @@ from tkinter import LEFT, RIGHT, VERTICAL, Y, Canvas, OptionMenu, StringVar, ttk
 import model.UMLClass as u
 import model.relationship as r
 import model.attributes as a
+import model.UMLState as s
 import math
 
 
 
 class View(tk.Tk):
+    def __new__(self, controller):
+        # Make an instance ONLY if one is not already created
+        if not hasattr(self, 'instance'):
+            self.instance = super(View, self).__new__(self)
+        return self.instance
+
     def __init__(self, controller):
         super().__init__()
         self.controller = controller
@@ -37,14 +44,18 @@ class View(tk.Tk):
         self.paramType = None
         self.paramTypeNew = None
         self.fileName = None
+        self.state = None
+        self.geometry("800x600")
         self.canvasSizeX = 2000
         self.canvasSizeY = 2000
         self.title("UML Editor")
-        #screenWidth = self.winfo_screenwidth() - 100
-        #screenHeight = self.winfo_screenheight() - 100
+
+        screenWidth = self.winfo_screenwidth() - 100
+        screenHeight = self.winfo_screenheight() - 100
+
         # Sets the size of the window
         # self.state('zoomed')
-        #self.geometry(f"{screenWidth}x{screenHeight}")
+        self.geometry(f"{screenWidth}x{screenHeight}")
         self.rowconfigure(0, weight=1)
         self.rowconfigure(1, weight=1)
         self.columnconfigure(1, weight=1)
@@ -96,6 +107,12 @@ class View(tk.Tk):
         #listmenu.add_command(label="List Relationships", command= lambda : self.controller.clickListRelationsButton())
         #listmenu.add_command(label="Clear", command= lambda : self.clearScreen())
         #menubar.add_cascade(label="List", menu=listmenu)
+        # Edit Menu
+        # Adds undo and redo commands to edit menu
+        editMenu = tk.Menu(menubar, tearoff=0)
+        editMenu.add_command(label="Undo", command = lambda : self.controller.clickUndoButton())
+        editMenu.add_command(label="Redo", command = lambda : self.controller.clickRedoButton())
+        menubar.add_cascade(label="Edit", menu=editMenu)
         self.config(menu=menubar)
 
     #creates all the button in the top left
@@ -227,10 +244,9 @@ class View(tk.Tk):
         self.scrollbar.pack(fill = tk.Y, side = tk.RIGHT)
         self.canvas.configure(yscrollcommand=self.scrollbar.set)
         self.canvas.bind('<Configure>', lambda e: self.canvas.configure(scrollregion = self.canvas.bbox("all")))
-        #self.outputFrame2 = tk.Frame(self.canvas)
-        #self.canvas.create_window((0,0), window=self.outputFrame2, anchor="nw")        
-        #self.canvas.create_window((0, 0), window=self.canvas_frame, anchor='nw')
-        #self.canvas_frame.bind("<Configure>", lambda e: self.canvas.configure(scrollregion = self.canvas.bbox("all"),width=self.canvasSizeX,height=self.canvasSizeY))
+        self.outputFrame2 = tk.Frame(self.canvas)
+        self.canvas.create_window((0,0), window=self.outputFrame2, anchor="nw")        
+        
     
     
     def printClassToCanvas(self, UMLClass):
@@ -263,6 +279,7 @@ class View(tk.Tk):
         UMLBoxes[lowercaseName] = tk.Label(self.canvas, text=t[0], height=t[1], width=t[2], borderwidth=1, relief="solid", justify=LEFT, name = lowercaseName)
         #UMLBoxes[lowercaseName].place(x=UMLClass.location['x'], y=UMLClass.location['y'])
         #binds boxes to drag and drop event
+        UMLBoxes[lowercaseName].bind("<ButtonRelease-1>", self.release)
         UMLBoxes[lowercaseName].bind("<Button-1>", self.dragStart)
         UMLBoxes[lowercaseName].bind("<B1-Motion>", self.dragMove)
         
@@ -308,6 +325,8 @@ class View(tk.Tk):
         #binds boxes to drag and drop event
         UMLBoxes[lowercaseName].bind("<Button-1>", self.dragStart)
         UMLBoxes[lowercaseName].bind("<B1-Motion>", self.dragMove)
+        UMLBoxes[lowercaseName].bind("<ButtonRelease-1>", self.release)
+
         
         #remakes the line with the new label if a relationship existed
         for each in sourceList:
@@ -389,32 +408,40 @@ class View(tk.Tk):
 
         # determines color of arrow from relationship type
         if type == "Aggregation":
-            color = "red"
+            color = "gray"
+            arrowShape = (24, 12, 12)
+            d = None
         elif type == "Composition":
-            color = "blue"
+            color = "black"
+            arrowShape = (24, 12, 12)
+            d = None
         elif type == "Inheritance":
-            color = "green"
+            color = "gray"
+            arrowShape = (12, 12, 12)
+            d = None
         else: 
-            color = "purple"
+            color = "gray"
+            arrowShape = (12, 12, 12)
+            d = (1,1)
 
         #creates the line to closest point and add it to the list
         minpos = closest.index(min(closest))
         if minpos == 0:
-            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dTopCoord[0],dTopCoord[1], width=3, arrow=tk.LAST, fill=color)
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dTopCoord[0],dTopCoord[1], width=3, arrow=tk.LAST, fill=color, arrowshape=arrowShape, dash=d)
         if minpos == 1:
-            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dLeftCoord[0],dLeftCoord[1], width=3, arrow=tk.LAST, fill=color)
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dLeftCoord[0],dLeftCoord[1], width=3, arrow=tk.LAST, fill=color, arrowshape=arrowShape, dash=d)
         if minpos == 2:
-            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dRightCoord[0],dRightCoord[1], width=3, arrow=tk.LAST, fill=color)
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dRightCoord[0],dRightCoord[1], width=3, arrow=tk.LAST, fill=color, arrowshape=arrowShape, dash=d)
         if minpos == 3:
-            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dBottomCoord[0],dBottomCoord[1], width=3, arrow=tk.LAST, fill=color)
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dBottomCoord[0],dBottomCoord[1], width=3, arrow=tk.LAST, fill=color, arrowshape=arrowShape, dash=d)
         if minpos == 4:
-            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dTopRight[0],dTopRight[1], width=3, arrow=tk.LAST, fill=color)
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dTopRight[0],dTopRight[1], width=3, arrow=tk.LAST, fill=color, arrowshape=arrowShape, dash=d)
         if minpos == 5:
-            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dTopLeft[0],dTopLeft[1], width=3, arrow=tk.LAST, fill=color)            
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dTopLeft[0],dTopLeft[1], width=3, arrow=tk.LAST, fill=color, arrowshape=arrowShape, dash=d)            
         if minpos == 6:
-            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dBottomRight[0],dBottomRight[1], width=3, arrow=tk.LAST, fill=color)    
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dBottomRight[0],dBottomRight[1], width=3, arrow=tk.LAST, fill=color, arrowshape=arrowShape, dash=d)    
         if minpos == 7:
-            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dBottomLeft[0],dBottomLeft[1], width=3, arrow=tk.LAST, fill=color)
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dBottomLeft[0],dBottomLeft[1], width=3, arrow=tk.LAST, fill=color, arrowshape=arrowShape, dash=d)
     
 
     def deleteLine(self, s, d):
@@ -434,6 +461,12 @@ class View(tk.Tk):
         self.makeOutputFrame()
         self.remake()
 
+    #clears canvas on right and input window on left
+    def clearCanvas(self):
+        self.outputFrame.destroy()
+        self.makeOutputFrame()
+
+    # refreshes the canvas and prints the list of class to the canvas 
     def printAllClassesToCanvas(self, list):
         """
         Refreshes the canvas and prints the list of class to the canvas
@@ -1203,19 +1236,19 @@ class View(tk.Tk):
             e2 = tk.Entry(self.inputFrame, width=50)
             e2.grid(row=3, columnspan=2)
             e2.focus_set()
-            inputlabel3 = tk.Label(self.inputFrame, text='Enter new parameter type:')
-            inputlabel3.grid(row=4, columnspan=2) 
-            e3 = tk.Entry(self.inputFrame, width=50)
-            e3.grid(row=5, columnspan=2)
+            #inputlabel3 = tk.Label(self.inputFrame, text='Enter new parameter type:')
+            #inputlabel3.grid(row=4, columnspan=2) 
+            #e3 = tk.Entry(self.inputFrame, width=50)
+            #e3.grid(row=5, columnspan=2)
             def addParam(event):
                 self.param = clicked.get().strip()
                 self.paramNew = e2.get()
-                self.paramTypeNew = e3.get()
+                #self.paramTypeNew = e3.get()
                 self.controller.clickChangeAnotherParamButton()
             def addParam1():
                 self.param = clicked.get().strip()
                 self.paramNew = e2.get()
-                self.paramTypeNew = e3.get()
+                #self.paramTypeNew = e3.get()
                 self.controller.clickChangeAnotherParamButton()
             addParamButton = tk.Button(self.inputFrame, text='Change parameter(s)', command= lambda: addParam1())
             addParamButton.grid(row=6, column=0)
@@ -1388,10 +1421,23 @@ class View(tk.Tk):
         self.inputFrame.destroy()
         self.makeInputFrame()
 
+    
+    def release(self, event):
+        """
+        saves state and adds it to undo stack when button is released
+        """
+        widget = event.widget
+        s.addUndo(self.state)
+        s.clearRedo()
+
+
     def dragStart(self, event):
         widget = event.widget
         widget.startX = event.x
         widget.startY = event.y
+        # saves state when object is clicked
+        self.state = s.saveState()
+
 
     
     def dragMove(self, event):
@@ -1401,7 +1447,7 @@ class View(tk.Tk):
 
         #saves the widget that was click on
         widget = event.widget
-        
+
         # calculates x and y coords of drag: 
         # top left corner of widget relative to window - place where we click in the label itself + where be begin draging the widget to
         x = widget.winfo_x() - widget.startX + event.x
@@ -1467,7 +1513,7 @@ def classToString(c):
     methLen = 12
     height = 8
     string = ''
-    string += "Class: " + c.name + "\n"
+    string += "Class: " + c.name + "\n" 
     classLen += len(c.name)
     string += "\n    Fields:\n"
     for each in c.fields:

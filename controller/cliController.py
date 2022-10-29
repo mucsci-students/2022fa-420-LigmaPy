@@ -3,7 +3,6 @@
     Description: Basic CLI interface and commands to go along with it.
 """
 
-from ast import Param
 import pyfiglet
 import cmd2
 from model.ErrorHandlers.FieldException import FieldException
@@ -14,7 +13,6 @@ import model.UMLClass as UMLCLass
 import model.attributes as attributes
 import model.relationship as relationship
 import model.parameter as parameter
-from UMLException import UMLException, UMLSuccess
 from interface.interfaceCommands import *
 from model.saveload import *
 from model import UMLState

@@ -1,4 +1,5 @@
-# Ligma Py UML Editor
+# ![z635c27fcde666](https://user-images.githubusercontent.com/44234583/198713215-fc36da34-6a18-4c19-81ab-87cb19859746.gif)
+
 
 ## Table of Contents
 - [Setup](#setup)
@@ -26,7 +27,9 @@ python uml.py [--cli]
 ```
 Note: Add the --cli flag to run the CLI editor
 
-## CLI Commands
+<details>
+
+<summary style="font-weight:bold;font-size:18.5pt;">CLI Commands</summary>
 
 ### `addClass` - <i>Creates a class</i>
 
@@ -133,6 +136,22 @@ help [command]
 ```bash
 exit
 ```
+</details>
+<br>
+
+<details>
+
+<summary style="font-weight:bold;font-size:18.5pt;">Design Patterns</summary>
+
+### MVC
+The [model](https://github.com/mucsci-students/2022fa-420-LigmaPy/tree/develop/model) contains the information for classes and relationships. This information is stored in two lists, classIndex and relationIndex, respectively. The [view](https://github.com/mucsci-students/2022fa-420-LigmaPy/tree/develop/view) contains everything used to display the model information onto the canvas. The [controller](https://github.com/mucsci-students/2022fa-420-LigmaPy/tree/develop/controller) listens for button presses in the gui or a valid command in the cli.
+### Memento - [UMLState](https://github.com/mucsci-students/2022fa-420-LigmaPy/blob/develop/model/UMLState.py)
+I created a class to capture and store states of the classIndex and relationIndex. This allows us to repopulate those lists with a different version (past or future), allowing us to be able to undo and redo actions.
+### Observer - [UMLClass](https://github.com/mucsci-students/2022fa-420-LigmaPy/blob/develop/model/UMLClass.py)
+The UMLClass contains a list of "subscribers" which are relationships that the class is a part of (as a source or destination). There are also class methods `register` and `unregister` which handle adding and removing relationships from that list. On every name change, or deletion of a class, each subscriber in the list is notified. This allows for relationships to be deleted when their source or destination has been deleted, and a class name change to be reflected in each relationship that it is a part of.
+### Singleton - [View](https://github.com/mucsci-students/2022fa-420-LigmaPy/blob/develop/view/View.py)
+Since there should only ever be one GUI window, the view class now checks if an instance has already been created or not, before making one. If there has been an instance created already, then the pre-existing instance will be returned instead of a newly made one.
+</details>
 <br>
 
 ## Team
