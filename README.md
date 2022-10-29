@@ -138,13 +138,16 @@ exit
 ```
 </details>
 <br>
+
 <details>
 
 <summary style="font-weight:bold;font-size:18.5pt;">Design Patterns</summary>
 
 ## MVC
-## Memento
-## Observer
+The [model](https://github.com/mucsci-students/2022fa-420-LigmaPy/tree/develop/model) contains the information for classes and relationships. This information is stored in two lists, classIndex and relationIndex, respectively. The [view](https://github.com/mucsci-students/2022fa-420-LigmaPy/tree/develop/view) contains everything used to display the model information onto the canvas. The [controller](https://github.com/mucsci-students/2022fa-420-LigmaPy/tree/develop/controller) listens for button presses in the gui or a valid command in the cli.
+## Memento - [UMLState](https://github.com/mucsci-students/2022fa-420-LigmaPy/blob/develop/model/UMLState.py)
+I created a class to capture and store states of the classIndex and relationIndex. This allows us to repopulate those lists with a different version (past or future), allowing us to be able to undo and redo actions.
+## Observer - [UMLClass](https://github.com/mucsci-students/2022fa-420-LigmaPy/blob/develop/model/UMLClass.py)
 ## Singleton
 </details>
 <br>
