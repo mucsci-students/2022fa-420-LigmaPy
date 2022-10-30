@@ -219,9 +219,10 @@ class View(tk.Tk):
         self.outputFrame.grid(row=0, column=1, sticky="nswe", rowspan=2)
         self.outputFrame.rowconfigure(0, weight=1)
         self.outputFrame.columnconfigure(1, weight=1)
-        self.canvas = tk.Canvas(self.outputFrame, bg='white', scrollregion=(0, 0, self.canvasSizeX, self.canvasSizeY))
+        #self.canvas = tk.Canvas(self.outputFrame, bg='white', scrollregion=(0, 0, self.canvasSizeX, self.canvasSizeY))
+        self.canvas = tk.Canvas(self.outputFrame, bg='white')
         #self.outputFrame.pack(side = RIGHT, fill=Y)
-        self.makeScrollBar()
+        #self.makeScrollBar()
         self.canvas.pack(fill=tk.BOTH, expand=tk.YES)
         #self.canvas.grid(row=0, column=1, sticky="nswe", rowspan=2)
        
