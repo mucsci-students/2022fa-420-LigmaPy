@@ -1,5 +1,4 @@
 """
-Author: Julia Geesaman
 Filename: parameter.py
 Description: Adds, deletes, and renames parameters
 """

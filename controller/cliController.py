@@ -1,5 +1,4 @@
 """
-    Author(s): Trevor Bender, Christian Shepperson
     Filename: cliController.py
     Description: Basic CLI interface and commands to go along with it.
 """

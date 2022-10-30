@@ -1,5 +1,4 @@
 """
-Author: Aaron Heinbaugh
 Filename: saveload.py
 Description: Saves and loads a user's session as a json
 """
@@ -14,7 +13,6 @@ import model.UMLClass as u
 import model.relationship as r
 import model.attributes as a
 import model.parameter as p
-from UMLException import UMLException, UMLSuccess
 
 
 ##################################################################
@@ -156,7 +154,7 @@ def load(filename):
 
         u.classIndex = returnClasses
         r.relationIndex = returnRelations
-        print(UMLSuccess(f"Loaded {filename}"))     
+        print(f"Loaded {filename}")     
         return 
     
     #if error loading return original lists

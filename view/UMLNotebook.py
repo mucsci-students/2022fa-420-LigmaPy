@@ -1,5 +1,4 @@
 """
-Author(s)   : Trevor Bender
 Filename    : UMLNotebook.py
 Description : Constructs the tkinter Notebook to switch between tabs.
 """
