@@ -1,5 +1,4 @@
 """
-    Author(s): Trevor Bender, Christian Shepperson
     Filename: interfaceCommands.py
     Description: Commands to be used with the interface class
 """

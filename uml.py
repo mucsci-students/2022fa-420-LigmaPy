@@ -1,5 +1,4 @@
 """
-Author      : Trevor Bender
 Filename    : uml.py
 Description : Main driver code for the UML Editor
 """

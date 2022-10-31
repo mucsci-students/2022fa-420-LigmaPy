@@ -1,5 +1,4 @@
 """
-Author(s)   : Trevor Bender
 Filename    : class_test.py
 Description : Tests for the UMLClass class
 """

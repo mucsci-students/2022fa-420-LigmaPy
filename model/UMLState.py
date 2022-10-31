@@ -56,6 +56,13 @@ def loadState(state : UMLState):
     for c in state.stateDict['classes']:
         # Add the class
         UMLClass.addClass(c['name'])
+        # Adds location to class
+        # for x in c['x']:
+        # print(c['x'])
+        # print(c['name'])
+        w = UMLClass.classIndex[UMLClass.findClass(c['name'])]
+        w.location['x'] = c['x']
+        w.location['y'] = c['y']
         # Add the fields to the class
         for field in c['Fields']:
             attributes.addField(field['name'], c['name'], field['type'])
@@ -64,7 +71,14 @@ def loadState(state : UMLState):
             attributes.addMethod(meth['name'], c['name'], meth['return_type'])
             # Add parameters to the method
             for param in meth['params']:
-                parameter.addParameter([(param['name'], param['type'])], meth['name'], c['name'])
+                parameter.addParameter(param['name'], param['type'], meth['name'], c['name'])
+    
+    for rel in state.stateDict['relationships']:
+        relationship.addRelationship(rel['source'], rel['destination'], rel['type'])
+
+    # Add all relationships back
+    for relation in state.stateDict['relationships']:
+        relationship.addRelationship(relation["source"], relation["destination"], relation["type"])
 
 def undo() -> UMLState:
     """
@@ -88,12 +102,9 @@ def redo() -> UMLState:
         return None
 
     undoStack.put(saveState())
-    state = redoStack.get()
+    return redoStack.get()
 
-    print(state)
-
-    return state
 def clearRedo():
     while not redoStack.empty():
-        print(redoStack.get())
+        redoStack.get()
 

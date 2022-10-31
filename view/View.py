@@ -1,5 +1,4 @@
 """
-Author(s)   : Trevor Bender and Aaron Heinbaugh
 Filename    : View.py
 Description : Constructs and displays the gui
 """
@@ -13,11 +12,18 @@ from tkinter import LEFT, RIGHT, VERTICAL, Y, Canvas, OptionMenu, StringVar, ttk
 import model.UMLClass as u
 import model.relationship as r
 import model.attributes as a
+import model.UMLState as s
 import math
 
 
 
 class View(tk.Tk):
+    def __new__(self, controller):
+        # Make an instance ONLY if one is not already created
+        if not hasattr(self, 'instance'):
+            self.instance = super(View, self).__new__(self)
+        return self.instance
+
     def __init__(self, controller):
         super().__init__()
         self.controller = controller
@@ -38,14 +44,18 @@ class View(tk.Tk):
         self.paramType = None
         self.paramTypeNew = None
         self.fileName = None
+        self.state = None
+        self.geometry("800x600")
         self.canvasSizeX = 2000
         self.canvasSizeY = 2000
         self.title("UML Editor")
-        #screenWidth = self.winfo_screenwidth() - 100
-        #screenHeight = self.winfo_screenheight() - 100
+
+        screenWidth = self.winfo_screenwidth() - 100
+        screenHeight = self.winfo_screenheight() - 100
+
         # Sets the size of the window
         # self.state('zoomed')
-        #self.geometry(f"{screenWidth}x{screenHeight}")
+        self.geometry(f"{screenWidth}x{screenHeight}")
         self.rowconfigure(0, weight=1)
         self.rowconfigure(1, weight=1)
         self.columnconfigure(1, weight=1)
@@ -97,6 +107,12 @@ class View(tk.Tk):
         #listmenu.add_command(label="List Relationships", command= lambda : self.controller.clickListRelationsButton())
         #listmenu.add_command(label="Clear", command= lambda : self.clearScreen())
         #menubar.add_cascade(label="List", menu=listmenu)
+        # Edit Menu
+        # Adds undo and redo commands to edit menu
+        editMenu = tk.Menu(menubar, tearoff=0)
+        editMenu.add_command(label="Undo", command = lambda : self.controller.clickUndoButton())
+        editMenu.add_command(label="Redo", command = lambda : self.controller.clickRedoButton())
+        menubar.add_cascade(label="Edit", menu=editMenu)
         self.config(menu=menubar)
 
     #creates all the button in the top left
@@ -104,7 +120,6 @@ class View(tk.Tk):
         self.buttonFrame = tk.Frame(self)
         
         def createNotebook(frame : tk.Frame):
-            
             """
                 Creates a tkinter Notebook
 
@@ -208,9 +223,10 @@ class View(tk.Tk):
         self.outputFrame.grid(row=0, column=1, sticky="nswe", rowspan=2)
         self.outputFrame.rowconfigure(0, weight=1)
         self.outputFrame.columnconfigure(1, weight=1)
-        self.canvas = tk.Canvas(self.outputFrame, bg='white', scrollregion=(0, 0, self.canvasSizeX, self.canvasSizeY))
+        #self.canvas = tk.Canvas(self.outputFrame, bg='white', scrollregion=(0, 0, self.canvasSizeX, self.canvasSizeY))
+        self.canvas = tk.Canvas(self.outputFrame, bg='white')
         #self.outputFrame.pack(side = RIGHT, fill=Y)
-        self.makeScrollBar()
+        #self.makeScrollBar()
         self.canvas.pack(fill=tk.BOTH, expand=tk.YES)
         #self.canvas.grid(row=0, column=1, sticky="nswe", rowspan=2)
        
@@ -228,16 +244,16 @@ class View(tk.Tk):
         self.scrollbar.pack(fill = tk.Y, side = tk.RIGHT)
         self.canvas.configure(yscrollcommand=self.scrollbar.set)
         self.canvas.bind('<Configure>', lambda e: self.canvas.configure(scrollregion = self.canvas.bbox("all")))
-        #self.outputFrame2 = tk.Frame(self.canvas)
-        #self.canvas.create_window((0,0), window=self.outputFrame2, anchor="nw")        
-        #self.canvas.create_window((0, 0), window=self.canvas_frame, anchor='nw')
-        #self.canvas_frame.bind("<Configure>", lambda e: self.canvas.configure(scrollregion = self.canvas.bbox("all"),width=self.canvasSizeX,height=self.canvasSizeY))
+        self.outputFrame2 = tk.Frame(self.canvas)
+        self.canvas.create_window((0,0), window=self.outputFrame2, anchor="nw")        
+        
     
-    """
-    Prints the 'UMLclass' in a nice box to the canvas
-    param1: UMLclass to print
-    """
+    
     def printClassToCanvas(self, UMLClass):
+        """
+        Prints the 'UMLclass' in a nice box to the canvas
+        param1: UMLclass to print
+        """
         #gets the text, width and heigth as tuple(t,w,h)
         t = classToString(UMLClass)
         
@@ -263,6 +279,7 @@ class View(tk.Tk):
         UMLBoxes[lowercaseName] = tk.Label(self.canvas, text=t[0], height=t[1], width=t[2], borderwidth=1, relief="solid", justify=LEFT, name = lowercaseName)
         #UMLBoxes[lowercaseName].place(x=UMLClass.location['x'], y=UMLClass.location['y'])
         #binds boxes to drag and drop event
+        UMLBoxes[lowercaseName].bind("<ButtonRelease-1>", self.release)
         UMLBoxes[lowercaseName].bind("<Button-1>", self.dragStart)
         UMLBoxes[lowercaseName].bind("<B1-Motion>", self.dragMove)
         
@@ -274,12 +291,13 @@ class View(tk.Tk):
             self.makeLine(UMLBoxes[lowercaseName].winfo_name(), each.winfo_name())
 
         
-    """
-    Prints a renamed class to canvas
-    param1: renamed UMLClass object
-    param2: old ULMClass object's name
-    """
-    def printRenamedClassToCanvas(self, UMLclass, UMLold):
+  
+    def printRenamedClassToCanvas(self, UMLclass, UMLold):  
+        """
+        Prints a renamed class to canvas
+        param1: renamed UMLClass object
+        param2: old ULMClass object's name
+        """
         #gets the text, width and heigth as tuple(t,w,h)
         new = classToString(UMLclass)
         #holders to recreate lines
@@ -307,6 +325,8 @@ class View(tk.Tk):
         #binds boxes to drag and drop event
         UMLBoxes[lowercaseName].bind("<Button-1>", self.dragStart)
         UMLBoxes[lowercaseName].bind("<B1-Motion>", self.dragMove)
+        UMLBoxes[lowercaseName].bind("<ButtonRelease-1>", self.release)
+
         
         #remakes the line with the new label if a relationship existed
         for each in sourceList:
@@ -315,11 +335,12 @@ class View(tk.Tk):
             self.makeLine(UMLBoxes[lowercaseName].winfo_name(), each.winfo_name())
 
 
-    """    
-    delete class box from canvas and any relationship lines dependant on the box    
-    param1: the UMLClass object to delete
-    """
-    def removeClassFromCanvas(self, UMLclass):
+
+    def removeClassFromCanvas(self, UMLclass):    
+        """    
+        delete class box from canvas and any relationship lines dependant on the box    
+        param1: the UMLClass object to delete
+        """
         #deletes and relation lines linked to box
         if UMLclass.lower() in UMLBoxes:
             for each in list(UMLLines):
@@ -329,12 +350,13 @@ class View(tk.Tk):
         UMLBoxes[UMLclass.lower()].destroy()
         del UMLBoxes[UMLclass.lower()]    
 
-    """
-    Makes a line between two boxes
-    param1: source box UMLClass name
-    param2: dest box UMLClass name
-    """
-    def makeLine(self, s, d):
+
+    def makeLine(self, s, d):    
+        """
+        Makes a line between two boxes
+        param1: source box UMLClass name
+        param2: dest box UMLClass name
+        """
         #updates the canvas to make the winfo calls accurate
         self.canvas.update()
         #gets the boxes
@@ -386,49 +408,69 @@ class View(tk.Tk):
 
         # determines color of arrow from relationship type
         if type == "Aggregation":
-            color = "red"
+            color = "gray"
+            arrowShape = (24, 12, 12)
+            d = None
         elif type == "Composition":
-            color = "blue"
+            color = "black"
+            arrowShape = (24, 12, 12)
+            d = None
         elif type == "Inheritance":
-            color = "green"
+            color = "gray"
+            arrowShape = (12, 12, 12)
+            d = None
         else: 
-            color = "purple"
+            color = "gray"
+            arrowShape = (12, 12, 12)
+            d = (1,1)
 
         #creates the line to closest point and add it to the list
         minpos = closest.index(min(closest))
         if minpos == 0:
-            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dTopCoord[0],dTopCoord[1], width=3, arrow=tk.LAST, fill=color)
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dTopCoord[0],dTopCoord[1], width=3, arrow=tk.LAST, fill=color, arrowshape=arrowShape, dash=d)
         if minpos == 1:
-            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dLeftCoord[0],dLeftCoord[1], width=3, arrow=tk.LAST, fill=color)
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dLeftCoord[0],dLeftCoord[1], width=3, arrow=tk.LAST, fill=color, arrowshape=arrowShape, dash=d)
         if minpos == 2:
-            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dRightCoord[0],dRightCoord[1], width=3, arrow=tk.LAST, fill=color)
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dRightCoord[0],dRightCoord[1], width=3, arrow=tk.LAST, fill=color, arrowshape=arrowShape, dash=d)
         if minpos == 3:
-            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dBottomCoord[0],dBottomCoord[1], width=3, arrow=tk.LAST, fill=color)
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dBottomCoord[0],dBottomCoord[1], width=3, arrow=tk.LAST, fill=color, arrowshape=arrowShape, dash=d)
         if minpos == 4:
-            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dTopRight[0],dTopRight[1], width=3, arrow=tk.LAST, fill=color)
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dTopRight[0],dTopRight[1], width=3, arrow=tk.LAST, fill=color, arrowshape=arrowShape, dash=d)
         if minpos == 5:
-            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dTopLeft[0],dTopLeft[1], width=3, arrow=tk.LAST, fill=color)            
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dTopLeft[0],dTopLeft[1], width=3, arrow=tk.LAST, fill=color, arrowshape=arrowShape, dash=d)            
         if minpos == 6:
-            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dBottomRight[0],dBottomRight[1], width=3, arrow=tk.LAST, fill=color)    
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dBottomRight[0],dBottomRight[1], width=3, arrow=tk.LAST, fill=color, arrowshape=arrowShape, dash=d)    
         if minpos == 7:
-            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dBottomLeft[0],dBottomLeft[1], width=3, arrow=tk.LAST, fill=color)
+            UMLLines[(source, dest)] = self.canvas.create_line(sCenterCoord[0],sCenterCoord[1],dBottomLeft[0],dBottomLeft[1], width=3, arrow=tk.LAST, fill=color, arrowshape=arrowShape, dash=d)
     
 
-    #delete a line and removes it from the list
     def deleteLine(self, s, d):
+        """
+        Deletes a line and removes it from the list
+        """
         source = UMLBoxes[s.lower()]
         dest = UMLBoxes[d.lower()]
         self.canvas.delete(UMLLines[(source, dest)])
         del UMLLines[(source, dest)]
 
-    #clears canvas on right and input window on left
     def clearScreen(self):
+        """
+        Clears canvas on right and input window on left
+        """
         self.outputFrame.destroy()
         self.makeOutputFrame()
         self.remake()
 
+    #clears canvas on right and input window on left
+    def clearCanvas(self):
+        self.outputFrame.destroy()
+        self.makeOutputFrame()
+
     # refreshes the canvas and prints the list of class to the canvas 
     def printAllClassesToCanvas(self, list):
+        """
+        Refreshes the canvas and prints the list of class to the canvas
+        """
         self.canvas.destroy()
         self.scrollbar.destroy()
         self.canvas = tk.Canvas(self.outputFrame, bg='white')
@@ -440,8 +482,10 @@ class View(tk.Tk):
         self.canvas.grid(row=0, column=1, sticky="nswe", rowspan=2)  
         
 
-    #refreshs the canvas and prints the list of relationships to the canvas
     def printRelationsToCanvase(self, list):
+        """
+        Refreshes the canvas and prints the list of relationships to the canvas
+        """
         self.canvas.destroy()
         self.scrollbar.destroy()
         self.canvas = tk.Canvas(self.outputFrame, bg='white')
@@ -458,14 +502,11 @@ class View(tk.Tk):
     def load(self):
         self.fileName = filedialog.askopenfilename(title="Open File", initialdir="UMLsavefiles", filetypes=[("JSON File", "*.json")])
         
-    """
-    Instead of making comments for each and every input frame (bottom left box in GUI):
-    See makeUpdateRelationType and makeDeleteFieldFrame below and apply their comments to every other makeXXXXX(self) function
-    The name of the function describes what frame will be made when called
-    """
     
-    #creates the frame to update relations after clicking said button
     def makeUpdateRelationType(self):
+        """
+        Creates the frame to update relations after clicking said button
+        """
         #checks if any relationships exist and alerts user if no
         if len(r.relationIndex) == 0:
             #creates alert message
@@ -520,8 +561,10 @@ class View(tk.Tk):
             cancel.grid(row=6, column=1)
             self.bind('<Return>', output)  
 
-    #creates the bottom left frame for deleting fields when the 'delete field' button is clicked
     def makeDeleteFieldFrame(self):
+        """
+        Creates the bottom left frame for deleting fields when the 'delete field' button is clicked
+        """
         #fills a dictionary {className: fields[], className: fields, ... } given the class has fields
         classDict = {c.name : c.fields for c in u.classIndex if len(c.fields) > 0}
         #checks if any classes have fields from the dict above and alerts user if not
@@ -576,8 +619,10 @@ class View(tk.Tk):
             self.bind('<Return>', output)
 
 
-    #creates the add class frame upon clicking add class
     def makeAddClassFrame(self):
+        """
+        Creates the add class frame upon clicking add class
+        """
         inputlabel1 = tk.Label(self.inputFrame, text='Enter Class name to add')
         inputlabel1.grid(row=0, columnspan=2) 
         e1 = tk.Entry(self.inputFrame, width=50)
@@ -595,12 +640,11 @@ class View(tk.Tk):
         cancel.grid(row=4, column=1)
         self.bind('<Return>', output)
         
-       
-    """
-    Creates delete class labels/entry/buttons in lower left corner
 
-    """
     def makeDeleteClassFrame(self):
+        """
+        Creates delete class labels/entry/buttons in lower left corner
+        """
         classList = [c.name for c in u.classIndex]
         if len(classList) == 0:
             inputlabel1 = tk.Label(self.inputFrame, text='No classes exist', width=30)
@@ -625,11 +669,11 @@ class View(tk.Tk):
             cancel.grid(row=4, column=1)
             self.bind('<Return>', output)
 
-    """
-    Creates rename class entry/buttons in lower left corner
 
-    """
     def makeRenameClassFrame(self):
+        """
+        Creates rename class entry/buttons in lower left corner
+        """
         classList = [c.name for c in u.classIndex]
         if len(classList) == 0:
             inputlabel1 = tk.Label(self.inputFrame, text='No classes exist', width=30)
@@ -661,11 +705,11 @@ class View(tk.Tk):
             cancel.grid(row=4, column=1)
             self.bind('<Return>', output)   
 
-    """
-    Creates add relation entry/buttons in lower left corner
-
-    """       
+    
     def makeAddRelationFrame(self):
+        """
+        Creates add relation entry/buttons in lower left corner
+        """  
         if len(u.classIndex) < 2:
             inputlabel1 = tk.Label(self.inputFrame, text='Not enough classes exist', width=30)
             inputlabel1.grid(row=0)
@@ -705,11 +749,11 @@ class View(tk.Tk):
             cancel.grid(row=6, column=1)
             self.bind('<Return>', output) 
 
-    """
-    Creates delete relatoions labels/entry/buttons in lower left corner
 
-    """
     def makeDeleteRelationFrame(self):
+        """
+        Creates delete relatoions labels/entry/buttons in lower left corner
+        """
         if len(r.relationIndex) == 0:
             inputlabel1 = tk.Label(self.inputFrame, text='Not enough relationships exist', width=30)
             inputlabel1.grid(row=0)
@@ -738,11 +782,11 @@ class View(tk.Tk):
             cancel.grid(row=4, column=1)
             self.bind('<Return>', output)
     
-    """
-    Creates add fields labels/entry/buttons in lower left corner
 
-    """
     def makeAddFieldFrame(self):
+        """
+        Creates add fields labels/entry/buttons in lower left corner
+        """      
         classList = [c.name for c in u.classIndex]
         if len(classList) == 0:
             inputlabel1 = tk.Label(self.inputFrame, text='No classes exist', width=30)
@@ -780,11 +824,11 @@ class View(tk.Tk):
             cancel.grid(row=6, column=1)
             self.bind('<Return>', output)
 
-    """
-    Creates raname fields labels/entry/buttons in lower left corner
 
-    """
-    def makeRenameFieldFrame(self):
+    def makeRenameFieldFrame(self):    
+        """
+        Creates raname fields labels/entry/buttons in lower left corner
+        """
         classDict = {c.name : c.fields for c in u.classIndex if len(c.fields) > 0}
         if len(classDict) == 0:
             inputlabel1 = tk.Label(self.inputFrame, text='No classes exist with fields', width=30)
@@ -832,11 +876,11 @@ class View(tk.Tk):
             cancel.grid(row=6, column=1)
             self.bind('<Return>', output)
 
-    """
-    Creates add parameter labels/entry/buttons in lower left corner
 
-    """
     def makeParamInputFrame(self):
+        """
+        Creates add parameter labels/entry/buttons in lower left corner
+        """
         inputlabel1 = tk.Label(self.inputFrame, text='Enter parameter name:')
         inputlabel1.grid(row=0, columnspan=2) 
         e1 = tk.Entry(self.inputFrame, width=50)
@@ -860,11 +904,11 @@ class View(tk.Tk):
         cancel.grid(row=4, column=1)
         self.bind('<Return>', addParam)
     
-    """
-    Creates add method labels/entry/buttons in lower left corner
 
-    """
     def makeAddMethodFrame(self):
+        """
+        Creates add method labels/entry/buttons in lower left corner
+        """
         classList = [c.name for c in u.classIndex]
         if len(classList) == 0:
             inputlabel1 = tk.Label(self.inputFrame, text='No classes exist', width=30)
@@ -910,11 +954,11 @@ class View(tk.Tk):
             cancel.grid(row=6, column=2)
             self.bind('<Return>', output)
 
-    """
-    Creates delete method labels/entry/buttons in lower left corner
 
-    """
     def makeDeleteMethodFrame(self):
+        """
+        Creates delete method labels/entry/buttons in lower left corner
+        """
         classDict = {c.name : c.methods for c in u.classIndex if len(c.methods) > 0}
         if len(classDict) == 0:
             inputlabel1 = tk.Label(self.inputFrame, text='No classes exist with methods', width=30)
@@ -955,11 +999,11 @@ class View(tk.Tk):
             cancel.grid(row=4, column=1)
             self.bind('<Return>', output)
     
-    """
-    Creates rename method labels/entry/buttons in lower left corner
 
-    """
     def makeRenameMethodFrame(self):
+        """
+        Creates rename method labels/entry/buttons in lower left corner
+        """
         classDict = {c.name : c.methods for c in u.classIndex if len(c.methods) > 0}
         if len(classDict) == 0:
             inputlabel1 = tk.Label(self.inputFrame, text='No classes exist with methods', width=30)
@@ -1007,11 +1051,11 @@ class View(tk.Tk):
             cancel.grid(row=6, column=1)
             self.bind('<Return>', output)
 
-    """
-    Creates add param labels/entry/buttons in lower left corner
 
-    """
-    def makeAddParamFrame(self):        
+    def makeAddParamFrame(self):   
+        """
+        Creates add param labels/entry/buttons in lower left corner
+        """     
         classDict = {c.name : c.methods for c in u.classIndex if len(c.methods) > 0}
         if len(classDict) == 0:
             inputlabel1 = tk.Label(self.inputFrame, text='No classes exist with methods', width=30)
@@ -1053,11 +1097,10 @@ class View(tk.Tk):
             self.bind('<Return>', addParam)
 
 
-    """
-    Creates delete param labels/entry/buttons in lower left corner
-
-    """
-    def makeParamDeleteInputFrame(self):        
+    def makeParamDeleteInputFrame(self):  
+        """
+        Creates delete param labels/entry/buttons in lower left corner
+        """      
         inputlabel1 = tk.Label(self.inputFrame, text='Enter parameter name to delete:')
         inputlabel1.grid(row=0, columnspan=2) 
         e1 = tk.Entry(self.inputFrame, width=50)
@@ -1084,12 +1127,11 @@ class View(tk.Tk):
         cancel.grid(row=4, column=2)
         self.bind('<Return>', addParam)
 
-    
-    """
-    Creates class/method selector labels/entry/buttons for add param frame in lower left corner
-
-    """    
+        
     def makeDeleteParamInputFrame(self):
+        """
+        Creates class/method selector labels/entry/buttons for add param frame in lower left corner
+        """ 
         paramList = u.classIndex[u.findClass(self.className)].methods[a.findMethod(self.method, self.className)].params
         if len(paramList) == 0:
             inputlabel1 = tk.Label(self.inputFrame, text='No parameters left in method', width=30)
@@ -1115,11 +1157,11 @@ class View(tk.Tk):
             cancel.grid(row=4, column=1)
             self.bind('<Return>', addParam)
 
-    """
-    Creates class/method selector labels/entry/buttons for delete param frame in lower left corner
 
-    """
-    def makeDeleteParamFrame(self):        
+    def makeDeleteParamFrame(self):  
+        """
+        Creates class/method selector labels/entry/buttons for delete param frame in lower left corner
+        """      
         classDict = {c.name : c.methods for c in u.classIndex for each in c.methods if len(each.params) > 0  }
         if len(classDict) == 0:
             inputlabel1 = tk.Label(self.inputFrame, text='No classes exist that have methods with parameters', width=60)
@@ -1166,11 +1208,11 @@ class View(tk.Tk):
             cancel.grid(row=4, column=2)
             self.bind('<Return>', addParam)
     
-    """
-    Creates change param labels/entry/buttons in lower left corner
 
-    """
     def makeChangeParamInputFrame(self):
+        """
+        Creates change param labels/entry/buttons in lower left corner
+        """
         paramList = u.classIndex[u.findClass(self.className)].methods[a.findMethod(self.method, self.className)].params
         if len(paramList) == 0:
             inputlabel1 = tk.Label(self.inputFrame, text='No parameters left in method', width=30)
@@ -1189,19 +1231,19 @@ class View(tk.Tk):
             e2 = tk.Entry(self.inputFrame, width=50)
             e2.grid(row=3, columnspan=2)
             e2.focus_set()
-            inputlabel3 = tk.Label(self.inputFrame, text='Enter new parameter type:')
-            inputlabel3.grid(row=4, columnspan=2) 
-            e3 = tk.Entry(self.inputFrame, width=50)
-            e3.grid(row=5, columnspan=2)
+            #inputlabel3 = tk.Label(self.inputFrame, text='Enter new parameter type:')
+            #inputlabel3.grid(row=4, columnspan=2) 
+            #e3 = tk.Entry(self.inputFrame, width=50)
+            #e3.grid(row=5, columnspan=2)
             def addParam(event):
                 self.param = clicked.get().strip()
                 self.paramNew = e2.get()
-                self.paramTypeNew = e3.get()
+                #self.paramTypeNew = e3.get()
                 self.controller.clickChangeAnotherParamButton()
             def addParam1():
                 self.param = clicked.get().strip()
                 self.paramNew = e2.get()
-                self.paramTypeNew = e3.get()
+                #self.paramTypeNew = e3.get()
                 self.controller.clickChangeAnotherParamButton()
             addParamButton = tk.Button(self.inputFrame, text='Change parameter(s)', command= lambda: addParam1())
             addParamButton.grid(row=6, column=0)
@@ -1209,11 +1251,11 @@ class View(tk.Tk):
             cancel.grid(row=6, column=1)
             self.bind('<Return>', addParam)
 
-    """
-    Creates class/method selector class labels/entry/buttons for changed param frame in lower left corner
 
-    """
     def makeChangeParamFrame(self):
+        """
+        Creates class/method selector class labels/entry/buttons for changed param frame in lower left corner
+        """
         classDict = {c.name : c.methods for c in u.classIndex for each in c.methods if len(each.params) > 0  }
         if len(classDict) == 0:
             inputlabel1 = tk.Label(self.inputFrame, text='No classes exist that have methods with parameters', width=60)
@@ -1262,6 +1304,9 @@ class View(tk.Tk):
 
 
     def makeListClassFrame(self):
+        """
+        Makes the frame to list a class
+        """
         classList = [c.name for c in u.classIndex]
         if len(classList) == 0:
             inputlabel1 = tk.Label(self.inputFrame, text='No classes exist', width=30)
@@ -1287,13 +1332,15 @@ class View(tk.Tk):
             self.bind('<Return>', output)
             
 
-    #remakes the input frame in the bottom left corner
     def remake(self):
+        """
+        Remakes the input frame in the bottom left corner
+        """
         self.inputFrame.destroy()
         self.makeInputFrame()
     
     """
-    the following clear the bottom left frame and make a new inputframe decribed by self.make<this frame>()  
+    The following clear the bottom left frame and make a new inputframe decribed by self.make<this frame>()  
     """
     def addClassFrame(self):
         self.wipe()
@@ -1362,36 +1409,48 @@ class View(tk.Tk):
     def helpFrame(self):
         pass
     
-    #clears bottom left input frames and remakes base frame
     def wipe(self):
+        """
+        Clears bottom left input frames and remakes base frame
+        """
         self.inputFrame.destroy()
         self.makeInputFrame()
+
+    
+    def release(self, event):
+        """
+        saves state and adds it to undo stack when button is released
+        """
+        widget = event.widget
+        s.addUndo(self.state)
+        s.clearRedo()
+
 
     def dragStart(self, event):
         widget = event.widget
         widget.startX = event.x
         widget.startY = event.y
+        # saves state when object is clicked
+        self.state = s.saveState()
+
 
     
-    """
-    Drag event handler
-
-    """
     def dragMove(self, event):
+        """
+        Drag event handler
+        """
 
         #saves the widget that was click on
         widget = event.widget
-        
+
         # calculates x and y coords of drag: 
         # top left corner of widget relative to window - place where we click in the label itself + where be begin draging the widget to
         x = widget.winfo_x() - widget.startX + event.x
         y = widget.winfo_y() - widget.startY + event.y
-
-        
+ 
         #cx = self.canvas.canvasx(event.x)
         #cy = self.canvas.canvasy(event.y)
 
-       
         #prevents boxes from going off canvas left and top border
         if (x > 0 and y > 0):
             #write the box to canvas
@@ -1438,17 +1497,18 @@ class View(tk.Tk):
                 else:
                     self.deleteLine(each[0].winfo_name(), each[1].winfo_name())
                     self.makeLine(each[0].winfo_name(), widget.winfo_name())
-"""
-takes a UMLClass object and
-returns its information "box" string format, plus its heigth and width
-"""
+
 def classToString(c):
+    """
+    takes a UMLClass object and
+    returns its information "box" string format, plus its heigth and width
+    """
     classLen = 7
     fieldLen = 10
     methLen = 12
     height = 8
     string = ''
-    string += "Class: " + c.name + "\n"
+    string += "Class: " + c.name + "\n" 
     classLen += len(c.name)
     string += "\n    Fields:\n"
     for each in c.fields:
@@ -1473,8 +1533,10 @@ def classToString(c):
     width = max(classLen, methLen, fieldLen)
     return (string, height, width)
 
-# returns a relationship 'r' in a string format for output (not used anymore)
 def relationToString(r):
+    """
+    Returns a relationship 'r' in a string format for output (not used anymore)
+    """
     string = ""
     string += "Relationship:\n"
     string += "    Source: " + r.source + "\n"

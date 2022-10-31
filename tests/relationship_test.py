@@ -1,5 +1,4 @@
 """
-Author(s)   : Trevor Bender
 Filename    : relationship_test.py
 Description : Tests for the relationship class
 """
