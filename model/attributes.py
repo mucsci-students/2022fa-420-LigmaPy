@@ -1,11 +1,10 @@
 """
-Authors: Julia Geesaman, Sam Noggle
 Filename: attributes.py
 Description: Adds, deletes, and renames an attribute (method or field)
 """
 
 import model.UMLClass as C
-from UMLException import UMLException, UMLSuccess
+from model.ErrorHandlers.ReturnStatus import codes
 
 
 class attribute():
@@ -33,6 +32,17 @@ class method(attribute):
         self.return_type = retType
         self.params = []
 
+    def toDict(self):
+        """
+        Converts a method to a dictionary
+
+        :returns: A dictionary of the method
+        """
+
+        paramDict = [p.toDict() for p in self.params]
+
+        return {"name": self.name, "return_type": self.return_type, "params": paramDict}
+
     def __str__(self):
         return f"{self.return_type} {self.name}({', '.join(map(str, self.params))})"
 
@@ -40,6 +50,14 @@ class field(attribute):
     def __init__(self, name : str, t : str):
         super().__init__(name)
         self.type = t
+
+    def toDict(self):
+        """
+        Converts a field to a dictionary
+
+        :returns: A dictionary of the field
+        """
+        return {"name": self.name, "type": self.type}
 
     def changeType(self, newName : str):
         self.name = newName
@@ -119,19 +137,16 @@ def addMethod(name : str, className : str, ret_type : str):
 
     # Runs if attribute with given name already exists in given class
     if existingMethod >= 0:
-        print(UMLException("Method error", f"{name} already exists in {className}"))
-        return -2
+        return codes.ADD_EXISTING_METHOD
     # Runs if attribute does not exist in given class
     elif existingMethod == -2:
         newMethod = method(name, ret_type)
         index = C.findClass(className)
         C.classIndex[index].methods.append(newMethod)
-        print(UMLSuccess(f"Added {newMethod} to {className}"))
-        return 1
+        return codes.ADDED_METHOD
     # Runs if given class does not exist
     else:
-        print(UMLException("Class error", f"{className} does not exist"))
-        return -1
+        return codes.ADD_NOT_EXISTING_CLASS
 
 def addField(name, className, t):
     """
@@ -149,16 +164,16 @@ def addField(name, className, t):
 
     # Runs if attribute with given name already exists in given class
     if existingField >= 0:
-        return -2
+        return codes.ADD_EXISTING_FIELD
     # Runs if attribute does not exist in given class
     elif existingField == -2:
         newField = field(name, t)
         index = C.findClass(className)
         C.classIndex[index].fields.append(newField)
-        return 1
+        return codes.ADDED_FIELD
     # Runs if given class does not exist
     else:
-        return -1
+        return codes.ADD_FIELD_NOT_EXISTING_CLASS
 
 
 def deleteMethod(name, className):
@@ -175,15 +190,15 @@ def deleteMethod(name, className):
 
     # Runs if given class does not exist
     if methIndex == -1:
-        return -1
+        return codes.DELETE_METHOD_NOT_EXISTING_CLASS
     # Runs if class and attribute exist
     elif methIndex >= 0:
         classIndex = C.findClass(className)
         C.classIndex[classIndex].methods.pop(methIndex)
-        return 1
+        return codes.DELETED_METHOD
     # Runs if class exists but method does not
     else:
-        return -2
+        return codes.DELETE_NOT_EXISTING_METHOD
 
 def deleteField(name, className):
     """
@@ -199,15 +214,15 @@ def deleteField(name, className):
 
     # Runs if given class does not exist
     if fieldIndex == -1:
-        return -1
+        return codes.DELETE_FIELD_NOT_EXISTING_CLASS
     # Runs if class and attribute exist
     elif fieldIndex >= 0:
         classIndex = C.findClass(className)
         C.classIndex[classIndex].fields.pop(fieldIndex)
-        return 1
+        return codes.DELETED_FIELD
     # Runs if class exists but field does not
     else:
-        return -2
+        return codes.DELETE_FIELD_NOT_EXISTING_FIELD
 
 def renameMethod(oldName, newName, className):
     """
@@ -228,16 +243,16 @@ def renameMethod(oldName, newName, className):
     if attIndexOld >= 0 and attIndexNew < 0:
         index = C.findClass(className)
         C.classIndex[index].methods[attIndexOld].rename(newName)
-        return 1
+        return codes.RENAMED_METHOD
     # Runs if given method does not exist in given class
     elif attIndexOld == -2:
-        return -2
+        return codes.RENAME_METHOD_METHOD_NOT_EXIST
     # Runs if given class does not exist
     elif attIndexOld == -1:
-        return -1
+        return codes.RENAME_METHOD_CLASS_NOT_EXIST
     # Runs if method already exists with new name in given class
     else:
-        return -3
+        return codes.RENAME_METHOD_NEW_EXISTS
 
 def renameField(oldName, newName, className):
     """
@@ -258,13 +273,13 @@ def renameField(oldName, newName, className):
     if attIndexOld >= 0 and attIndexNew < 0:
         index = C.findClass(className)
         C.classIndex[index].fields[attIndexOld].rename(newName)
-        return 1
+        return codes.RENAMED_FIELD
     # Runs if given field does not exist in given class
     elif attIndexOld == -2:
-        return -2
+        return codes.RENAME_FIELD_FIELD_NOT_EXIST
     # Runs if given class does not exist
     elif attIndexOld == -1:
-        return -1
+        return codes.RENAME_FIELD_CLASS_NOT_EXIST
     # Runs if field already exists with new name in given class
     else:
-        return -3
+        return codes.RENAME_FIELD_NEW_EXISTS

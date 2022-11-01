@@ -1,5 +1,4 @@
 """
-Author(s)   : Trevor Bender
 Filename    : buttons.py
 Description : Functions to add buttons to the gui
 """
