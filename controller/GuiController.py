@@ -160,7 +160,7 @@ class Controller:
             us.addUndo(state)    
             self.view.remake()
             self.view.makeRenameClassFrame()
-            self.view.printRenamedClassToCanvas(u.classIndex[u.findClass(self.view.classNameNew)], self.view.className)            
+            self.view.printClassToCanvas(u.classIndex[u.findClass(self.view.classNameNew)], self.view.className)            
             self.view.makeMessage("Class renamed")
             # clear redo
             us.clearRedo()

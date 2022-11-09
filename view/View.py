@@ -247,12 +247,12 @@ class View(tk.Tk):
         self.outputFrame2 = tk.Frame(self.canvas)
         self.canvas.create_window((0,0), window=self.outputFrame2, anchor="nw")        
         
-    
-    
-    def printClassToCanvas(self, UMLClass):
+    def printClassToCanvas(self, UMLClass, UMLOld = ""):
         """
         Prints the 'UMLclass' in a nice box to the canvas
-        param1: UMLclass to print
+        @param param1: UMLclass to print
+        @param param2: Optional parameter only used when class has been renamed. 
+                       Old class name
         """
         #gets the text, width and heigth as tuple(t,w,h)
         t = classToString(UMLClass)
@@ -263,17 +263,32 @@ class View(tk.Tk):
         sourceList = []
         destList = []
         
-        #checks if a box / relation exists and deletes the line and box so they can be remade
-        if lowercaseName in UMLBoxes:
-            for each in list(UMLLines):
-                if UMLBoxes[lowercaseName] in each:
-                    if each.index(UMLBoxes[lowercaseName]) == 0:
-                        destList.append(each[1])
-                        self.deleteLine(each[0].winfo_name(), each[1].winfo_name())
-                    else:
-                        sourceList.append(each[0])
-                        self.deleteLine(each[0].winfo_name(), each[1].winfo_name())
-            self.removeClassFromCanvas(lowercaseName)
+        #runs if class hasn't been renamed
+        if UMLOld == "":
+            #checks if a box / relation exists and deletes the line and box so they can be remade
+            if lowercaseName in UMLBoxes:
+                for each in list(UMLLines):
+                    if UMLBoxes[lowercaseName] in each:
+                        if each.index(UMLBoxes[lowercaseName]) == 0:
+                            destList.append(each[1])
+                            self.deleteLine(each[0].winfo_name(), each[1].winfo_name())
+                        else:
+                            sourceList.append(each[0])
+                            self.deleteLine(each[0].winfo_name(), each[1].winfo_name())
+                self.removeClassFromCanvas(lowercaseName)
+        # runs if class has been renamed
+        else:
+            #checks if a box / relation exists and deletes the line and box so they can be remade
+            if UMLOld.lower() in UMLBoxes:
+                for each in list(UMLLines):
+                    if UMLBoxes[UMLOld.lower()] in each:
+                        if each.index(UMLBoxes[UMLOld.lower()]) == 0:
+                            destList.append(each[1])
+                            self.deleteLine(each[0].winfo_name(), each[1].winfo_name())
+                        else:
+                            sourceList.append(each[0])
+                            self.deleteLine(each[0].winfo_name(), each[1].winfo_name())
+                self.removeClassFromCanvas(UMLOld.lower())
         
         #makes/remakes boxes using tuple above
         UMLBoxes[lowercaseName] = tk.Label(self.canvas, text=t[0], height=t[1], width=t[2], borderwidth=1, relief="solid", justify=LEFT, name = lowercaseName)
@@ -289,51 +304,6 @@ class View(tk.Tk):
             self.makeLine(each.winfo_name(), UMLBoxes[lowercaseName].winfo_name())
         for each in destList:
             self.makeLine(UMLBoxes[lowercaseName].winfo_name(), each.winfo_name())
-
-        
-  
-    def printRenamedClassToCanvas(self, UMLclass, UMLold):  
-        """
-        Prints a renamed class to canvas
-        param1: renamed UMLClass object
-        param2: old ULMClass object's name
-        """
-        #gets the text, width and heigth as tuple(t,w,h)
-        new = classToString(UMLclass)
-        #holders to recreate lines
-        lowercaseName = UMLclass.name.lower()
-        
-        sourceList = []
-        destList = []
-        
-        #checks if a box / relation exists and deletes the line and box so they can be remade
-        if UMLold.lower() in UMLBoxes:
-            for each in list(UMLLines):
-                if UMLBoxes[UMLold.lower()] in each:
-                    if each.index(UMLBoxes[UMLold.lower()]) == 0:
-                        destList.append(each[1])
-                        self.deleteLine(each[0].winfo_name(), each[1].winfo_name())
-                    else:
-                        sourceList.append(each[0])
-                        self.deleteLine(each[0].winfo_name(), each[1].winfo_name())
-            self.removeClassFromCanvas(UMLold.lower())
-        
-        #makes/remakes boxes using tuple above
-        UMLBoxes[lowercaseName] = tk.Label(self.canvas, text=new[0], height=new[1], width=new[2], borderwidth=1, relief="solid", justify=LEFT, name = lowercaseName)
-        #UMLBoxes[lowercaseName].place(x=UMLclass.location['x'], y=UMLclass.location['y'])
-        self.canvas.create_window((UMLclass.location['x'],UMLclass.location['y']), window=UMLBoxes[lowercaseName])
-        #binds boxes to drag and drop event
-        UMLBoxes[lowercaseName].bind("<Button-1>", self.dragStart)
-        UMLBoxes[lowercaseName].bind("<B1-Motion>", self.dragMove)
-        UMLBoxes[lowercaseName].bind("<ButtonRelease-1>", self.release)
-
-        
-        #remakes the line with the new label if a relationship existed
-        for each in sourceList:
-            self.makeLine(each.winfo_name(), UMLBoxes[lowercaseName].winfo_name())
-        for each in destList:
-            self.makeLine(UMLBoxes[lowercaseName].winfo_name(), each.winfo_name())
-
 
 
     def removeClassFromCanvas(self, UMLclass):    
