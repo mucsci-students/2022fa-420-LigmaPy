@@ -43,8 +43,6 @@ class Interface(cmd2.Cmd):
         del cmd2.Cmd.do_macro
         del cmd2.Cmd.do_quit
 
-    classNames = []
-
     """ CLASS COMMANDS """
 
     """
@@ -62,14 +60,13 @@ class Interface(cmd2.Cmd):
         UMLState.clearRedo()
 
         UMLClassException(ret).throwStatus(arg.class_name, None)
-        self.classNames.append(arg.class_name)
 
     """
         Delete Class
     """
 
     deleteClassParser = cmd2.Cmd2ArgumentParser(description="Removes a class and all of its contents")
-    deleteClassParser.add_argument('class_name', help="Name of the class to be deleted", choices=classNames)
+    deleteClassParser.add_argument('class_name', help="Name of the class to be deleted", choices=UMLClass.classIndex, metavar="class_name")
     @cmd2.with_argparser(deleteClassParser)
     @cmd2.with_category("Class")
     # Removes a class
@@ -80,14 +77,13 @@ class Interface(cmd2.Cmd):
         UMLState.clearRedo()
 
         UMLClassException(ret).throwStatus(arg.class_name, None)
-        self.classNames.remove(arg.class_name)
         
     
     """ 
         Rename Class
     """
     renameClassParser = cmd2.Cmd2ArgumentParser(description="Changes the name of an existing class")
-    renameClassParser.add_argument('class_name', help="Name of the class to update", choices=classNames)
+    renameClassParser.add_argument('class_name', help="Name of the class to update", choices=UMLClass.classIndex, metavar="class_name")
     renameClassParser.add_argument('new_name', help="Name to change the class to")
     @cmd2.with_argparser(renameClassParser)
     @cmd2.with_category("Class")
@@ -99,8 +95,6 @@ class Interface(cmd2.Cmd):
         UMLState.clearRedo()
 
         UMLClassException(ret).throwStatus(arg.class_name, arg.new_name)
-        self.classNames.remove(arg.class_name)
-        self.classNames.append(arg.new_name)
 
     """ RELATIONSHIP COMMANDS """
 
@@ -111,9 +105,9 @@ class Interface(cmd2.Cmd):
         Add Relationship
     """
     addRelationParser = cmd2.Cmd2ArgumentParser(description="Adds a relationship between two existing classes")
-    addRelationParser.add_argument('src', help="Name of the source class", choices=classNames)
-    addRelationParser.add_argument('dest', help="Name of the destination class", choices=classNames)
-    addRelationParser.add_argument('type', help="Type of relationship between the source and destination classes", choices=relationTypes)
+    addRelationParser.add_argument('src', help="Name of the source class", choices=UMLClass.classIndex, metavar="src")
+    addRelationParser.add_argument('dest', help="Name of the destination class", choices=UMLClass.classIndex, metavar="dest")
+    addRelationParser.add_argument('type', help="Type of relationship between the source and destination classes", choices=relationTypes, metavar="type")
     @cmd2.with_argparser(addRelationParser)
     @cmd2.with_category("Relationship")
     # Creates a relationship between two classes
@@ -128,9 +122,11 @@ class Interface(cmd2.Cmd):
     """
         Delete Relationship
     """
+
     deleteRelationParser = cmd2.Cmd2ArgumentParser(description="Removes an existing relationship between two classes")
-    deleteRelationParser.add_argument('src', help="Name of the source class", choices=classNames)
-    deleteRelationParser.add_argument('dest', help="Name of the destination class", choices=classNames)
+    deleteRelationParser.add_argument('src', help="Name of the source class", choices=UMLClass.classIndex, metavar="src")
+    deleteRelationParser.add_argument('dest', help="Name of the destination class", choices=UMLClass.classIndex, metavar="dest")
+    @cmd2.with_argparser(deleteRelationParser)
     @cmd2.with_category("Relationship")
     # Deletes an existing relationship between two classes
     def do_deleteRelationship(self, arg):
@@ -145,9 +141,9 @@ class Interface(cmd2.Cmd):
         Change Relationship Type
     """
     changeRelTypeParser = cmd2.Cmd2ArgumentParser(description="Change the type of an existing relationship")
-    changeRelTypeParser.add_argument('src', help="Name of the source class", choices=classNames)
-    changeRelTypeParser.add_argument('dest', help="Name of the destination class", choices=classNames)
-    changeRelTypeParser.add_argument('new_type', help="New type for the relationship", choices=relationTypes)
+    changeRelTypeParser.add_argument('src', help="Name of the source class", choices=UMLClass.classIndex, metavar="src")
+    changeRelTypeParser.add_argument('dest', help="Name of the destination class", choices=UMLClass.classIndex, metavar="dest")
+    changeRelTypeParser.add_argument('new_type', help="New type for the relationship", choices=relationTypes, metavar="type")
     @cmd2.with_argparser(changeRelTypeParser)
     @cmd2.with_category("Relationship")
     def do_changeRelType(self, arg):
@@ -164,7 +160,7 @@ class Interface(cmd2.Cmd):
     """
     # Argument Parser for addMethod
     addMethodParser = cmd2.Cmd2ArgumentParser(description="Adds a method to the specified class")
-    addMethodParser.add_argument('class_name', help="Name of target class", choices=classNames)
+    addMethodParser.add_argument('class_name', help="Name of target class", choices=UMLClass.classIndex, metavar="class_name")
     addMethodParser.add_argument('method_name', help="Name of method to be added")
     addMethodParser.add_argument('ret_type', help="Return type of the new method")
     addMethodParser.add_argument('-p', nargs='+', help="List of parameters to add in the format <name>:<type>")
@@ -191,7 +187,7 @@ class Interface(cmd2.Cmd):
         Delete Method
     """
     deleteMethodParser = cmd2.Cmd2ArgumentParser(description="Removes an existing method from an existing class")
-    deleteMethodParser.add_argument('class_name', help="Class containing the method to be removed", choices=classNames)
+    deleteMethodParser.add_argument('class_name', help="Class containing the method to be removed", choices=UMLClass.classIndex)
     deleteMethodParser.add_argument('method_name', help="Name of the method to be removed")
     @cmd2.with_argparser(deleteMethodParser)
     @cmd2.with_category("Method")
@@ -210,7 +206,7 @@ class Interface(cmd2.Cmd):
         Rename Method
     """
     renameMethodParser = cmd2.Cmd2ArgumentParser()
-    renameMethodParser.add_argument('class_name', help="Class containing the method to rename", choices=classNames)
+    renameMethodParser.add_argument('class_name', help="Class containing the method to rename", choices=UMLClass.classIndex)
     renameMethodParser.add_argument('old_name', help="Current name of the method to be renamed")
     renameMethodParser.add_argument('new_name', help="New name for method")
     @cmd2.with_argparser(renameMethodParser)
@@ -231,7 +227,7 @@ class Interface(cmd2.Cmd):
         Add Field
     """
     addFieldParser = cmd2.Cmd2ArgumentParser(description="Adds a new field to an existing class")
-    addFieldParser.add_argument('class_name', help="Name of class to add field to", choices=classNames)
+    addFieldParser.add_argument('class_name', help="Name of class to add field to", choices=UMLClass.classIndex)
     addFieldParser.add_argument('field_name', help="Name of field to add")
     addFieldParser.add_argument('type', help="Type of the new field")
     @cmd2.with_argparser(addFieldParser)
@@ -248,7 +244,7 @@ class Interface(cmd2.Cmd):
         Delete Field
     """
     deleteFieldParser = cmd2.Cmd2ArgumentParser(description="Removes an existing field from an existing class")
-    deleteFieldParser.add_argument('class_name', help="Name of the pre-existing class", choices=classNames)
+    deleteFieldParser.add_argument('class_name', help="Name of the pre-existing class", choices=UMLClass.classIndex)
     deleteFieldParser.add_argument('field_name', help="Name of the pre-existing field")
     @cmd2.with_argparser(deleteFieldParser)
     @cmd2.with_category("Field")
@@ -264,7 +260,7 @@ class Interface(cmd2.Cmd):
         Rename Field
     """
     renameFieldParser = cmd2.Cmd2ArgumentParser(description="Updates the name of an existing field")
-    renameFieldParser.add_argument('class_name', help="Name of a pre-existing class", choices=classNames)
+    renameFieldParser.add_argument('class_name', help="Name of a pre-existing class", choices=UMLClass.classIndex)
     renameFieldParser.add_argument('name', help="Current name of an existing field")
     renameFieldParser.add_argument('new_name', help="Name to change the field to")
     @cmd2.with_argparser(renameFieldParser)
@@ -283,7 +279,7 @@ class Interface(cmd2.Cmd):
         Add Parameter(s)
     """
     addParamParser = cmd2.Cmd2ArgumentParser(description="Adds one or more parameters to a classes method", epilog="A parameter has the format name:type")
-    addParamParser.add_argument('class_name', help="Name of the class containing the target method", choices=classNames)
+    addParamParser.add_argument('class_name', help="Name of the class containing the target method", choices=UMLClass.classIndex)
     addParamParser.add_argument('method_name', help="Name of the method to add the parameter(s) to")
     addParamParser.add_argument('p', nargs='+', help="Name and type of the parameter")
     @cmd2.with_argparser(addParamParser)
@@ -301,7 +297,7 @@ class Interface(cmd2.Cmd):
         Delete Parameter(s)
     """
     deleteParamParser = cmd2.Cmd2ArgumentParser(description="Removes parameter(s) from a classes method")
-    deleteParamParser.add_argument('class_name', help="Name of the class containing the target method", choices=classNames)
+    deleteParamParser.add_argument('class_name', help="Name of the class containing the target method", choices=UMLClass.classIndex)
     deleteParamParser.add_argument('method_name', help="Name of the method to remove parameter(s) from")
     deleteParamParser.add_argument('-a', action='store_true', help="Delete all parameters from the specified method")
     deleteParamParser.add_argument('-p', nargs='+', help="Name of the parameter to be deleted")
@@ -325,7 +321,7 @@ class Interface(cmd2.Cmd):
         Change Parameter(s)
     """
     changeParamParser = cmd2.Cmd2ArgumentParser(description="Changes parameter list of a classes method")
-    changeParamParser.add_argument('class_name', help="Name of the class containing the target method", choices=classNames)
+    changeParamParser.add_argument('class_name', help="Name of the class containing the target method", choices=UMLClass.classIndex)
     changeParamParser.add_argument('method_name', help="Name of the method to have its parameter(s) changed")
     changeParamParser.add_argument('-o', nargs='+', help="Parameter(s) to be changed")
     changeParamParser.add_argument('-n', nargs='+', help="Parameter(s) to change to")
@@ -356,6 +352,12 @@ class Interface(cmd2.Cmd):
     def do_load(self, arg):
         load(arg.filename)
 
+    """
+    TODO: 
+        - Export current state to an image file
+        - Add argument parser
+    """
+
     """ UNDO/REDO """
     def do_undo(self, _):
         UMLState.loadState(UMLState.undo())
@@ -374,7 +376,7 @@ class Interface(cmd2.Cmd):
         listClasses()
     
     listClassParser = cmd2.Cmd2ArgumentParser(description="Lists the fields and methods of a class")
-    listClassParser.add_argument('class_name', help="Name of the class to list", choices=classNames)
+    listClassParser.add_argument('class_name', help="Name of the class to list", choices=UMLClass.classIndex)
     @cmd2.with_argparser(listClassParser)
     @cmd2.with_category("Lists")
     # Lists the contents of a specified class
@@ -388,6 +390,8 @@ class Interface(cmd2.Cmd):
         
         Lists all existing relationships between classes.
         """
+        print(relationship.getSource())
+        print(relationship.getDestinaitons("Tire"))
         print(listRelationships())
     
     """ EXIT COMMAND """
