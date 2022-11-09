@@ -766,7 +766,21 @@ class Controller:
         # adds new state to undo stack
         us.addUndo(newState)           
 
-        
+    def clickExportButton(self):
+        """
+        Exports the canvas as an image
+        """
+        self.view.saveImage()
+        filename = self.view.fileName      
+        if self.view.fileName == "":
+            return
+        if self.view.fileName.endswith('.jpg'):
+            filename = filename[:-4]
+        if self.view.fileName.endswith('.jpeg'):
+            filename = filename[:-5]
+        if self.view.fileName.endswith('.jpe'):
+            filename = filename[:-4]
+        self.view.saveImageButton2(filename + ".jpg")  
 
     def clickSaveButton(self):
         """

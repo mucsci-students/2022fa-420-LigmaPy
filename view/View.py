@@ -4,16 +4,20 @@ Description : Constructs and displays the gui
 """
 
 
-
+import time
 import tkinter as tk
 #import UMLNotebook as notebook
 from tkinter import LEFT, RIGHT, VERTICAL, Y, Canvas, OptionMenu, StringVar, ttk, filedialog
-
+from PIL import (Image, ImageDraw, ImageFont, ImageGrab)
+from tkinter import ALL, EventType
+import io
 import model.UMLClass as u
 import model.relationship as r
 import model.attributes as a
 import model.UMLState as s
 import math
+import subprocess
+import os
 
 
 
@@ -45,17 +49,17 @@ class View(tk.Tk):
         self.paramTypeNew = None
         self.fileName = None
         self.state = None
-        self.geometry("800x600")
-        self.canvasSizeX = 2000
-        self.canvasSizeY = 2000
+        #self.geometry("800x600")
+        self.canvasSizeX = 10000
+        self.canvasSizeY = 10000
         self.title("UML Editor")
 
-        screenWidth = self.winfo_screenwidth() - 100
-        screenHeight = self.winfo_screenheight() - 100
-
+        #screenWidth = self.winfo_screenwidth() - 100
+        #screenHeight = self.winfo_screenheight() - 100
         # Sets the size of the window
-        # self.state('zoomed')
-        self.geometry(f"{screenWidth}x{screenHeight}")
+        #self.state('zoomed')
+        #self.geometry(f"{screenWidth}x{screenHeight}")
+        #self.attributes('-fullscreen', True)
         self.rowconfigure(0, weight=1)
         self.rowconfigure(1, weight=1)
         self.columnconfigure(1, weight=1)
@@ -93,6 +97,7 @@ class View(tk.Tk):
         filemenu = tk.Menu(menubar, tearoff=0)
         filemenu.add_command(label="Open", command= lambda : self.controller.clickLoadButton())
         filemenu.add_command(label="Save", command= lambda : self.controller.clickSaveButton())
+        filemenu.add_command(label="Export as image", command= lambda : self.controller.clickExportButton())           # self.saveImageButton2(self.canvas, "testimage.jpg"))
         filemenu.add_separator()
         filemenu.add_command(label="Exit", command=self.quit)
         menubar.add_cascade(label="File", menu=filemenu)
@@ -223,8 +228,8 @@ class View(tk.Tk):
         self.outputFrame.grid(row=0, column=1, sticky="nswe", rowspan=2)
         self.outputFrame.rowconfigure(0, weight=1)
         self.outputFrame.columnconfigure(1, weight=1)
-        #self.canvas = tk.Canvas(self.outputFrame, bg='white', scrollregion=(0, 0, self.canvasSizeX, self.canvasSizeY))
-        self.canvas = tk.Canvas(self.outputFrame, bg='white')
+        self.canvas = tk.Canvas(self.outputFrame, bg='white', scrollregion=(0, 0, self.canvasSizeX, self.canvasSizeY))
+        #self.canvas = tk.Canvas(self.outputFrame, bg='white')
         #self.outputFrame.pack(side = RIGHT, fill=Y)
         #self.makeScrollBar()
         self.canvas.pack(fill=tk.BOTH, expand=tk.YES)
@@ -246,9 +251,9 @@ class View(tk.Tk):
         self.canvas.bind('<Configure>', lambda e: self.canvas.configure(scrollregion = self.canvas.bbox("all")))
         self.outputFrame2 = tk.Frame(self.canvas)
         self.canvas.create_window((0,0), window=self.outputFrame2, anchor="nw")        
-        
-    
-    
+
+   
+
     def printClassToCanvas(self, UMLClass):
         """
         Prints the 'UMLclass' in a nice box to the canvas
@@ -289,7 +294,7 @@ class View(tk.Tk):
             self.makeLine(each.winfo_name(), UMLBoxes[lowercaseName].winfo_name())
         for each in destList:
             self.makeLine(UMLBoxes[lowercaseName].winfo_name(), each.winfo_name())
-
+    
         
   
     def printRenamedClassToCanvas(self, UMLclass, UMLold):  
@@ -496,6 +501,301 @@ class View(tk.Tk):
         self.canvas.grid(row=0, column=1, sticky="nswe", rowspan=2)  
         self.makeScrollBar()
     
+    def saveImageButton2(self, fileName):
+        """
+        Uses PIL to draw the current canvas on a new PIL canvas so it can be saved it as an image
+        :param1: file name to save as
+        """
+        #Segoe UI (need to figure out how to change font)
+
+        #if no boxes, save a 800x600 empty canvas
+        if len(UMLBoxes) == 0:
+            canvas = Image.new("RGB", (800, 600), color = "white")
+            image = ImageDraw.Draw(canvas)
+            canvas.save(fileName)
+            return
+
+        #create blank PIL canvas
+        canvas = Image.new("RGB", (self.canvasSizeX, self.canvasSizeY), color = "white")
+        image = ImageDraw.Draw(canvas)
+        #font = ImageFont.load_default()
+        #font = ImageFont.load("Segoe UI")
+        #font = ImageFont.truetype(font="C:\Windows\Fonts\Segoe UI.tff")
+        
+        #if no boxes, save a big empty canvas
+        if len(UMLBoxes) == 0:
+            canvas.save(fileName)
+            return
+        #place holder for each boxes coords
+        boxes = {}
+        #saves the coords of each box in a list
+        for each in u.classIndex:
+            new = classToString(each)    
+            #gets the coords for each box based on x,y and text size
+            coords = image.multiline_textbbox(xy=(each.location['x'], each.location['y']), text = new[0])
+            #saves coods in a list with a buffer to draw boxes later
+            boxes[each.name] = (coords[0] - 10, coords[1] - 10, coords[2] + 10, coords[3] + 10)
+
+        #loops through each relationship and draws the arrow and arrowtips
+        for each in r.relationIndex:
+            #determines how to draw line based on relationship type
+            #color = fill color or triangle/square
+            color = "white"
+            arrowShape = "square"
+            dashed = False
+            if each.type == "Composition":
+                color = "black"
+            if each.type == "Inheritance":
+                arrowShape = "triangle"
+            if each.type == "Realization": 
+                arrowShape = "triangle"
+                dashed = True
+
+            #gets coords for source and dest
+            sCoord = boxes[each.source]
+            dCoord = boxes[each.destination]
+            
+            #if we want to use source edge coords instead of center coords
+            # use the following 
+            """
+            sNW = (sCoord[0], sCoord[1])
+            sW = (sCoord[0], sCoord[1] + (sCoord[3] - sCoord[1])//2)
+            sN = (sCoord[0] + (sCoord[2] - sCoord[0])//2, sCoord[1])
+            sNE = (sCoord[2], sCoord[1])
+            sE = (sCoord[2], sCoord[1] + (sCoord[3] - sCoord[1])//2)
+            sSE = (sCoord[2], sCoord[3])
+            sS = (sCoord[0] + (sCoord[2] - sCoord[0])//2, sCoord[3])
+            sSW = (sCoord[0], sCoord[3])
+            sPoints = [sNW,sN,sNE,sE,sSE,sS,sSW,sW]
+            """
+            #determine center point of source box
+            midPt = ((sCoord[2] - sCoord[0])//2 + sCoord[0], (sCoord[3] - sCoord[1])//2 + sCoord[1])
+            sPoints = [midPt]
+
+            #determines corner and center-edge points of dest box
+            dNW = (dCoord[0], dCoord[1])
+            dW = (dCoord[0], dCoord[1] + (dCoord[3] - dCoord[1])//2)
+            dN = (dCoord[0] + (dCoord[2] - dCoord[0])//2, dCoord[1])
+            dNE = (dCoord[2], dCoord[1])
+            dE = (dCoord[2], dCoord[1] + (dCoord[3] - dCoord[1])//2)
+            dSE = (dCoord[2], dCoord[3])
+            dS = (dCoord[0] + (dCoord[2] - dCoord[0])//2, dCoord[3])
+            dSW = (dCoord[0], dCoord[3])
+            dPoints = [dNW,dN,dNE,dE,dSE,dS,dSW,dW]
+            
+            #determines closest dest point (above) to center source point 
+            #saves a tuple (index, index) to get coord out of sPoints, dPoints
+            m = math.dist(midPt,dNW)
+            indexes = (0,0)
+            for first in range(len(sPoints)):
+                for second in range(len(dPoints)):
+                    val = math.dist(sPoints[first],dPoints[second])
+                    if m > val:
+                        indexes = (first, second)
+                        m = val
+            #the source point and dest points determined above            
+            startPt = sPoints[indexes[0]]
+            endPt = dPoints[indexes[1]]
+            #draws dashed line
+            if dashed:
+                #starting x and y points
+                x = startPt[0]
+                y = startPt[1]
+                #if line is verticle 
+                if startPt[0] == endPt[0]:
+                    #if line points up
+                    if startPt[1] > endPt[1]:
+                        #draw 4 pixes then skip 4 pixes until reach end of line
+                        while y > endPt[1]:
+                            #go 4 pixels up
+                            nextX, nextY = (x,  y - 4)
+                            #draw line from start pt to 4 pixels up
+                            image.line(xy=((x,y),(nextX, nextY)), fill="black", width=2)
+                            #update start pt to 4 pixels past end pt of most recently drawn line segment
+                            x, y = (nextX,  nextY - 4)
+                    #line points down
+                    else:
+                        while y < endPt[1]:
+                            nextX, nextY = (x,  y + 4)
+                            image.line(xy=((x,y),(nextX, nextY)), fill="black", width=2)
+                            x, y = (nextX,  nextY + 4)                                    
+                #if line is horizontal
+                elif startPt[1] == endPt[1]:
+                    #line points right
+                    if startPt[0] > endPt[0]:
+                        while x > endPt[0]:
+                            nextX, nextY = (x - 4, y)
+                            image.line(xy=((x,y),(nextX, nextY)), fill="black", width=2)
+                            x, y = (nextX - 4, nextY)
+                    #line points left
+                    else:
+                        while x < endPt[0]:
+                            nextX, nextY = (x + 4, y)
+                            image.line(xy=((x,y),(nextX, nextY)), fill="black", width=2)
+                            x, y = (nextX + 4, nextY)
+                #line is not horiz or vert
+                else:
+                    #determines slope
+                    slope = (endPt[1] - startPt[1]) / (endPt[0] - startPt[0])
+                    #if lines points towards the right
+                    if startPt[0] < endPt[0]:
+                        while x < endPt[0]:
+                            #fancy math to go 4 pixels down the line
+                            nextX, nextY = (x + (4 / (math.sqrt(1 + slope**2))), y + (4 * slope) / (math.sqrt(1 + slope**2)))
+                            #draw the line
+                            image.line(xy=((x,y),(nextX,nextY)), fill="black", width=2)
+                            #move x and y 4 more pixels down the line (makes space)
+                            x, y = (nextX + (4 / (math.sqrt(1 + slope**2))), nextY + (4 * slope) / (math.sqrt(1 + slope**2)))
+                    #if lines points towards the left
+                    else:
+                        while x > endPt[0]:
+                            nextX, nextY = (x - (4 / (math.sqrt(1 + slope**2))), y - (4 * slope) / (math.sqrt(1 + slope**2)))
+                            image.line(xy=((x,y),(nextX,nextY)), fill="black", width=2)
+                            x, y = (nextX - (4 / (math.sqrt(1 + slope**2))), nextY - (4 * slope) / (math.sqrt(1 + slope**2)))
+            #draws solid line
+            if not dashed:    
+                image.line(xy=(startPt, endPt), fill="black", width=2)
+            #draws a triangle at the end of the line based on line angle
+            if arrowShape == "triangle":
+                #if verticle line
+                if startPt[0] == endPt[0]:
+                    #if pointing up
+                    if startPt[1] > endPt[1]:
+                        #draw triangle using 3 coords based on end point of line
+                        image.polygon([endPt, (endPt[0] + 8, endPt[1] + 8), (endPt[0] - 8, endPt[1] + 8)],fill=color ,outline="black")
+                    #pointing down
+                    else:
+                        image.polygon([endPt, (endPt[0] + 8, endPt[1] - 8), (endPt[0] - 8, endPt[1] - 8)], fill=color, outline="black" )
+                #if horiz line
+                elif startPt[1] == endPt[1]:
+                    if startPt[0] > endPt[0]:
+                        image.polygon([endPt, (endPt[0] + 8, endPt[1] + 8), (endPt[0] + 8, endPt[1] - 8)], fill=color, outline="black")
+                    else:
+                        image.polygon([endPt, (endPt[0] - 8, endPt[1] + 8), (endPt[0] - 8, endPt[1] - 8)], fill=color, outline="black")
+                #not horiz or vert
+                else:
+                    #determine slope of line
+                    slope = (endPt[1] - startPt[1]) / (endPt[0] - startPt[0])
+                    #line point towards the right direction
+                    if startPt[0] < endPt[0]:
+                        #fancy math to determing the coords of the triangle to draw based on line angle
+                        baseX, baseY = (endPt[0] - (8 / (math.sqrt(1 + slope**2))), endPt[1] - (8 * slope) / (math.sqrt(1 + slope**2))) 
+                        invSlope = -1/slope
+                        pt1x, pt1y = (baseX - (8 / (math.sqrt(1 + invSlope**2))), baseY - (8 * invSlope) / (math.sqrt(1 + invSlope**2))) 
+                        pt2x, pt2y = (baseX + (8 / (math.sqrt(1 + invSlope**2))), baseY + (8 * invSlope) / (math.sqrt(1 + invSlope**2)))
+                        #draw the triangle using coords above
+                        image.polygon([endPt, (pt1x,pt1y), (pt2x, pt2y)], fill=color, outline="black")     
+                    #line point towards the left direction
+                    else:
+                        baseX, baseY = (endPt[0] + (8 / (math.sqrt(1 + slope**2))), endPt[1] + (8 * slope) / (math.sqrt(1 + slope**2))) 
+                        invSlope = -1/slope
+                        pt1x, pt1y = (baseX - (8 / (math.sqrt(1 + invSlope**2))), baseY - (8 * invSlope) / (math.sqrt(1 + invSlope**2))) 
+                        pt2x, pt2y = (baseX + (8 / (math.sqrt(1 + invSlope**2))), baseY + (8 * invSlope) / (math.sqrt(1 + invSlope**2)))
+                        image.polygon([endPt, (pt1x,pt1y), (pt2x, pt2y)], fill=color, outline="black")
+            #same as triangle code but draws a square instead
+            if arrowShape == "square":
+                if startPt[0] == endPt[0]:
+                    if startPt[1] > endPt[1]:
+                        image.polygon([endPt, (endPt[0] + 8, endPt[1] + 8), (endPt[0], endPt[1] + 16) ,(endPt[0] - 8, endPt[1] + 8)],fill=color ,outline="black")
+                    else:
+                        image.polygon([endPt, (endPt[0] + 8, endPt[1] - 8), (endPt[0], endPt[1] - 16), (endPt[0] - 8, endPt[1] - 8)], fill=color, outline="black" )
+                elif startPt[1] == endPt[1]:
+                    if startPt[0] > endPt[0]:
+                        image.polygon([endPt, (endPt[0] + 8, endPt[1] + 8),(endPt[0] + 16, endPt[1]), (endPt[0] + 8, endPt[1] - 8)], fill=color, outline="black")
+                    else:
+                        image.polygon([endPt, (endPt[0] - 8, endPt[1] + 8),(endPt[0] - 16, endPt[1]), (endPt[0] - 8, endPt[1] - 8)], fill=color, outline="black")
+                else:
+                    slope = (endPt[1] - startPt[1]) / (endPt[0] - startPt[0])
+                    if startPt[0] < endPt[0]:
+                        baseX, baseY = (endPt[0] - (8 / (math.sqrt(1 + slope**2))), endPt[1] - (8 * slope) / (math.sqrt(1 + slope**2))) 
+                        invSlope = -1/slope
+                        pt1x, pt1y = (baseX - (8 / (math.sqrt(1 + invSlope**2))), baseY - (8 * invSlope) / (math.sqrt(1 + invSlope**2))) 
+                        pt2x, pt2y = (baseX + (8 / (math.sqrt(1 + invSlope**2))), baseY + (8 * invSlope) / (math.sqrt(1 + invSlope**2)))
+                        pt3x, pt3y = (endPt[0] - (16 / (math.sqrt(1 + slope**2))), endPt[1] - (16 * slope) / (math.sqrt(1 + slope**2))) 
+                        image.polygon([endPt, (pt1x,pt1y), (pt3x, pt3y), (pt2x, pt2y)], fill=color, outline="black")     
+                    else:
+                        baseX, baseY = (endPt[0] + (8 / (math.sqrt(1 + slope**2))), endPt[1] + (8 * slope) / (math.sqrt(1 + slope**2))) 
+                        invSlope = -1/slope
+                        pt1x, pt1y = (baseX - (8 / (math.sqrt(1 + invSlope**2))), baseY - (8 * invSlope) / (math.sqrt(1 + invSlope**2))) 
+                        pt2x, pt2y = (baseX + (8 / (math.sqrt(1 + invSlope**2))), baseY + (8 * invSlope) / (math.sqrt(1 + invSlope**2)))
+                        pt3x, pt3y = (endPt[0] + (16 / (math.sqrt(1 + slope**2))), endPt[1] + (16 * slope) / (math.sqrt(1 + slope**2)))
+                        image.polygon([endPt, (pt1x,pt1y), (pt3x, pt3y), (pt2x, pt2y)], fill=color, outline="black")
+
+        #draws each box and text
+        for each in u.classIndex:
+            #get text
+            new = classToString(each)
+            #draw box
+            image.rectangle(xy=boxes[each.name], outline="black", fill = '#F0F0F0')    
+            #draw text
+            image.multiline_text(xy=(each.location['x'], each.location['y']), text = new[0], spacing=4, align='left', fill="black") #, font = font)
+  
+        # gets coords tp crop the image
+        xMin = []
+        yMin = [] 
+        xMax = []
+        yMax = []
+        #adds the coords of each box to a list
+        for each in boxes:
+            xMin.append(boxes[each][0])
+            yMin.append(boxes[each][1])
+            xMax.append(boxes[each][2])
+            yMax.append(boxes[each][3])
+        #determines largest/smallest xy coord 
+        x = min(xMin)
+        y = min(yMin)
+        h = max(yMax) 
+        w = max(xMax)
+        #crops the canvas
+        canvas = canvas.crop((x-10,y-10,w+10,h+10))
+        #saves it to file
+        canvas.save(fileName)
+
+    def saveImageButton(self, widget, fileName):
+        """
+        unused screen grabber (requires ghostscript dependency and doesn't capture anything not visible on screen)
+        """
+        #1920x1080
+        
+        xMin = []
+        yMin = [] 
+        xMax = []
+        yMax = []
+        for each in UMLBoxes:
+            xMin.append(UMLBoxes[each].winfo_x())
+            yMin.append(UMLBoxes[each].winfo_y())
+            xMax.append(UMLBoxes[each].winfo_x() + UMLBoxes[each].winfo_width())
+            yMax.append(UMLBoxes[each].winfo_y() + UMLBoxes[each].winfo_height())
+        x = min(xMin)
+        y = min(yMin)
+        h = max(yMax) - y
+        w = max(xMax) - x
+        #y = coords[1]
+        #w = coords[2] - x
+        #h = coords[3] - y
+        print([x,y,w,h])
+
+
+        #ps = widget.postscript(colormode='color', width = w + 20, height = h + 20, x = x - 10, y = y - 10, pagewidth = 1200)
+        #img = Image.open(io.BytesIO(ps.encode('utf-8')))
+        screenWidth = self.winfo_screenwidth() 
+        screenHeight = self.winfo_screenheight() 
+        # Sets the size of the window
+        # self.state('zoomed')
+        self.geometry(f"{screenWidth}x{screenHeight}+0+0")
+     
+        widget.postscript(file = fileName + '.eps', colormode='color', width = w + 20, height = h + 20, x = x - 10, y = y - 10, pagewidth = 1200)
+        img = Image.open(fileName + '.eps')
+        img.save(fileName + '.jpg', 'jpeg')
+
+    
+    def saveImage(self):
+        fileExists = os.path.exists("UMLImages")
+        if not fileExists:    
+            print("Created directory: UMLImages")
+            os.mkdir("UMLImages")
+        self.fileName = filedialog.asksaveasfilename(title="Open File", initialdir="UMLImages",  filetypes=[("JPEG File", "*.jpg")])
+
     def save(self):
         self.fileName = filedialog.asksaveasfilename(title="Open File", initialdir="UMLsavefiles",  filetypes=[("JSON File", "*.json")])
  
@@ -1416,7 +1716,7 @@ class View(tk.Tk):
         self.inputFrame.destroy()
         self.makeInputFrame()
 
-    
+        
     def release(self, event):
         """
         saves state and adds it to undo stack when button is released
@@ -1434,7 +1734,7 @@ class View(tk.Tk):
         self.state = s.saveState()
 
 
-    
+
     def dragMove(self, event):
         """
         Drag event handler
