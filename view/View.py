@@ -4,19 +4,15 @@ Description : Constructs and displays the gui
 """
 
 
-import time
 import tkinter as tk
-#import UMLNotebook as notebook
+
 from tkinter import LEFT, RIGHT, VERTICAL, Y, Canvas, OptionMenu, StringVar, ttk, filedialog
-from PIL import (Image, ImageDraw, ImageFont, ImageGrab)
 from tkinter import ALL, EventType
-import io
 import model.UMLClass as u
 import model.relationship as r
 import model.attributes as a
 import model.UMLState as s
 import math
-import subprocess
 import os
 
 
@@ -54,11 +50,11 @@ class View(tk.Tk):
         self.canvasSizeY = 10000
         self.title("UML Editor")
 
-        #screenWidth = self.winfo_screenwidth() - 100
-        #screenHeight = self.winfo_screenheight() - 100
+        screenWidth = self.winfo_screenwidth() - 100
+        screenHeight = self.winfo_screenheight() - 100
         # Sets the size of the window
         #self.state('zoomed')
-        #self.geometry(f"{screenWidth}x{screenHeight}")
+        self.geometry(f"{screenWidth}x{screenHeight}")
         #self.attributes('-fullscreen', True)
         self.rowconfigure(0, weight=1)
         self.rowconfigure(1, weight=1)
@@ -501,11 +497,12 @@ class View(tk.Tk):
         self.canvas.grid(row=0, column=1, sticky="nswe", rowspan=2)  
         self.makeScrollBar()
     
+    """
     def saveImageButton2(self, fileName):
-        """
-        Uses PIL to draw the current canvas on a new PIL canvas so it can be saved it as an image
-        :param1: file name to save as
-        """
+        
+        #Uses PIL to draw the current canvas on a new PIL canvas so it can be saved it as an image
+        #:param1: file name to save as
+        
         #Segoe UI (need to figure out how to change font)
 
         #if no boxes, save a 800x600 empty canvas
@@ -557,17 +554,17 @@ class View(tk.Tk):
             
             #if we want to use source edge coords instead of center coords
             # use the following 
-            """
-            sNW = (sCoord[0], sCoord[1])
-            sW = (sCoord[0], sCoord[1] + (sCoord[3] - sCoord[1])//2)
-            sN = (sCoord[0] + (sCoord[2] - sCoord[0])//2, sCoord[1])
-            sNE = (sCoord[2], sCoord[1])
-            sE = (sCoord[2], sCoord[1] + (sCoord[3] - sCoord[1])//2)
-            sSE = (sCoord[2], sCoord[3])
-            sS = (sCoord[0] + (sCoord[2] - sCoord[0])//2, sCoord[3])
-            sSW = (sCoord[0], sCoord[3])
-            sPoints = [sNW,sN,sNE,sE,sSE,sS,sSW,sW]
-            """
+            
+            #sNW = (sCoord[0], sCoord[1])
+            #sW = (sCoord[0], sCoord[1] + (sCoord[3] - sCoord[1])//2)
+            #sN = (sCoord[0] + (sCoord[2] - sCoord[0])//2, sCoord[1])
+            #sNE = (sCoord[2], sCoord[1])
+            #sE = (sCoord[2], sCoord[1] + (sCoord[3] - sCoord[1])//2)
+            #sSE = (sCoord[2], sCoord[3])
+            #sS = (sCoord[0] + (sCoord[2] - sCoord[0])//2, sCoord[3])
+            #sSW = (sCoord[0], sCoord[3])
+            #sPoints = [sNW,sN,sNE,sE,sSE,sS,sSW,sW]
+            
             #determine center point of source box
             midPt = ((sCoord[2] - sCoord[0])//2 + sCoord[0], (sCoord[3] - sCoord[1])//2 + sCoord[1])
             sPoints = [midPt]
@@ -752,9 +749,9 @@ class View(tk.Tk):
         canvas.save(fileName)
 
     def saveImageButton(self, widget, fileName):
-        """
-        unused screen grabber (requires ghostscript dependency and doesn't capture anything not visible on screen)
-        """
+        
+        #unused screen grabber (requires ghostscript dependency and doesn't capture anything not visible on screen)
+        
         #1920x1080
         
         xMin = []
@@ -787,7 +784,7 @@ class View(tk.Tk):
         widget.postscript(file = fileName + '.eps', colormode='color', width = w + 20, height = h + 20, x = x - 10, y = y - 10, pagewidth = 1200)
         img = Image.open(fileName + '.eps')
         img.save(fileName + '.jpg', 'jpeg')
-
+"""
     
     def saveImage(self):
         fileExists = os.path.exists("UMLImages")
@@ -1748,45 +1745,61 @@ class View(tk.Tk):
         x = widget.winfo_x() - widget.startX + event.x
         y = widget.winfo_y() - widget.startY + event.y
  
-        #cx = self.canvas.canvasx(event.x)
-        #cy = self.canvas.canvasy(event.y)
-
-        #prevents boxes from going off canvas left and top border
-        if (x > 0 and y > 0):
-            #write the box to canvas
-            self.canvas.create_window((x + widget.winfo_width()//2, y + widget.winfo_height()//2), window=widget)
-            #updates the respective widgets UMLClass's x and y coords 
-            for each in u.classIndex:
-                if each.name.lower() == widget.winfo_name():
-                    each.location['x'] = x + widget.winfo_width()//2
-                    each.location['y'] = y + widget.winfo_height()//2
-        elif y > 0:
-            self.canvas.create_window((widget.winfo_width()//2, y + widget.winfo_height()//2), window=widget)
-            for each in u.classIndex:
-                if each.name.lower() == widget.winfo_name():
-                    each.location['x'] = widget.winfo_width()//2
-                    each.location['y'] = y + widget.winfo_height()//2
-
-        elif x > 0:
-            self.canvas.create_window((x + widget.winfo_width()//2, widget.winfo_height()//2), window=widget)
-            for each in u.classIndex:
-                if each.name.lower() == widget.winfo_name():
-                    each.location['x'] = x + widget.winfo_width()//2
-                    each.location['y'] = widget.winfo_height()//2
-        
-        else:
+        if (x < 0 and y < 0):
             self.canvas.create_window((widget.winfo_width()//2, widget.winfo_height()//2), window=widget)
             for each in u.classIndex:
                 if each.name.lower() == widget.winfo_name():
                     each.location['x'] = widget.winfo_width()//2 
                     each.location['y'] = widget.winfo_height()//2
-
-        #set the widget at the location
-        #widget.place(x=x, y=y)
-        #sets the UMLClass object's x and y values
-        #name = u.classIndex[u.findClass(widget.winfo_name())]
-        #name.location['x'] = x
-        #name.location['y'] = y
+        elif ((x + widget.winfo_width()) > self.outputFrame.winfo_width() and (y + widget.winfo_height()) > self.outputFrame.winfo_height()):
+            self.canvas.create_window((self.outputFrame.winfo_width() - widget.winfo_width()//2, self.outputFrame.winfo_height() - widget.winfo_height()//2), window=widget)
+            for each in u.classIndex:
+                if each.name.lower() == widget.winfo_name():
+                    each.location['x'] = self.outputFrame.winfo_width() - widget.winfo_width()//2 
+                    each.location['y'] = self.outputFrame.winfo_height() - widget.winfo_height()//2
+        elif (x < 0 and (y + widget.winfo_height()) > self.outputFrame.winfo_height()):
+            self.canvas.create_window((widget.winfo_width()//2, self.outputFrame.winfo_height() - widget.winfo_height()//2), window=widget)
+            for each in u.classIndex:
+                if each.name.lower() == widget.winfo_name():
+                    each.location['x'] = widget.winfo_width()//2 
+                    each.location['y'] = self.outputFrame.winfo_height() - widget.winfo_height()//2
+        elif (y < 0 and (x + widget.winfo_width()) > self.outputFrame.winfo_width()):
+            self.canvas.create_window((self.outputFrame.winfo_width() - widget.winfo_width()//2, widget.winfo_height()//2), window=widget)
+            for each in u.classIndex:
+                if each.name.lower() == widget.winfo_name():
+                    each.location['x'] = self.outputFrame.winfo_width() - widget.winfo_width()//2 
+                    each.location['y'] = widget.winfo_height()//2
+        elif (x < 0 and y > 0 and y + widget.winfo_height() < self.outputFrame.winfo_height()):
+            self.canvas.create_window((widget.winfo_width()//2, y + widget.winfo_height()//2), window=widget)
+            for each in u.classIndex:
+                if each.name.lower() == widget.winfo_name():
+                    each.location['x'] = widget.winfo_width()//2 
+                    each.location['y'] = y + widget.winfo_height()//2
+        elif (y < 0 and x > 0 and x + widget.winfo_width() < self.outputFrame.winfo_width()):
+            self.canvas.create_window((x + widget.winfo_width()//2, widget.winfo_height()//2), window=widget)
+            for each in u.classIndex:
+                if each.name.lower() == widget.winfo_name():
+                    each.location['x'] = x + widget.winfo_width()//2 
+                    each.location['y'] = widget.winfo_height()//2
+        elif(y + widget.winfo_height() > self.outputFrame.winfo_height() and x > 0 and x + widget.winfo_width() < self.outputFrame.winfo_width()):
+            self.canvas.create_window((x + widget.winfo_width()//2, self.outputFrame.winfo_height() - widget.winfo_height()//2), window=widget)
+            for each in u.classIndex:
+                if each.name.lower() == widget.winfo_name():
+                    each.location['x'] = x + widget.winfo_width()//2 
+                    each.location['y'] = self.outputFrame.winfo_height() - widget.winfo_height()//2
+        elif(x + widget.winfo_width() > self.outputFrame.winfo_width() and y > 0  and y + widget.winfo_height() < self.outputFrame.winfo_height()):
+            self.canvas.create_window((self.outputFrame.winfo_width() - widget.winfo_width()//2, y + widget.winfo_height()//2), window=widget)
+            for each in u.classIndex:
+                if each.name.lower() == widget.winfo_name():
+                    each.location['x'] = self.outputFrame.winfo_width() - widget.winfo_width()//2 
+                    each.location['y'] = y + widget.winfo_height()//2        
+        else:
+            self.canvas.create_window((x + widget.winfo_width()//2, y + widget.winfo_height()//2), window=widget)
+            for each in u.classIndex:
+                if each.name.lower() == widget.winfo_name():
+                    each.location['x'] = x + widget.winfo_width()//2 
+                    each.location['y'] = y + widget.winfo_height()//2
+  
 
         #updates the relationship lines (deletes then remakes)
         for each in list(UMLLines):
