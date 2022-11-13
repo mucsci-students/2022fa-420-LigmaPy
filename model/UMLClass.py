@@ -151,4 +151,3 @@ def clear():
 
 # List of all class objects the user has created
 classIndex: List[UMLClass] = []
-classIter = iter(classIndex)
