@@ -10,6 +10,7 @@ import model.UMLState as us
 import model.saveload as s
 import model.attributes as a
 import model.parameter as p
+import view.exportImage as e
 
 
 class Controller:
@@ -766,7 +767,41 @@ class Controller:
         # adds new state to undo stack
         us.addUndo(newState)           
 
-        
+    def clickExportButton(self):
+        """
+        Exports the canvas as an image 
+        """
+        self.view.saveImage()
+        filename = self.view.fileName      
+        if self.view.fileName == "":
+            return
+        if self.view.fileName.endswith('.jpg'):
+            filename = filename[:-4]
+        if self.view.fileName.endswith('.jpeg'):
+            filename = filename[:-5]
+        if self.view.fileName.endswith('.jpe'):
+            filename = filename[:-4]
+        export = e.exportImage(e.compLine)
+        if len(u.classIndex) == 0:
+            export.exportEmpty(filename + ".jpg")
+            return
+        export.createBoxes()
+        for each in r.relationIndex:
+            export.setCoords(each)
+            if each.type == "Composition":
+                export.strategy = e.compLine()
+                export.drawLines()
+            if each.type == "Inheritance":
+                export.strategy = e.inherLine()
+                export.drawLines()
+            if each.type == "Realization":
+                export.strategy = e.realLine()
+                export.drawLines()
+            if each.type == "Aggregation":
+                export.strategy = e.aggLine()
+                export.drawLines()
+        export.drawBoxes()
+        export.export(filename + ".jpg")    
 
     def clickSaveButton(self):
         """
