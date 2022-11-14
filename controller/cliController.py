@@ -8,6 +8,7 @@ import cmd2
 from model.ErrorHandlers.FieldException import FieldException
 from model.ErrorHandlers.MethodException import MethodException
 from model.ErrorHandlers.ParamException import ParamException
+from typing import List
 # Local Imports
 import model.UMLClass as UMLCLass
 import model.attributes as attributes
@@ -42,6 +43,18 @@ class Interface(cmd2.Cmd):
         del cmd2.Cmd.do_alias
         del cmd2.Cmd.do_macro
         del cmd2.Cmd.do_quit
+        self.classNameChoices = []
+
+    def all_class_names(self) -> List[str]:
+        """
+        Fetches a list of names of every class for tab completion
+        """
+        # Clear her
+        self.classNameChoices = []
+        # Update her with the string names
+        for c in UMLClass.classIndex : self.classNameChoices.append(c.name)
+        
+        return self.classNameChoices
 
     """ CLASS COMMANDS """
 
@@ -66,7 +79,7 @@ class Interface(cmd2.Cmd):
     """
 
     deleteClassParser = cmd2.Cmd2ArgumentParser(description="Removes a class and all of its contents")
-    deleteClassParser.add_argument('class_name', help="Name of the class to be deleted", choices=UMLClass.classIndex, metavar="class_name")
+    deleteClassParser.add_argument('class_name', help="Name of the class to be deleted", choices_provider=all_class_names, metavar="class_name")
     @cmd2.with_argparser(deleteClassParser)
     @cmd2.with_category("Class")
     # Removes a class
@@ -83,7 +96,7 @@ class Interface(cmd2.Cmd):
         Rename Class
     """
     renameClassParser = cmd2.Cmd2ArgumentParser(description="Changes the name of an existing class")
-    renameClassParser.add_argument('class_name', help="Name of the class to update", choices=UMLClass.classIndex, metavar="class_name")
+    renameClassParser.add_argument('class_name', help="Name of the class to update", choices_provider=all_class_names, metavar="class_name")
     renameClassParser.add_argument('new_name', help="Name to change the class to")
     @cmd2.with_argparser(renameClassParser)
     @cmd2.with_category("Class")
