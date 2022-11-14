@@ -8,7 +8,7 @@ Description : Constructs and displays the gui
 import tkinter as tk
 #import UMLNotebook as notebook
 from tkinter import LEFT, RIGHT, VERTICAL, Y, Canvas, OptionMenu, StringVar, ttk, filedialog
-
+from view.prototype import *
 import model.UMLClass as u
 import model.relationship as r
 import model.attributes as a
@@ -48,7 +48,9 @@ class View(tk.Tk):
         self.geometry("800x600")
         self.canvasSizeX = 2000
         self.canvasSizeY = 2000
+        self.canvas = None
         self.title("UML Editor")
+        # self.prototype = p(self)
 
         screenWidth = self.winfo_screenwidth() - 100
         screenHeight = self.winfo_screenheight() - 100
@@ -254,8 +256,7 @@ class View(tk.Tk):
         @param param2: Optional parameter only used when class has been renamed. 
                        Old class name
         """
-        #gets the text, width and heigth as tuple(t,w,h)
-        t = classToString(UMLClass)
+        
         
         lowercaseName = UMLClass.name.lower()
 
@@ -291,7 +292,11 @@ class View(tk.Tk):
                 self.removeClassFromCanvas(UMLOld.lower())
         
         #makes/remakes boxes using tuple above
-        UMLBoxes[lowercaseName] = tk.Label(self.canvas, text=t[0], height=t[1], width=t[2], borderwidth=1, relief="solid", justify=LEFT, name = lowercaseName)
+        # UMLBoxes[lowercaseName] = tk.Label(self.canvas, text=t[0], height=t[1], width=t[2], borderwidth=1, relief="solid", justify=LEFT, name = lowercaseName)
+        UMLBoxes[lowercaseName] = makeLabel(UMLClass, self.canvas)
+        #gets the text, width and heigth as tuple(t,h,w)
+        t = classToString(UMLClass)
+        UMLBoxes[lowercaseName].config(text = t[0], width = t[2], height = t[1])
         #UMLBoxes[lowercaseName].place(x=UMLClass.location['x'], y=UMLClass.location['y'])
         #binds boxes to drag and drop event
         UMLBoxes[lowercaseName].bind("<ButtonRelease-1>", self.release)
@@ -1503,16 +1508,16 @@ def classToString(c):
     width = max(classLen, methLen, fieldLen)
     return (string, height, width)
 
-def relationToString(r):
-    """
-    Returns a relationship 'r' in a string format for output (not used anymore)
-    """
-    string = ""
-    string += "Relationship:\n"
-    string += "    Source: " + r.source + "\n"
-    string += "    Destination: " + r.destination + "\n"
-    string += "    Type: " + r.type + "\n\n"
-    return string
+# def relationToString(r):
+#     """
+#     Returns a relationship 'r' in a string format for output (not used anymore)
+#     """
+#     string = ""
+#     string += "Relationship:\n"
+#     string += "    Source: " + r.source + "\n"
+#     string += "    Destination: " + r.destination + "\n"
+#     string += "    Type: " + r.type + "\n\n"
+#     return string
 """
 def dragStart(event):
     widget = event.widget
