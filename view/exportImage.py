@@ -5,7 +5,7 @@ Description :
 
 import model.relationship as r
 import view.View as v
-from PIL import (Image, ImageDraw)
+from PIL import (Image, ImageDraw, ImageFont)
 import model.UMLClass as u
 import math
 from abc import ABC, abstractmethod
@@ -25,7 +25,7 @@ class exportImage():
     def __init__(self, strategy: Strategy):
 
         self._strategy = strategy
-        self.boxes = None
+        self.boxes = {}
         self.canvas = Image.new("RGB", (5000, 5000), color = "white")
         self.image = ImageDraw.Draw(self.canvas)
         self.startPt = None
@@ -43,12 +43,13 @@ class exportImage():
         """
         fills boxes dictionary with umlclassname -> box coords (x, y)
         """
-        self.boxes = {}
+        # self.boxes = {}
         #saves the coords of each box in a list
         for each in u.classIndex:
             new = v.classToString(each)    
+            font = ImageFont.truetype(r'./GothamRoundedLight_21020.ttf', 12)
             #gets the coords for each box based on x,y and text size
-            coords = self.image.multiline_textbbox(xy=(each.location['x'], each.location['y']), text = new[0])
+            coords = self.image.multiline_textbbox(xy=(each.location['x'], each.location['y']), text = new[0], font=font)
             #saves coods in a list with a buffer to draw boxes later
             self.boxes[each.name] = (coords[0] - 10, coords[1] - 10, coords[2] + 10, coords[3] + 10)
 
@@ -141,6 +142,9 @@ class exportImage():
         yMin = [] 
         xMax = []
         yMax = []
+
+        print(self.boxes)
+
         #adds the coords of each box to a list
         for each in self.boxes:
             xMin.append(self.boxes[each][0])

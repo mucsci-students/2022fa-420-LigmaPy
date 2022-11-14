@@ -452,7 +452,15 @@ class Interface(cmd2.Cmd):
     exportParser.add_argument('filename', help="Name of the file to save the image to")
     @cmd2.with_argparser(exportParser)
     def do_export(self, arg):
-        exportImage.exportImage(exportImage.inherLine()).export(arg.filename)
+        export = exportImage.exportImage(exportImage.compLine)
+        if len(UMLClass.classIndex) < 1:
+            export.exportEmpty(arg.filename + ".jpg")
+            return
+
+        export.createBoxes()
+        print(export.boxes)
+        export.drawBoxes()
+        export.export(arg.filename + ".jpg")
 
     """ UNDO/REDO """
     def do_undo(self, _):
