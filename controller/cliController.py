@@ -145,7 +145,7 @@ class Interface(cmd2.Cmd):
     @cmd2.with_argparser(addClassParser)
     @cmd2.with_category("Class")
     # Creates a uniquely named class
-    def do_addclass(self, arg):
+    def do_addClass(self, arg):
         # Save the current state
         UMLState.addUndo(UMLState.saveState())
         ret = UMLClass.addClass(arg.class_name)
@@ -161,7 +161,7 @@ class Interface(cmd2.Cmd):
     @cmd2.with_argparser(deleteClassParser)
     @cmd2.with_category("Class")
     # Removes a class
-    def do_deleteclass(self, arg):
+    def do_deleteClass(self, arg):
         # Save the current state
         UMLState.addUndo(UMLState.saveState())
         ret = UMLClass.deleteClass(arg.class_name)
@@ -179,7 +179,7 @@ class Interface(cmd2.Cmd):
     @cmd2.with_argparser(renameClassParser)
     @cmd2.with_category("Class")
     # Changes the name of a class
-    def do_renameclass(self, arg):
+    def do_renameClass(self, arg):
         # Save the current state
         UMLState.addUndo(UMLState.saveState())
         ret = UMLClass.renameClass(arg.class_name, arg.new_name)
@@ -202,7 +202,7 @@ class Interface(cmd2.Cmd):
     @cmd2.with_argparser(addRelationParser)
     @cmd2.with_category("Relationship")
     # Creates a relationship between two classes
-    def do_addrelationship(self, arg):
+    def do_addRelationship(self, arg):
         # Save the current state
         UMLState.addUndo(UMLState.saveState())
         ret = relationship.addRelationship(arg.src, arg.dest, arg.type)
@@ -219,7 +219,7 @@ class Interface(cmd2.Cmd):
     @cmd2.with_argparser(deleteRelationParser)
     @cmd2.with_category("Relationship")
     # Deletes an existing relationship between two classes
-    def do_deleterelationship(self, arg):
+    def do_deleteRelationship(self, arg):
         # Save the current state
         UMLState.addUndo(UMLState.saveState())
         relType = relationship.relationIndex[relationship.findRelationship(arg.src, arg.dest)].type
@@ -237,7 +237,7 @@ class Interface(cmd2.Cmd):
     changeRelTypeParser.add_argument('new_type', help="New type for the relationship", choices=relationTypes, metavar="type")
     @cmd2.with_argparser(changeRelTypeParser)
     @cmd2.with_category("Relationship")
-    def do_changereltype(self, arg):
+    def do_changeRelType(self, arg):
         # Save the current state
         UMLState.addUndo(UMLState.saveState())
         relIndex = relationship.findRelationship(arg.src, arg.dest)
@@ -258,7 +258,7 @@ class Interface(cmd2.Cmd):
     @cmd2.with_category("Method")
     @cmd2.with_argparser(addMethodParser)
     # Creates a new method for the specified class
-    def do_addmethod(self, arg):
+    def do_addMethod(self, arg):
         # Save the current state
         UMLState.addUndo(UMLState.saveState())
         # Added the method with return type to the class
@@ -283,7 +283,7 @@ class Interface(cmd2.Cmd):
     @cmd2.with_argparser(deleteMethodParser)
     @cmd2.with_category("Method")
     # Removes the method from the specified class
-    def do_deletemethod(self, arg):
+    def do_deleteMethod(self, arg):
         # Save the current program state
         UMLState.addUndo(UMLState.saveState())
         # Remove method from class
@@ -303,7 +303,7 @@ class Interface(cmd2.Cmd):
     @cmd2.with_argparser(renameMethodParser)
     @cmd2.with_category("Method")
     # Renames the specified method in the specified class
-    def do_renamemethod(self, arg):
+    def do_renameMethod(self, arg):
         # Save the current program state
         UMLState.addUndo(UMLState.saveState())
         # Update the name of the method in a class
@@ -323,7 +323,7 @@ class Interface(cmd2.Cmd):
     addFieldParser.add_argument('type', help="Type of the new field")
     @cmd2.with_argparser(addFieldParser)
     @cmd2.with_category("Field")
-    def do_addfield(self, arg):
+    def do_addField(self, arg):
         # Save the current program state
         UMLState.addUndo(UMLState.saveState())
         ret = attributes.addField(arg.field_name, arg.class_name, arg.type)
@@ -339,7 +339,7 @@ class Interface(cmd2.Cmd):
     deleteFieldParser.add_argument('field_name', help="Name of the pre-existing field", choices_provider=classFieldNames)
     @cmd2.with_argparser(deleteFieldParser)
     @cmd2.with_category("Field")
-    def do_deletefield(self, arg):
+    def do_deleteField(self, arg):
         # Save the current program state
         UMLState.addUndo(UMLState.saveState())
         ret = attributes.deleteField(arg.field_name, arg.class_name)
@@ -356,7 +356,7 @@ class Interface(cmd2.Cmd):
     renameFieldParser.add_argument('new_name', help="Name to change the field to")
     @cmd2.with_argparser(renameFieldParser)
     @cmd2.with_category("Field")
-    def do_renamefield(self, arg):
+    def do_renameField(self, arg):
         # Save the current program state
         UMLState.addUndo(UMLState.saveState())
         ret = attributes.renameField(arg.name, arg.new_name, arg.class_name)
@@ -375,7 +375,7 @@ class Interface(cmd2.Cmd):
     addParamParser.add_argument('p', nargs='+', help="Name and type of the parameter")
     @cmd2.with_argparser(addParamParser)
     @cmd2.with_category("Parameter")
-    def do_addparam(self, arg):
+    def do_addParam(self, arg):
         # Save the current program state
         UMLState.addUndo(UMLState.saveState())
         for param in arg.p:
@@ -394,7 +394,7 @@ class Interface(cmd2.Cmd):
     deleteParamParser.add_argument('-p', nargs='+', help="Name of the parameter to be deleted", choices_provider=methodParams)
     @cmd2.with_argparser(deleteParamParser)
     @cmd2.with_category("Parameter")
-    def do_deleteparam(self, arg):
+    def do_deleteParam(self, arg):
         # Save the current program state
         UMLState.addUndo(UMLState.saveState())
         if arg.a:
@@ -416,7 +416,7 @@ class Interface(cmd2.Cmd):
     changeParamParser.add_argument('-n', nargs='+', help="Parameter(s) to change to")
     @cmd2.with_argparser(changeParamParser)
     @cmd2.with_category("Parameter")
-    def do_changeparam(self, arg):
+    def do_changeParam(self, arg):
         # Loop through new and old list at the same time
         for i in range(0, len(arg.o)):
             ret = parameter.changeParameter(arg.o[i], arg.n[i], arg.method_name, arg.class_name)
@@ -472,7 +472,7 @@ class Interface(cmd2.Cmd):
     """ LIST COMMANDS """
     @cmd2.with_category("Lists")
     # List all classes and their contents
-    def do_listclasses(self, _):
+    def do_listClasses(self, _):
         """Usage: listClasses
         
         Lists all existing classes and their contents.
@@ -484,12 +484,12 @@ class Interface(cmd2.Cmd):
     @cmd2.with_argparser(listClassParser)
     @cmd2.with_category("Lists")
     # Lists the contents of a specified class
-    def do_listclass(self, arg):
+    def do_listClass(self, arg):
         listClass(arg.class_name)
 
     @cmd2.with_category("Lists")
     # Lists all existing relationships
-    def do_listrelationships(self, _):
+    def do_listRelationships(self, _):
         """Usage: listRelationships
         
         Lists all existing relationships between classes.
