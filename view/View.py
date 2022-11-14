@@ -848,6 +848,8 @@ class View(tk.Tk):
                 #splits the input into 2 source/dest
                 parsed = clicked1.get().split(" -> ")
                 #sets each output variable
+                if parsed[0] == "":
+                    return
                 self.source = parsed[0]
                 self.destination = parsed[1]
                 self.relationshipTypeNew = clicked.get()
@@ -1073,6 +1075,8 @@ class View(tk.Tk):
                 self.controller.clickDeleteRelationButton()
             def output1():
                 parsed = clicked.get().split(" -> ")
+                if parsed[0] == "":
+                    return
                 self.source = parsed[0]
                 self.destination = parsed[1]
                 self.controller.clickDeleteRelationButton()
