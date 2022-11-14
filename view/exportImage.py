@@ -1,3 +1,8 @@
+"""
+Filename    : exportImage.py
+Description : 
+"""
+
 import model.relationship as r
 import view.View as v
 from PIL import (Image, ImageDraw)
@@ -50,7 +55,7 @@ class exportImage():
     def setCoords(self, each):
         """
         determines and sets the coordinate of the start and end points of a line to be drawn
-        :param 1: UML relationship object
+        :param each: UML relationship object
         """
 
         #gets coords for source and dest
@@ -121,7 +126,7 @@ class exportImage():
     def exportEmpty(self, fileName):
         """
         saves a 800x600 canvas as the image if no boxes
-        :param 1: filename to save as
+        :param fileName: filename to save as
         """
         self.canvas = Image.new("RGB", (800, 600), color = "white")
         self.image = ImageDraw.Draw(self.canvas)
@@ -130,7 +135,7 @@ class exportImage():
     def export(self, fileName):
         """
         saves a cropped image if boxes exist
-        :param 1: filename to save as  
+        :param fileName: filename to save as  
         """
         xMin = []
         yMin = [] 
@@ -161,9 +166,9 @@ class inherLine(Strategy):
     def drawLine(self, image, startPt, endPt):
         """
         draws a solid line with a empty (white) arrow tip
-        :param 1: image to draw to  
-        :param 2: start point (x,y) for line 
-        :param 3: end point (x,y) for line 
+        :param image: image to draw to  
+        :param startPt: start point (x,y) for line 
+        :param endPt: end point (x,y) for line 
         """   
         color = "white"
         image.line(xy=(startPt, endPt), fill="black", width=2)
@@ -212,9 +217,9 @@ class realLine(Strategy):
     def drawLine(self, image, startPt, endPt):
         """
         draws a dashed line with a empty (white) arrow tip
-        :param 1: image to draw to  
-        :param 2: start point (x,y) for line 
-        :param 3: end point (x,y) for line 
+        :param image: image to draw to  
+        :param startPt: start point (x,y) for line 
+        :param endPt: end point (x,y) for line 
         """   
         color = "white"
         #starting x and y points
@@ -314,9 +319,9 @@ class aggLine(Strategy):
     def drawLine(self, image, startPt, endPt):
         """
         draws a solid line with a empty (white) square tip
-        :param 1: image to draw to  
-        :param 2: start point (x,y) for line 
-        :param 3: end point (x,y) for line 
+        :param image: image to draw to  
+        :param startPt: start point (x,y) for line 
+        :param endPt: end point (x,y) for line 
         """
         #see comments from strategies above for implementation details       
         color = "white"
@@ -356,9 +361,9 @@ class compLine(Strategy):
     def drawLine(self, image, startPt, endPt):
         """
         draws a solid line with a filled (black) square tip
-        :param 1: image to draw to  
-        :param 2: start point (x,y) for line 
-        :param 3: end point (x,y) for line 
+        :param image: image to draw to  
+        :param startPt: start point (x,y) for line 
+        :param endPt: end point (x,y) for line 
         """ 
         #see comments from strategies above for implementation details  
         color = "black"
