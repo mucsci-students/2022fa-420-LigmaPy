@@ -252,11 +252,10 @@ class View(tk.Tk):
     def printClassToCanvas(self, UMLClass, UMLOld = ""):
         """
         Prints the 'UMLclass' in a nice box to the canvas
-        @param param1: UMLclass to print
-        @param param2: Optional parameter only used when class has been renamed. 
+        @param UMLClass: UMLclass to print
+        @param UMLOld: Optional parameter only used when class has been renamed. 
                        Old class name
         """
-        
         
         lowercaseName = UMLClass.name.lower()
 
@@ -292,7 +291,6 @@ class View(tk.Tk):
                 self.removeClassFromCanvas(UMLOld.lower())
         
         #makes/remakes boxes using tuple above
-        # UMLBoxes[lowercaseName] = tk.Label(self.canvas, text=t[0], height=t[1], width=t[2], borderwidth=1, relief="solid", justify=LEFT, name = lowercaseName)
         UMLBoxes[lowercaseName] = makeLabel(UMLClass, self.canvas)
         #gets the text, width and heigth as tuple(t,h,w)
         t = classToString(UMLClass)
@@ -352,7 +350,7 @@ class View(tk.Tk):
 
         # finds the type of the relationship
         index = r.findRelationship(s, d)
-        print(index)
+        # print(index)
         type = r.relationIndex[index].type
 
         #gets the center coord of the source where the line starts
