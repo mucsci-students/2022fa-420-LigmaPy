@@ -5,7 +5,7 @@ Description : Constructs and displays the gui
 
 
 import tkinter as tk
-
+#import UMLNotebook as notebook
 from tkinter import LEFT, RIGHT, VERTICAL, Y, Canvas, OptionMenu, StringVar, ttk, filedialog
 from tkinter import ALL, EventType
 import model.UMLClass as u
@@ -13,6 +13,7 @@ import model.relationship as r
 import model.attributes as a
 import model.UMLState as s
 import math
+from view.prototype import *
 import os
 
 
@@ -45,10 +46,12 @@ class View(tk.Tk):
         self.paramTypeNew = None
         self.fileName = None
         self.state = None
+        self.canvas = None
         #self.geometry("800x600")
         self.canvasSizeX = 10000
         self.canvasSizeY = 10000
         self.title("UML Editor")
+        # self.prototype = p(self)
 
         screenWidth = self.winfo_screenwidth() - 100
         screenHeight = self.winfo_screenheight() - 100
@@ -247,16 +250,14 @@ class View(tk.Tk):
         self.canvas.bind('<Configure>', lambda e: self.canvas.configure(scrollregion = self.canvas.bbox("all")))
         self.outputFrame2 = tk.Frame(self.canvas)
         self.canvas.create_window((0,0), window=self.outputFrame2, anchor="nw")        
-
-   
-
-    def printClassToCanvas(self, UMLClass):
+        
+    def printClassToCanvas(self, UMLClass, UMLOld = ""):
         """
         Prints the 'UMLclass' in a nice box to the canvas
-        param1: UMLclass to print
+        @param UMLClass: UMLclass to print
+        @param UMLOld: Optional parameter only used when class has been renamed. 
+                       Old class name
         """
-        #gets the text, width and heigth as tuple(t,w,h)
-        t = classToString(UMLClass)
         
         lowercaseName = UMLClass.name.lower()
 
@@ -264,20 +265,38 @@ class View(tk.Tk):
         sourceList = []
         destList = []
         
-        #checks if a box / relation exists and deletes the line and box so they can be remade
-        if lowercaseName in UMLBoxes:
-            for each in list(UMLLines):
-                if UMLBoxes[lowercaseName] in each:
-                    if each.index(UMLBoxes[lowercaseName]) == 0:
-                        destList.append(each[1])
-                        self.deleteLine(each[0].winfo_name(), each[1].winfo_name())
-                    else:
-                        sourceList.append(each[0])
-                        self.deleteLine(each[0].winfo_name(), each[1].winfo_name())
-            self.removeClassFromCanvas(lowercaseName)
+        #runs if class hasn't been renamed
+        if UMLOld == "":
+            #checks if a box / relation exists and deletes the line and box so they can be remade
+            if lowercaseName in UMLBoxes:
+                for each in list(UMLLines):
+                    if UMLBoxes[lowercaseName] in each:
+                        if each.index(UMLBoxes[lowercaseName]) == 0:
+                            destList.append(each[1])
+                            self.deleteLine(each[0].winfo_name(), each[1].winfo_name())
+                        else:
+                            sourceList.append(each[0])
+                            self.deleteLine(each[0].winfo_name(), each[1].winfo_name())
+                self.removeClassFromCanvas(lowercaseName)
+        # runs if class has been renamed
+        else:
+            #checks if a box / relation exists and deletes the line and box so they can be remade
+            if UMLOld.lower() in UMLBoxes:
+                for each in list(UMLLines):
+                    if UMLBoxes[UMLOld.lower()] in each:
+                        if each.index(UMLBoxes[UMLOld.lower()]) == 0:
+                            destList.append(each[1])
+                            self.deleteLine(each[0].winfo_name(), each[1].winfo_name())
+                        else:
+                            sourceList.append(each[0])
+                            self.deleteLine(each[0].winfo_name(), each[1].winfo_name())
+                self.removeClassFromCanvas(UMLOld.lower())
         
         #makes/remakes boxes using tuple above
-        UMLBoxes[lowercaseName] = tk.Label(self.canvas, text=t[0], height=t[1], width=t[2], borderwidth=1, relief="solid", justify=LEFT, name = lowercaseName)
+        UMLBoxes[lowercaseName] = makeLabel(UMLClass, self.canvas)
+        #gets the text, width and heigth as tuple(t,h,w)
+        t = classToString(UMLClass)
+        UMLBoxes[lowercaseName].config(text = t[0], width = t[2], height = t[1])
         #UMLBoxes[lowercaseName].place(x=UMLClass.location['x'], y=UMLClass.location['y'])
         #binds boxes to drag and drop event
         UMLBoxes[lowercaseName].bind("<ButtonRelease-1>", self.release)
@@ -290,51 +309,6 @@ class View(tk.Tk):
             self.makeLine(each.winfo_name(), UMLBoxes[lowercaseName].winfo_name())
         for each in destList:
             self.makeLine(UMLBoxes[lowercaseName].winfo_name(), each.winfo_name())
-    
-        
-  
-    def printRenamedClassToCanvas(self, UMLclass, UMLold):  
-        """
-        Prints a renamed class to canvas
-        param1: renamed UMLClass object
-        param2: old ULMClass object's name
-        """
-        #gets the text, width and heigth as tuple(t,w,h)
-        new = classToString(UMLclass)
-        #holders to recreate lines
-        lowercaseName = UMLclass.name.lower()
-        
-        sourceList = []
-        destList = []
-        
-        #checks if a box / relation exists and deletes the line and box so they can be remade
-        if UMLold.lower() in UMLBoxes:
-            for each in list(UMLLines):
-                if UMLBoxes[UMLold.lower()] in each:
-                    if each.index(UMLBoxes[UMLold.lower()]) == 0:
-                        destList.append(each[1])
-                        self.deleteLine(each[0].winfo_name(), each[1].winfo_name())
-                    else:
-                        sourceList.append(each[0])
-                        self.deleteLine(each[0].winfo_name(), each[1].winfo_name())
-            self.removeClassFromCanvas(UMLold.lower())
-        
-        #makes/remakes boxes using tuple above
-        UMLBoxes[lowercaseName] = tk.Label(self.canvas, text=new[0], height=new[1], width=new[2], borderwidth=1, relief="solid", justify=LEFT, name = lowercaseName)
-        #UMLBoxes[lowercaseName].place(x=UMLclass.location['x'], y=UMLclass.location['y'])
-        self.canvas.create_window((UMLclass.location['x'],UMLclass.location['y']), window=UMLBoxes[lowercaseName])
-        #binds boxes to drag and drop event
-        UMLBoxes[lowercaseName].bind("<Button-1>", self.dragStart)
-        UMLBoxes[lowercaseName].bind("<B1-Motion>", self.dragMove)
-        UMLBoxes[lowercaseName].bind("<ButtonRelease-1>", self.release)
-
-        
-        #remakes the line with the new label if a relationship existed
-        for each in sourceList:
-            self.makeLine(each.winfo_name(), UMLBoxes[lowercaseName].winfo_name())
-        for each in destList:
-            self.makeLine(UMLBoxes[lowercaseName].winfo_name(), each.winfo_name())
-
 
 
     def removeClassFromCanvas(self, UMLclass):    
@@ -378,7 +352,7 @@ class View(tk.Tk):
 
         # finds the type of the relationship
         index = r.findRelationship(s, d)
-        print(index)
+        # print(index)
         type = r.relationIndex[index].type
 
         #gets the center coord of the source where the line starts
@@ -1846,16 +1820,16 @@ def classToString(c):
     width = max(classLen, methLen, fieldLen)
     return (string, height, width)
 
-def relationToString(r):
-    """
-    Returns a relationship 'r' in a string format for output (not used anymore)
-    """
-    string = ""
-    string += "Relationship:\n"
-    string += "    Source: " + r.source + "\n"
-    string += "    Destination: " + r.destination + "\n"
-    string += "    Type: " + r.type + "\n\n"
-    return string
+# def relationToString(r):
+#     """
+#     Returns a relationship 'r' in a string format for output (not used anymore)
+#     """
+#     string = ""
+#     string += "Relationship:\n"
+#     string += "    Source: " + r.source + "\n"
+#     string += "    Destination: " + r.destination + "\n"
+#     string += "    Type: " + r.type + "\n\n"
+#     return string
 """
 def dragStart(event):
     widget = event.widget
