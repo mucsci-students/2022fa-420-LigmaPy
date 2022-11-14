@@ -36,7 +36,7 @@ class Interface(cmd2.Cmd):
         # Remove built-in commands from cmd2.Cmd
         del cmd2.Cmd.do_edit
         del cmd2.Cmd.do_shell
-        del cmd2.Cmd.do_set
+        # del cmd2.Cmd.do_set
         del cmd2.Cmd.do_shortcuts
         del cmd2.Cmd.do_run_script
         del cmd2.Cmd.do_run_pyscript
@@ -56,7 +56,7 @@ class Interface(cmd2.Cmd):
         # Update her with the string names
         for c in UMLClass.classIndex : classNameChoices.append(c.name)
         
-        return self.classNameChoices
+        return classNameChoices
 
     def relationSources(self) -> List[str]:
         """
@@ -116,7 +116,7 @@ class Interface(cmd2.Cmd):
 
     def methodParams(self, arg_tokens: Dict[str, List[str]]) -> List[str]:
         """
-        Fetches a list of names of every method in a class
+        Fetches a list of names of every param in a method
 
         :param arg_tokens: Dictionary that maps the command line tokens up through the one being completed
                             to their argparse argument name
@@ -155,7 +155,6 @@ class Interface(cmd2.Cmd):
     """
         Delete Class
     """
-
     deleteClassParser = cmd2.Cmd2ArgumentParser(description="Removes a class and all of its contents")
     deleteClassParser.add_argument('class_name', help="Name of the class to be deleted", choices_provider=allClassNames, metavar="class_name")
     @cmd2.with_argparser(deleteClassParser)
@@ -213,7 +212,6 @@ class Interface(cmd2.Cmd):
     """
         Delete Relationship
     """
-
     deleteRelationParser = cmd2.Cmd2ArgumentParser(description="Removes an existing relationship between two classes")
     deleteRelationParser.add_argument('src', help="Name of the source class", choices_provider=relationSources, metavar="src")
     deleteRelationParser.add_argument('dest', help="Name of the destination class", choices_provider=relationDestinations, metavar="dest")
@@ -404,10 +402,8 @@ class Interface(cmd2.Cmd):
         else:
             for param in arg.p:
                 ret = parameter.deleteParameter(param, arg.method_name, arg.class_name)
-                ParamException(ret).throwStatus(arg.class_name, arg.method_name, param)
+                ParamException(ret).throwStatus(arg.class_name, arg.method_name, param, None)
         UMLState.clearRedo()
-
-        # ParamException(ret).throwStatus(arg.class_name, arg.method_name, )
 
     """
         Change Parameter(s)
@@ -424,6 +420,7 @@ class Interface(cmd2.Cmd):
         for i in range(0, len(arg.o)):
             ret = parameter.changeParameter(arg.o[i], arg.n[i], arg.method_name, arg.class_name)
             ParamException(ret).throwStatus(arg.class_name, arg.method_name, arg.o[i], arg.n[i])
+    
     
     """ SAVE/LOAD COMMANDS """
 
