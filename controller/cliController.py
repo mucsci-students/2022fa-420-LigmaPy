@@ -14,6 +14,7 @@ import model.UMLClass as UMLCLass
 import model.attributes as attributes
 import model.relationship as relationship
 import model.parameter as parameter
+import view.exportImage as exportImage
 from interface.interfaceCommands import *
 from model.saveload import *
 from model import UMLState
@@ -446,6 +447,20 @@ class Interface(cmd2.Cmd):
         - Export current state to an image file
         - Add argument parser
     """
+
+    exportParser = cmd2.Cmd2ArgumentParser(description="Exports the current program state to an image")
+    exportParser.add_argument('filename', help="Name of the file to save the image to")
+    @cmd2.with_argparser(exportParser)
+    def do_export(self, arg):
+        export = exportImage.exportImage(exportImage.compLine)
+        if len(UMLClass.classIndex) < 1:
+            export.exportEmpty(arg.filename + ".jpg")
+            return
+
+        export.createBoxes()
+        print(export.boxes)
+        export.drawBoxes()
+        export.export(arg.filename + ".jpg")
 
     """ UNDO/REDO """
     def do_undo(self, _):

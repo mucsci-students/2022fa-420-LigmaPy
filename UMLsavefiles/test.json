@@ -1,0 +1,61 @@
+{
+    "classes": [
+        {
+            "name": "Tire",
+            "fields": [
+                {
+                    "name": "psi",
+                    "type": "float"
+                }
+            ],
+            "methods": [
+                {
+                    "name": "setPSI",
+                    "return_type": "void",
+                    "params": [
+                        {
+                            "name": "new_psi",
+                            "type": "float"
+                        }
+                    ]
+                }
+            ],
+            "location": {
+                "x": 100,
+                "y": 100
+            },
+            "subscribers": [
+                8780709816807
+            ]
+        },
+        {
+            "name": "Car",
+            "fields": [],
+            "methods": [],
+            "location": {
+                "x": 100,
+                "y": 100
+            },
+            "subscribers": [
+                8780709816807
+            ]
+        },
+        {
+            "name": "Engine",
+            "fields": [],
+            "methods": [],
+            "location": {
+                "x": 100,
+                "y": 100
+            },
+            "subscribers": []
+        }
+    ],
+    "relationships": [
+        {
+            "source": "Tire",
+            "destination": "Car",
+            "type": "composition"
+        }
+    ]
+}
