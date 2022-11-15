@@ -3,3 +3,4 @@ pyfiglet
 pathvalidate
 tk
 cmd2
+pillow
