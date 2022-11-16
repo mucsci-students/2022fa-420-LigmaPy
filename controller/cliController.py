@@ -458,7 +458,22 @@ class Interface(cmd2.Cmd):
             return
 
         export.createBoxes()
-        print(export.boxes)
+        for each in relationship.relationIndex:
+            export.setCoords(each)
+            if each.type == "Composition":
+                export.strategy = exportImage.compLine()
+                export.drawLines()
+            if each.type == "Inheritance":
+                export.strategy = exportImage.inherLine()
+                export.drawLines()
+            if each.type == "Realization":
+                export.strategy = exportImage.realLine()
+                export.drawLines()
+            if each.type == "Aggregation":
+                export.strategy = exportImage.aggLine()
+                export.drawLines()
+
+        
         export.drawBoxes()
         export.export(arg.filename + ".jpg")
 
