@@ -95,6 +95,10 @@ def test_destination_renamed():
     relIndex = relationship.findRelationship("Sam", "isReallyCool")
     assert relationship.relationIndex[relIndex].destination == "isReallyCool"
 
-
-
+def test__str__():
+    UMLClass.addClass("Sam")
+    UMLClass.addClass("isCool")   
+    relationship.addRelationship("Sam", "isCool", "Composition")
+    relIndex = relationship.findRelationship("Sam", "isCool")
+    assert relationship.relationIndex[relIndex].__str__() == "[Sam] - [isCool] <Composition>"
 
