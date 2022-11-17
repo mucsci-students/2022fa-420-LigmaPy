@@ -151,7 +151,7 @@ I created a class to capture and store states of the classIndex and relationInde
 The UMLClass contains a list of "subscribers" which are relationships that the class is a part of (as a source or destination). There are also class methods `register` and `unregister` which handle adding and removing relationships from that list. On every name change, or deletion of a class, each subscriber in the list is notified. This allows for relationships to be deleted when their source or destination has been deleted, and a class name change to be reflected in each relationship that it is a part of.
 ### Singleton - [View](https://github.com/mucsci-students/2022fa-420-LigmaPy/blob/develop/view/View.py)
 Since there should only ever be one GUI window, the view class now checks if an instance has already been created or not, before making one. If there has been an instance created already, then the pre-existing instance will be returned instead of a newly made one.
-###Strategy – [exportImage](https://github.com/mucsci-students/2022fa-420-LigmaPy/blob/develop/view/exportImage.py)
+### Strategy – [exportImage](https://github.com/mucsci-students/2022fa-420-LigmaPy/blob/develop/view/exportImage.py)
 Each different relationship line (Aggregation, Composition, Inheritance, Realization) represents a different strategy. The algorithms for drawing the different types of lines are put into separate classes. The context export object can then change its strategy based on the line type then draw the corresponding line to canvas.
 </details>
 <br>
