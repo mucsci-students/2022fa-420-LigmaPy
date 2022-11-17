@@ -49,9 +49,52 @@ def test_delete_all_parameters():
     assert parameter.addParameter("earned", "int", "getQuality", "Tire") == codes.ADDED_PARAM
     assert parameter.deleteAllParameter("getQuality", "Tire") == codes.DELETED_PARAM
 
+def test_delete_class_does_not_exist():
+    # Test deleting a parameter from a class that does not exist
+    assert parameter.addParameter("idNum", "string", "setPSI", "Tire") == codes.ADDED_PARAM
+    assert parameter.deleteParameter("idNum", "string", "setPSI", "Car") == codes.DELETE_PARAM_CLASS_NOT_EXIST
+
+def test_delete_method_does_not_exist():
+    # Test deleting a parameter from a method that does not exist
+    assert parameter.addParameter("id", "int", "setPSI", "Tire") == codes.ADDED_PARAM
+    assert parameter.deleteParameter("id", "int", "new", "Tire") == codes.DELETE_PARAM_METHOD_NOT_EXIST
+
+def test_delete_param_does_not_exist():
+    # Test deleting a parameter that does not exist
+    assert parameter.deleteParameter("new", "string", "setPSI", "Tire") == codes.DELETE_PARAM_NOT EXIST
+
+def test_delete_all_class_does_not_exist():
+    # Test deleting all parameters when class does not exist
+    assert parameter.deleteAllParameter("getQuality", "Car") == codes.DELETE_PARAM_CLASS_NOT_EXIST
+
+def test_delete_all_method_does_not_exist():
+    # Test deleting all parameters when method does not exist
+    assert parameter.deleteAllParameter("new", "Tire") == codes.DELETE_PARAM_METHOD_NOT_EXIST
+
 
 """     Change Parameter Tests     """
 def test_change_parameters():
     # Test Changing the name of a parameter
     assert parameter.addParameter("band", "string", "setPSI", "Tire") == codes.ADDED_PARAM
     assert parameter.changeParameter("band", "brand", "setPSI", "Tire") == codes.CHANGED_PARAM
+
+def test_change_class_does_not_exist():
+    # Test changing the name of a parameter when the class does not exist
+    assert parameter.addParameter("band", "string", "setPSI", "Tire") == codes.ADDED_PARAM
+    assert parameter.changeParameter("band", "brand", "setPSI", "Car") == codes.CHANGE_PARAM_CLASS_NOT_EXIST
+
+def test_change_method_does_not_exist():
+    # Test changing the name of a parameter when the class does not exist
+    assert parameter.addParameter("band", "string", "setPSI", "Tire") == codes.ADDED_PARAM
+    assert parameter.changeParameter("band", "string", "new", "Tire") == codes.CHANGE_PARAM_METHOD_NOT_EXIST
+    
+def test_change_param_does_not_exist():
+    # Test changing the name of a parameter that does not exist
+    assert parameter.changeParameter("one", "four", "setPSI", "Tire") == codes.CHANGE_PARAM_PARAM_NOT_EXIST
+
+def test_change_param_already_exists():
+    # Test changing the name of a parameter to the name of an existing parameter
+    assert parameter.addParameter("one", "int", "getQuality", "Tire") == codes.ADDED_PARAM
+    assert parameter.addParameter("two", "int", "getQuality", "Tire") == codes.ADDED_PARAM
+    assert parameter.changeParameter("one", "two", "getQuality", "Tire") == codes.CHANGE_PARAM_ALREADY_EXISTS
+    
