@@ -122,9 +122,7 @@ def renameClass(oldName: str, newName: str):
     :param oldName: the target class's name
     :param newName: the new name for the target class
     """
-    if findClass(newName) != None:
-        return codes.RENAME_NEW_CLASS_EXIST
-    
+
     if not isNameUnique(newName):
         return codes.ADD_EXISTING_CLASS
 
