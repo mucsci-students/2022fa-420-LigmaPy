@@ -100,5 +100,5 @@ def test__str__():
     UMLClass.addClass("isCool")   
     relationship.addRelationship("Sam", "isCool", "Composition")
     relIndex = relationship.findRelationship("Sam", "isCool")
-    assert relationship.relationIndex[relIndex].__str__() == "[Sam] - [isCool] <Composition>"
+    assert relationship.relationIndex[relIndex].__str__() == "\x1b[01m[Sam] - [isCool] <Composition>\x1b[0m"
 
