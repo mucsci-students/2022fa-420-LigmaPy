@@ -112,4 +112,4 @@ def test_str():
     classInd = UMLClass.findClass("Tire")
     methodInd = attributes.findMethod("getQuality", "Tire")
     paramInd = parameter.findParameter("four", methodInd, classInd)
-    assert UMLClass.classIndex[classInd].methods[methodInd].params[paramInd].__str__() == "{int} {four}"
+    assert UMLClass.classIndex[classInd].methods[methodInd].params[paramInd].__str__() == "int four"
