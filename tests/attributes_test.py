@@ -77,7 +77,7 @@ def test_rename_method():
     assert attributes.renameMethod("getBarnd", "getBrand", "Tire") == codes.RENAMED_METHOD
     assert attributes.renameMethod("Nope", "yep", "Tire") == codes.RENAME_METHOD_METHOD_NOT_EXIST
     assert attributes.renameMethod("getBrand", "yep", "nope") == codes.RENAME_METHOD_CLASS_NOT_EXIST
-    assert attributes.renameMethod("getBrand", "Exists", "nope") == codes.RENAME_METHOD_NEW_EXISTS
+    assert attributes.renameMethod("getBrand", "Exists", "Tire") == codes.RENAME_METHOD_NEW_EXISTS
 
 """     Delete Method Tests    """
 def test_delete_method():
