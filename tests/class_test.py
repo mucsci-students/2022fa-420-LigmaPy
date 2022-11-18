@@ -66,20 +66,7 @@ def test_repr():
     s = testClass.__repr__()
     assert s == testClass.name
 
-"""     Subscriber Test    """
 
-def test_subscribers():
-    UMLClass.addClass("Salami")
-    UMLClass.addClass("Chees")
-    r.addRelationship("Salami", "Chees", "composite")
-
-    # Exists with new class name.
-    UMLClass.renameClass("Chees", "Cheese")
-    assert r.findRelationship("Salami", "Cheese") != -1
-
-    # It was deleted when class is deleted
-    UMLClass.deleteClass("Salami")
-    assert r.findRelationship("Salami", "Cheese") == -1
 
 
    

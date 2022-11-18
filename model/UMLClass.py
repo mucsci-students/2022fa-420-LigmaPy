@@ -36,12 +36,10 @@ class UMLClass:
     def register(self, relationship):
         self.subscribers.append(relationship)
 
-    def unregister(self, relationship):
-        self.subscribers.pop(relationship)
-    
-    def dispatch(self, message):
-        for subscriber in self.subscribers:
-            subscriber.update(message)
+    # Not needed
+    # def unregister(self, relationship):
+    #     self.subscribers.pop(relationship)
+
 
 
 def isNameUnique(name: str):
