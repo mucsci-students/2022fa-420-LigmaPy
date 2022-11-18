@@ -4,6 +4,7 @@ Description : Tests for the UMLClass class
 """
 # Class to test
 import model.UMLClass as UMLClass
+import model.relationship as r
 from model.ErrorHandlers.ReturnStatus import codes
 
 """     Add Class Tests     """
@@ -57,10 +58,28 @@ def test_delete_class_not_existing():
     # Test deleting a class that does not exist
     assert UMLClass.deleteClass("Baz") == codes.DELETE_NOT_EXISTING_CLASS
 
+"""     String Test    """
+
 def test_repr():
-    pass
+    UMLClass.addClass("Peanut")
+    testClass = UMLClass.classIndex[UMLClass.findClass("Peanut")]
+    s = testClass.__repr__()
+    assert s == testClass.name
+
+"""     Subscriber Test    """
 
 def test_subscribers():
-    pass
+    UMLClass.addClass("Salami")
+    UMLClass.addClass("Chees")
+    r.addRelationship("Salami", "Chees", "composite")
+
+    # Exists with new class name.
+    UMLClass.renameClass("Chees", "Cheese")
+    assert r.findRelationship("Salami", "Cheese") != -1
+
+    # It was deleted when class is deleted
+    UMLClass.deleteClass("Salami")
+    assert r.findRelationship("Salami", "Cheese") == -1
+
 
    
