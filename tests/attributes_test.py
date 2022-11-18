@@ -20,6 +20,7 @@ def test_add_field():
     assert field == codes.ADDED_FIELD
     UMLClass.classIndex[0].fields[0].changeType("int")
     assert UMLClass.classIndex[0].fields[0].name == "int"
+    assert UMLClass.classIndex[0].fields[0].__str__() == UMLClass.classIndex[0].fields[0].__str__()
 
 def test_toDict():
     attributes.addMethod("psi", "Tire", "int")
