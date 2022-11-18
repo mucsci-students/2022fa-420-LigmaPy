@@ -108,8 +108,8 @@ def test_toDict():
     assert UMLClass.classIndex[classInd].methods[methodInd].params[paramInd].toDict() == {"name": "three", "type": "int"}
 
 def test_str():
-    assert parameter.addParameter("two", "int", "getQuality", "Tire") == codes.ADDED_PARAM
-    classInd = UMLClass.findClass("Fire")
+    assert parameter.addParameter("four", "int", "getQuality", "Tire") == codes.ADDED_PARAM
+    classInd = UMLClass.findClass("Tire")
     methodInd = attributes.findMethod("getQuality", "Tire")
-    paramInd = parameter.findParameter("two", methodInd, classInd)
-    assert UMLClass.classIndex[classInd].methods[methodInd].params[paramInd].__str__ == "int two"
+    paramInd = parameter.findParameter("four", methodInd, classInd)
+    assert UMLClass.classIndex[classInd].methods[methodInd].params[paramInd].__str__ == "{int} {four}"
