@@ -61,7 +61,7 @@ def test_delete_method_does_not_exist():
 
 def test_delete_param_does_not_exist():
     # Test deleting a parameter that does not exist
-    assert parameter.deleteParameter("new", "string", "setPSI", "Tire") == codes.DELETE_PARAM_NOT EXIST
+    assert parameter.deleteParameter("new", "string", "setPSI", "Tire") == codes.DELETE_PARAM_NOT_EXIST
 
 def test_delete_all_class_does_not_exist():
     # Test deleting all parameters when class does not exist
@@ -98,3 +98,18 @@ def test_change_param_already_exists():
     assert parameter.addParameter("two", "int", "getQuality", "Tire") == codes.ADDED_PARAM
     assert parameter.changeParameter("one", "two", "getQuality", "Tire") == codes.CHANGE_PARAM_ALREADY_EXISTS
     
+
+# """     Test param class     """
+def test_toDict():
+    assert parameter.addParameter("one", "int", "getQuality", "Tire") == codes.ADDED_PARAM
+    classInd = UMLClass.findClass("Fire")
+    methodInd = attributes.findMethod("getQuality", "Tire")
+    paramInd = parameter.findParameter("one", methodInd, classInd)
+    assert UMLCLass.classIndex[classInd].methods[methodInd].params[paramInd].toDict() == {"name": "one", "type": "int"}
+
+def test_str():
+    assert parameter.addParameter("two", "int", "getQuality", "Tire") == codes.ADDED_PARAM
+    classInd = UMLClass.findClass("Fire")
+    methodInd = attributes.findMethod("getQuality", "Tire")
+    paramInd = parameter.findParameter("two", methodInd, classInd)
+    assert UMLCLass.classIndex[classInd].methods[methodInd].params[paramInd].__str__ == "int two"
