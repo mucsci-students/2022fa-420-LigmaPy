@@ -52,16 +52,16 @@ def test_delete_all_parameters():
 def test_delete_class_does_not_exist():
     # Test deleting a parameter from a class that does not exist
     assert parameter.addParameter("idNum", "string", "setPSI", "Tire") == codes.ADDED_PARAM
-    assert parameter.deleteParameter("idNum", "string", "setPSI", "Car") == codes.DELETE_PARAM_CLASS_NOT_EXIST
+    assert parameter.deleteParameter("idNum", "setPSI", "Car") == codes.DELETE_PARAM_CLASS_NOT_EXIST
 
 def test_delete_method_does_not_exist():
     # Test deleting a parameter from a method that does not exist
     assert parameter.addParameter("id", "int", "setPSI", "Tire") == codes.ADDED_PARAM
-    assert parameter.deleteParameter("id", "int", "new", "Tire") == codes.DELETE_PARAM_METHOD_NOT_EXIST
+    assert parameter.deleteParameter("id", "new", "Tire") == codes.DELETE_PARAM_METHOD_NOT_EXIST
 
 def test_delete_param_does_not_exist():
     # Test deleting a parameter that does not exist
-    assert parameter.deleteParameter("new", "string", "setPSI", "Tire") == codes.DELETE_PARAM_NOT_EXIST
+    assert parameter.deleteParameter("new", "setPSI", "Tire") == codes.DELETE_PARAM_NOT_EXIST
 
 def test_delete_all_class_does_not_exist():
     # Test deleting all parameters when class does not exist
@@ -85,8 +85,8 @@ def test_change_class_does_not_exist():
 
 def test_change_method_does_not_exist():
     # Test changing the name of a parameter when the class does not exist
-    assert parameter.addParameter("band", "string", "setPSI", "Tire") == codes.ADDED_PARAM
-    assert parameter.changeParameter("band", "string", "new", "Tire") == codes.CHANGE_PARAM_METHOD_NOT_EXIST
+    assert parameter.addParameter("drum", "string", "setPSI", "Tire") == codes.ADDED_PARAM
+    assert parameter.changeParameter("drum", "guitar", "new", "Tire") == codes.CHANGE_PARAM_METHOD_NOT_EXIST
     
 def test_change_param_does_not_exist():
     # Test changing the name of a parameter that does not exist
@@ -101,11 +101,11 @@ def test_change_param_already_exists():
 
 # """     Test param class     """
 def test_toDict():
-    assert parameter.addParameter("one", "int", "getQuality", "Tire") == codes.ADDED_PARAM
-    classInd = UMLClass.findClass("Fire")
+    assert parameter.addParameter("three", "int", "getQuality", "Tire") == codes.ADDED_PARAM
+    classInd = UMLClass.findClass("Tire")
     methodInd = attributes.findMethod("getQuality", "Tire")
-    paramInd = parameter.findParameter("one", methodInd, classInd)
-    assert UMLCLass.classIndex[classInd].methods[methodInd].params[paramInd].toDict() == {"name": "one", "type": "int"}
+    paramInd = parameter.findParameter("three", methodInd, classInd)
+    assert UMLCLass.classIndex[classInd].methods[methodInd].params[paramInd].toDict() == {"name": "three", "type": "int"}
 
 def test_str():
     assert parameter.addParameter("two", "int", "getQuality", "Tire") == codes.ADDED_PARAM
