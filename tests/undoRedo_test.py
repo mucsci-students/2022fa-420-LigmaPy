@@ -41,7 +41,7 @@ def test_multi_undo():
     assert relationship.addRelationship("Tire", "Car", "composition") == codes.ADD_DEST_NOT_EXIST
     UMLState.addUndo(UMLState.saveState())
     assert attributes.addField("psi", "Tire", "float") == codes.ADDED_FIELD
-    assert (relationship.findRelationship("Tire", "Car") > -1) and (attributes.findField("psi", "Tire") > -1)
+    assert (relationship.findRelationship("Tire", "Car") == -1) and (attributes.findField("psi", "Tire") > -1)
     UMLState.loadState(UMLState.undo())
     UMLState.loadState(UMLState.undo())
     assert (relationship.findRelationship("Tire", "Car") == -1) and (attributes.findField("psi", "Tire") < 0)
