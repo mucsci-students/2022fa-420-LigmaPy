@@ -4,6 +4,7 @@ Description : Tests for the UMLClass class
 """
 # Class to test
 import model.UMLClass as UMLClass
+import model.relationship as r
 from model.ErrorHandlers.ReturnStatus import codes
 
 """     Add Class Tests     """
@@ -33,12 +34,18 @@ def test_rename_nonexisting_class():
     UMLClass.addClass("Foo")
     UMLClass.addClass("Bar")
     assert UMLClass.renameClass("Baz", "Far") == codes.RENAME_CLASS_NOT_EXIST
-
-def test_rename_existing_new_class():
+    
+def test_rename_nonunique():
     # Test renaming a class to an already existing class
-    UMLClass.addClass("Foo")
-    UMLClass.addClass("Bar")
-    assert UMLClass.renameClass("Bar", "Foo") == codes.RENAME_NEW_CLASS_EXIST
+    UMLClass.addClass("Pizza")
+    UMLClass.addClass("Bacon")
+    assert UMLClass.renameClass("Bacon", "Pizza") == codes.ADD_EXISTING_CLASS
+
+def test_rename_emptyname():
+    # Test renaming a class to an empty string
+    UMLClass.addClass("Soda")
+    assert UMLClass.renameClass("Soda", "") == codes.RENAME_CLASS_EMPTY
+ 
 
 """     Delete Class Tests     """
 def test_delete_class():
@@ -51,3 +58,15 @@ def test_delete_class_not_existing():
     # Test deleting a class that does not exist
     assert UMLClass.deleteClass("Baz") == codes.DELETE_NOT_EXISTING_CLASS
 
+"""     String Test    """
+
+def test_repr():
+    UMLClass.addClass("Peanut")
+    testClass = UMLClass.classIndex[UMLClass.findClass("Peanut")]
+    s = testClass.__repr__()
+    assert s == testClass.name
+
+
+
+
+   

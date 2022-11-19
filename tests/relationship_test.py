@@ -26,6 +26,7 @@ def test_add_duplicate_relationship():
 def test_add_nonexisting_class():
     # Test adding a relationship with non-existing source class
     assert relationship.addRelationship("NotCar", "Tire", "Aggregation") == codes.ADD_SRC_NOT_EXIST
+    assert relationship.addRelationship("Car", "NotTire", "Aggregation") == codes.ADD_DEST_NOT_EXIST
 
 
 """     Edit Relationship Type Tests     """
@@ -46,6 +47,7 @@ def test_delete_relationship():
 def test_delete_nonexistant_s_and_d():
     # Tst deleting a nonexistan relation
     assert relationship.deleteRelationship("help", "Tire") == codes.DELETE_NOT_EXISTING_SRC
+    assert relationship.deleteRelationship("Car", "help") == codes.DELETE_NOT_EXISTING_DEST
 
 """     Find Relationship Tests     """
 
@@ -95,6 +97,10 @@ def test_destination_renamed():
     relIndex = relationship.findRelationship("Sam", "isReallyCool")
     assert relationship.relationIndex[relIndex].destination == "isReallyCool"
 
-
-
+def test__str__():
+    UMLClass.addClass("Sam")
+    UMLClass.addClass("isCool")   
+    relationship.addRelationship("Sam", "isCool", "Composition")
+    relIndex = relationship.findRelationship("Sam", "isCool")
+    assert relationship.relationIndex[relIndex].__str__() == "\x1b[01m[Sam] - [isCool] <Composition>\x1b[0m"
 

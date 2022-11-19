@@ -154,6 +154,8 @@ Since there should only ever be one GUI window, the view class now checks if an 
 ### Prototype - [Prototype](https://github.com/mucsci-students/2022fa-420-LigmaPy/blob/develop/view/prototype.py)
 Every time a class is added to the GUI, a label is created with "Class: Fields: Methods:". Prototype creates this label which is then copied every time a new class is created. This
 allows us to start with the same label every time and then adjust it as needed to add the specific qualities of the new class.
+### Strategy – [exportImage](https://github.com/mucsci-students/2022fa-420-LigmaPy/blob/develop/view/exportImage.py)
+Each different relationship line (Aggregation, Composition, Inheritance, Realization) represents a different strategy. The algorithms for drawing the different types of lines are put into separate classes. The context export object can then change its strategy based on the line type then draw the corresponding line to canvas.
 </details>
 <br>
 
