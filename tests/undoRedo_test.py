@@ -61,7 +61,7 @@ def test_load():
     attributes.addMethod("Hi", "Hi", 'Hi')
     p.addParameter('Hi', "Hi", "Hi", "Hi")
     s = len(UMLClass.classIndex)
-    UMLClass.loadState(UMLClass.saveState())
+    UMLState.loadState(UMLState.saveState())
     s1 = len(UMLClass.classIndex)
     assert s == s1
 
