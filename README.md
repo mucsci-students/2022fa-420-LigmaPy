@@ -127,6 +127,11 @@ listClass <name>
 listRelationships
 ```
 
+### `export` - <i>Exports the UML to a .jpg image</i>
+```bash
+export <filename>
+```
+
 ### `help` - <i>Lists all available commands and their descriptions</i>
 ```bash
 help [command]
