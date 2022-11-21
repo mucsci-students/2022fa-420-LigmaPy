@@ -24,7 +24,7 @@ class UMLRelationship:
         """
         return {"source": self.source, "destination": self.destination, "type": self.type}
 
-    def __repr__(self):
+    def __str__(self):
         return f"{colors.bold}[{self.source}] - [{self.destination}] <{self.type}>{colors.reset}"
 
     #changes the type of the relationship
@@ -126,7 +126,9 @@ def deleteRelationship(source: str, destination: str):
     else:
         # Relationship does not exist
         return codes.DELETE_NOT_EXISTING_RELATIONSHIP
-        
+
+
+
 ###################################################################################################
 
 def clear():

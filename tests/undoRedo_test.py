@@ -8,7 +8,15 @@ import model.UMLClass as UMLClass
 import model.UMLState as UMLState
 import model.relationship as relationship
 import model.attributes as attributes
+import model.parameter as p
 
+
+def test_empty():
+    assert UMLState.undo() == None
+    assert UMLState.redo() == None
+    UMLState.loadState(UMLState.undo()) 
+    UMLState.addRedo(UMLState.undo())
+    assert UMLState.redoStack.get() == None
 
 # Test undo command
 def test_undo():
@@ -23,6 +31,7 @@ def test_undo():
     assert relationship.findRelationship("Tire", "Car") > -1
     UMLState.loadState(UMLState.undo())
     assert relationship.findRelationship("Tire", "Car") == -1
+    assert UMLState.saveState().__repr__() == UMLState.saveState().__repr__()
 
 # Test multiple runs of undo back to back
 def test_multi_undo():
@@ -46,6 +55,15 @@ def test_command_after_undo():
     UMLState.clearRedo()
     assert UMLState.redoStack.empty()
 
+def test_load():
+    UMLClass.addClass("Hi")
+    attributes.addField("Hi", "Hi", "Hi")
+    attributes.addMethod("Hi", "Hi", 'Hi')
+    p.addParameter('Hi', "Hi", "Hi", "Hi")
+    s = len(UMLClass.classIndex)
+    UMLState.loadState(UMLState.saveState())
+    s1 = len(UMLClass.classIndex)
+    assert s == s1
 
 
 

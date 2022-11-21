@@ -36,12 +36,10 @@ class UMLClass:
     def register(self, relationship):
         self.subscribers.append(relationship)
 
-    def unregister(self, relationship):
-        self.subscribers.pop(relationship)
-    
-    def dispatch(self, message):
-        for subscriber in self.subscribers:
-            subscriber.update(message)
+    # Not needed
+    # def unregister(self, relationship):
+    #     self.subscribers.pop(relationship)
+
 
 
 def isNameUnique(name: str):
@@ -122,9 +120,7 @@ def renameClass(oldName: str, newName: str):
     :param oldName: the target class's name
     :param newName: the new name for the target class
     """
-    if findClass(newName) != None:
-        return codes.RENAME_NEW_CLASS_EXIST
-    
+
     if not isNameUnique(newName):
         return codes.ADD_EXISTING_CLASS
 
