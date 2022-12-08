@@ -97,6 +97,7 @@ class View(tk.Tk):
         filemenu.add_command(label="Open", command= lambda : self.controller.clickLoadButton())
         filemenu.add_command(label="Save", command= lambda : self.controller.clickSaveButton())
         filemenu.add_command(label="Export as image", command= lambda : self.controller.clickExportButton())           # self.saveImageButton2(self.canvas, "testimage.jpg"))
+        filemenu.add_command(label="Arrow Legend", command= lambda : self.displayLegend())
         filemenu.add_separator()
         filemenu.add_command(label="Exit", command=self.quit)
         menubar.add_cascade(label="File", menu=filemenu)
@@ -773,7 +774,23 @@ class View(tk.Tk):
     def load(self):
         self.fileName = filedialog.askopenfilename(title="Open File", initialdir="UMLsavefiles", filetypes=[("JSON File", "*.json")])
         
-    
+    def displayLegend(self):
+        """
+        Creates the legend that decribe each arrow type 
+        """
+        self.inputFrame.destroy()
+        self.makeInputFrame()
+        label = tk.Label(self.inputFrame, text='Arrow Legend', width=60)
+        label1 = tk.Label(self.inputFrame, text='Aggregation: solid gray line with square tip', width=50)
+        label2 = tk.Label(self.inputFrame, text='Composition: solid black line with square tip', width=50)
+        label3 = tk.Label(self.inputFrame, text='Inheritance: solid gray line with arrow tip', width=50)
+        label4 = tk.Label(self.inputFrame, text='Realization: dashed gray line with arrow tip', width=50)
+        label.grid(row=0, columnspan=2)
+        label1.grid(row=1, columnspan=2)
+        label2.grid(row=2, columnspan=2)
+        label3.grid(row=3, columnspan=2)
+        label4.grid(row=4, columnspan=2)
+
     def makeUpdateRelationType(self):
         """
         Creates the frame to update relations after clicking said button
